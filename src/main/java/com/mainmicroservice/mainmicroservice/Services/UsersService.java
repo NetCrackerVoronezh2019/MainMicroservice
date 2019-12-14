@@ -12,13 +12,16 @@ public class UsersService {
 	private UsersRepository ur;
 	
 	@Transactional
-	public Users GetNameById()
+	public Users getUserById(Long id)
 	{
-		@SuppressWarnings("deprecation")
-		Long id=new Long(1);
 		return ur.findById(id).get();
 	}
 	
+	@Transactional
+	public void addNewUser(Users us)
+	{
+		ur.save(us);
+	}
 	@Autowired
 	public void setUsersRepository(UsersRepository ur)
 	{

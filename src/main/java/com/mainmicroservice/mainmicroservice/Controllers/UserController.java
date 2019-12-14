@@ -3,6 +3,7 @@ package com.mainmicroservice.mainmicroservice.Controllers;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,17 +18,19 @@ public class UserController {
 
 	@Autowired
 	private UsersService us;
+	
 	@GetMapping("/user/{id}")
-	public Users getUser()
+	public Users getUser(@PathVariable Long id)
 	{
 		System.out.println("GetUser");
-		return us.GetNameById();
+		return us.getUserById(id);
 	}
 	
 	@PostMapping("/adduser")
 	public void addUser( @RequestBody Users us)
 	{
-		System.out.println("PostUser---"+ us.getFirstname());
+		System.out.println(us.getAge());
+		this.us.addNewUser(us);
 	}
 	
 }
