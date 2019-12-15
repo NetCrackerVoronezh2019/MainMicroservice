@@ -8,27 +8,19 @@ import javax.validation.constraints.*;
 @Table(name="Services")
 public class Services {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long serviceId;
-
-    @Size(min=4, max=30)
-	private String serviceName;
-
+    
+    @Id
 	@Size(min=4, max=30)
 	private String serviceWebSite;
+	
+	@Size(min=4, max=30)
+	private String serviceName;
 	@NotNull
 	@OneToMany(cascade = CascadeType.ALL,
     fetch = FetchType.LAZY,
     mappedBy = "service")
-	Set<Users> userss=new HashSet<>();
-	
-	public Long getServiceId() {
-		return this.serviceId;
-	}
-	public void setServiceId(Long serviceId) {
-		this.serviceId = serviceId;
-	}
+	Set<Users> allusers=new HashSet<>();
+
 	public String getServiceName() {
 		return this.serviceName;
 	}

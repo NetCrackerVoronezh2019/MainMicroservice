@@ -1,9 +1,8 @@
 
 CREATE TABLE Services
 (
-	ServiceId SERIAL PRIMARY KEY,
-	ServiceName CHARACTER VARYING(30) UNIQUE  NOT NULL,
-	ServiceWebSite CHARACTER VARYING(30) UNIQUE NOT NULL
+	ServiceWebSite CHARACTER VARYING(30) PRIMARY KEY,
+	ServiceName CHARACTER VARYING(30) UNIQUE  NOT NULL
 );
 
 INSERT INTO Services (ServiceName, ServiceWebSite) 
@@ -20,11 +19,11 @@ CREATE TABLE Users
     LastName CHARACTER VARYING(30),
     Email CHARACTER VARYING(30),
 	Password CHARACTER VARYING(30),
-	FromService INTEGER,
+	ServiceWebSite CHARACTER VARYING(30),
     Age INTEGER,
-	FOREIGN KEY (FromService) REFERENCES Services (ServiceId) ON DELETE CASCADE
+	FOREIGN KEY (ServiceWebSite) REFERENCES Services (ServiceWebSite) ON DELETE CASCADE
 );
 
-INSERT INTO Users (FirstName, LastName,Email,Password,FromService,Age) 
+INSERT INTO Users (FirstName, LastName,Email,Password,ServiceWebSite ,Age) 
 VALUES 
-('Armen','Tovmasyan','armentovmasyan02@gmail.com','tovmasyan',1,'20');
+('Armen','Tovmasyan','armentovmasyan02@gmail.com','tovmasyan','www.facebook.com','20');

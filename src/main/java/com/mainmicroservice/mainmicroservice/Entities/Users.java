@@ -21,7 +21,7 @@ public class Users {
 	@Max(90)
 	private int age;
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SERVICEID", nullable = false)
+    @JoinColumn(name = "SERVICEWEBSITE", nullable = false)
     private Services service;
 	
 	public String getFirstname()
@@ -39,6 +39,11 @@ public class Users {
 	public int getAge()
 	{
 		return this.age;
+	}
+	
+	public String getService()
+	{
+		return this.service.getServiceWebSite();
 	}
 	
 	
