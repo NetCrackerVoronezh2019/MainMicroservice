@@ -11,9 +11,9 @@ public class Users {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long Userid;
-	@Size(min=5, max=20)
+	@Size(min=4, max=20)
 	private String firstname;
-	@Size(min=5, max=20)
+	@Size(min=4, max=20)
 	private String lastname;
 	@Email
 	private String email;
@@ -28,23 +28,53 @@ public class Users {
 	{
 		return this.firstname;
 	}
+	public void setFirstname(String x)
+	{
+		this.firstname=x;
+	}
 	public String getLastName()
 	{
 		return this.lastname;
 	}
+	
+	public void setLastname(String x)
+	{
+		this.lastname=x;
+	}
 	public String getPassword()
+	
 	{
 		return this.password;
 	}
-	public int getAge()
+	public void setPassword(String x)
 	{
-		return this.age;
+		this.password=x;
+	}
+	public String getEmail()
+	{
+		return this.email;
 	}
 	
+	public void setEmail(String x)
+	{
+		this.email=x;
+	}
+	
+ public int getAge()
+ {
+	 return 100;
+ }
 	public String getService()
 	{
-		return this.service.getServiceWebSite();
+		if(this.service==null)
+		{
+			return "null";
+		}
+		
+		return service.getServiceWebSite();
 	}
+	
+
 	
 	
 
