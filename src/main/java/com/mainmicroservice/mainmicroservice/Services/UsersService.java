@@ -3,7 +3,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mainmicroservice.mainmicroservice.Entities.Users;
+import com.mainmicroservice.mainmicroservice.Entities.User;
 import com.mainmicroservice.mainmicroservice.Repositories.UsersRepository;
 
 @Service
@@ -12,13 +12,13 @@ public class UsersService {
 	private UsersRepository ur;
 	
 	@Transactional
-	public Users getUserById(Long id)
+	public User getUserById(Long id)
 	{
 		return ur.findById(id).get();
 	}
 	
 	@Transactional
-	public void addNewUser(Users us)
+	public void addNewUser(User us)
 	{
 		ur.save(us);
 	}

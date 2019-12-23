@@ -19,7 +19,7 @@ public class Services {
 	@OneToMany(cascade = CascadeType.ALL,
     fetch = FetchType.LAZY,
     mappedBy = "service")
-	Set<Users> allusers=new HashSet<>();
+	Set<User> allusers=new HashSet<>();
 
 	public String getServiceName() {
 		return this.serviceName;
