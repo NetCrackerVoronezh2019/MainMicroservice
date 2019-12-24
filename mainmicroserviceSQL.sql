@@ -12,15 +12,19 @@ VALUES
 ('facebook','www.facebook.com'),
 ('vk','www.vk.com');
 
+
+
 CREATE TABLE Users
 (
-    UserId 	SERIAL PRIMARY KEY,
-    FirstName CHARACTER VARYING(30),
-    LastName CHARACTER VARYING(30),
-    Email CHARACTER VARYING(30),
+  UserId 	SERIAL PRIMARY KEY,
+  FirstName CHARACTER VARYING(30),
+  LastName CHARACTER VARYING(30),
+  Email CHARACTER VARYING(30),
 	Password CHARACTER VARYING(30),
 	ServiceWebSite CHARACTER VARYING(30),
-    Age INTEGER,
+  Age INTEGER,
+	ActivatedCode CHARACTER VARYING(100),
+	IsActivate BOOLEAN,
 	FOREIGN KEY (ServiceWebSite) REFERENCES Services (ServiceWebSite) ON DELETE CASCADE
 );
 

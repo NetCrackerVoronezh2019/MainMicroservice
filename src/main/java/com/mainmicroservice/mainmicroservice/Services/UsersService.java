@@ -17,6 +17,24 @@ public class UsersService {
 		return ur.findById(id).get();
 	}
 	
+	public void saveChanges(User user) {
+		ur.save(user);
+	}
+	
+	@Transactional
+	public User getUserByActivateCode(String code) 
+	{
+		try
+		{
+			return ur.findByActivateCode(code);
+		}
+		catch(Exception ex)
+		{
+			return null;
+		}
+		
+	}
+	
 	@Transactional
 	public void addNewUser(User us)
 	{

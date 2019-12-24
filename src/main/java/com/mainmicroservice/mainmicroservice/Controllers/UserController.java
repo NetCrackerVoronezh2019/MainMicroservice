@@ -1,5 +1,7 @@
 package com.mainmicroservice.mainmicroservice.Controllers;
 
+import java.util.UUID;
+
 import javax.validation.Valid;
 
 
@@ -25,6 +27,7 @@ public class UserController {
 		return us.getUserById(id);
 	}
 	
+	/*  Training
 	@GetMapping("/email")
 	public String email()
 	{
@@ -33,17 +36,27 @@ public class UserController {
 		System.out.println("Email");
 		return "Spring Email";
 	}
+	*/
 	
+	@GetMapping("/activate/{code}")
+	public void activate(@PathVariable String code)
+	{
+		User user=us.getUserByActivateCode(code);
+	
+		user.setActivate(true);
+	  us.saveChanges(user);
+		
+	}
 	
 	@PostMapping("/registration")
 	@CrossOrigin(origins="http://localhost:4200")
 	public User angular( @RequestBody User us)
 	{
+		us.setActivate(false);
+		us.setActivateCode(UUID.randomUUID().toString());
 		this.us.addNewUser(us);
-		ms.SendMessage("Registration", "Hello"+us.getFirstname(), us.getEmail());
+		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+us.getActivateCode(), us.getEmail());
 		return us;
 	}
-	
-	
 	
 }

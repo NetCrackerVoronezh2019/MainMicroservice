@@ -9,4 +9,5 @@ import com.mainmicroservice.mainmicroservice.Entities.User;
 @Transactional
 public interface UsersRepository extends CrudRepository<User,Long> {
 
+	User findByActivateCode(String activationCode);
 }

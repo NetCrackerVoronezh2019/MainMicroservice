@@ -3,14 +3,33 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 
+/*
+ CREATE TABLE Users
+(
+  UserId 	SERIAL PRIMARY KEY,
+  FirstName CHARACTER VARYING(30),
+  LastName CHARACTER VARYING(30),
+  Email CHARACTER VARYING(30),
+	Password CHARACTER VARYING(30),
+	ServiceWebSite CHARACTER VARYING(30),
+  Age INTEGER,
+	ActivatedCode CHARACTER VARYING(100),
+	IsActivate BOOLEAN,
+	FOREIGN KEY (ServiceWebSite) REFERENCES Services (ServiceWebSite) ON DELETE CASCADE
+);
+ */
+
 
 @Entity
 @Table(name = "Users")
 public class User {
 
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long Userid;
+	public boolean isActivate;
+	private String activateCode;
 	@Size(min=4, max=20)
 	private String firstname;
 	@Size(min=4, max=20)
@@ -75,7 +94,21 @@ public class User {
 	}
 	
 
+	public boolean isActivate() {
+		return isActivate;
+	}
 	
+	public void setActivate(boolean isActivate) {
+		this.isActivate = isActivate;
+	}
+	
+	public String getActivateCode() {
+		return activateCode;
+	}
+	
+	public void setActivateCode(String activateCode) {
+		this.activateCode = activateCode;
+	}
 	
 
 }
