@@ -43,7 +43,7 @@ public class UserController {
 	{
 		User user=us.getUserByActivateCode(code);
 	
-		user.setActivate(true);
+		user.setIsActivate(true);
 	  us.saveChanges(user);
 		
 	}
@@ -52,7 +52,7 @@ public class UserController {
 	@CrossOrigin(origins="http://localhost:4200")
 	public User angular( @RequestBody User us)
 	{
-		us.setActivate(false);
+		us.setIsActivate(false);
 		us.setActivateCode(UUID.randomUUID().toString());
 		this.us.addNewUser(us);
 		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+us.getActivateCode(), us.getEmail());

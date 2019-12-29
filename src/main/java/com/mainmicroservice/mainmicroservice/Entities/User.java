@@ -27,8 +27,10 @@ public class User {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name="userid")
 	private long Userid;
-	public boolean isActivate;
+	@Column(name="isactivate")
+	public boolean IsActivate;
 	private String activateCode;
 	@Size(min=4, max=20)
 	private String firstname;
@@ -40,7 +42,7 @@ public class User {
 	@Max(90)
 	private int age;
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SERVICEWEBSITE", nullable = false)
+    @JoinColumn(name = "service_web_site", nullable = false)
     private Services service;
 	
 	public String getFirstname()
@@ -94,16 +96,21 @@ public class User {
 	}
 	
 
-	public boolean isActivate() {
-		return isActivate;
-	}
 	
-	public void setActivate(boolean isActivate) {
-		this.isActivate = isActivate;
-	}
 	
+	
+	
+	public boolean getIsActivate() {
+		return true; 
+		//activateCode.return is_activate;
+	}
+	public void setIsActivate(boolean is_activate) {
+		this.IsActivate = is_activate;
+	}
 	public String getActivateCode() {
-		return activateCode;
+		if(this.activateCode==null)
+				return "none";
+		return this.activateCode;
 	}
 	
 	public void setActivateCode(String activateCode) {

@@ -11,6 +11,7 @@ public class Services {
     
     @Id
 	@Size(min=4, max=30)
+    @Column(name="service_web_site")
 	private String serviceWebSite;
 	
 	@Size(min=4, max=30)
