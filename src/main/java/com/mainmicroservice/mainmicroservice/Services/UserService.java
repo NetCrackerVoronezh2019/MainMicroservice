@@ -4,29 +4,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mainmicroservice.mainmicroservice.Entities.User;
-import com.mainmicroservice.mainmicroservice.Repositories.UsersRepository;
+import com.mainmicroservice.mainmicroservice.Repositories.UserRepository;
+
 
 @Service
-public class UsersService {
+public class UserService {
 	
-	private UsersRepository ur;
+	@Autowired
+	private UserRepository userRepository;
 	
 	@Transactional
 	public User getUserById(Long id)
 	{
-		return ur.findById(id).get();
+		return userRepository.findById(id).get();
 	}
 	
 	public void saveChanges(User user) {
-		ur.save(user);
+		userRepository.save(user);
 	}
+	
+	public User findByEmail(String email) {
+        User result = userRepository.findByEmail(email);
+       
+        return result;
+    }
 	
 	@Transactional
 	public User getUserByActivateCode(String code) 
 	{
 		try
 		{
-			return ur.findByActivateCode(code);
+			return userRepository.findByActivateCode(code);
 		}
 		catch(Exception ex)
 		{
@@ -38,12 +46,8 @@ public class UsersService {
 	@Transactional
 	public void addNewUser(User us)
 	{
-		ur.save(us);
+		userRepository.save(us);
 	}
-	@Autowired
-	public void setUsersRepository(UsersRepository ur)
-	{
-		this.ur=ur;
-	}
+
 	
 }

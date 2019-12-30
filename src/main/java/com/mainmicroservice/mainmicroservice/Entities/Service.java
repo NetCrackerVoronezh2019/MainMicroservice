@@ -5,20 +5,21 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 @Entity
-@Table(name="Services")
-public class Services {
+@Table(name="SERVICES")
+public class Service {
 
     
     @Id
 	@Size(min=4, max=30)
-    @Column(name="service_web_site")
+    @Column(name="SERVICEWEBSITE")
 	private String serviceWebSite;
-	
+    
 	@Size(min=4, max=30)
+	@Column(name="SERVICENAME")
 	private String serviceName;
 	@NotNull
 	@OneToMany(cascade = CascadeType.ALL,
-    fetch = FetchType.LAZY,
+    fetch = FetchType.EAGER,
     mappedBy = "service")
 	Set<User> allusers=new HashSet<>();
 

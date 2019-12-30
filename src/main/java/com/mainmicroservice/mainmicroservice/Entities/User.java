@@ -3,119 +3,107 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 
-/*
- CREATE TABLE Users
-(
-  UserId 	SERIAL PRIMARY KEY,
-  FirstName CHARACTER VARYING(30),
-  LastName CHARACTER VARYING(30),
-  Email CHARACTER VARYING(30),
-	Password CHARACTER VARYING(30),
-	ServiceWebSite CHARACTER VARYING(30),
-  Age INTEGER,
-	ActivatedCode CHARACTER VARYING(100),
-	IsActivate BOOLEAN,
-	FOREIGN KEY (ServiceWebSite) REFERENCES Services (ServiceWebSite) ON DELETE CASCADE
-);
- */
-
 
 @Entity
-@Table(name = "Users")
+@Table(name = "USERS")
 public class User {
 
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="userid")
+	@Column(name="USERID")
 	private long Userid;
-	@Column(name="isactivate")
+	@Column(name="ISACTIVATE")
 	public boolean IsActivate;
+	@Column(name="ACTIVATECODE")
 	private String activateCode;
 	@Size(min=4, max=20)
+	@Column(name="FIRSTNAME")
 	private String firstname;
+	@Column(name="LASTNAME")
 	@Size(min=4, max=20)
 	private String lastname;
 	@Email
+	@Column(name="EMAIL")
 	private String email;
+	@Column(name="PASSWORD")
 	private String password;
 	@Max(90)
+	@Column(name="AGE")
 	private int age;
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_web_site", nullable = false)
-    private Services service;
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "SERVICEWEBSITE", nullable = false)
+    private Service service;
 	
-	public String getFirstname()
-	{
-		return this.firstname;
-	}
-	public void setFirstname(String x)
-	{
-		this.firstname=x;
-	}
-	public String getLastName()
-	{
-		return this.lastname;
-	}
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ROLEID", nullable = false)
+    private Role role ;
 	
-	public void setLastname(String x)
-	{
-		this.lastname=x;
+	public Role getRole() {
+		return role;
 	}
-	public String getPassword()
-	
-	{
-		return this.password;
+	public void setRole(Role role) {
+		this.role = role;
 	}
-	public void setPassword(String x)
-	{
-		this.password=x;
+	public long getUserid() {
+		return Userid;
 	}
-	public String getEmail()
-	{
-		return this.email;
+	public void setUserid(long userid) {
+		Userid = userid;
 	}
-	
-	public void setEmail(String x)
-	{
-		this.email=x;
+	public boolean isIsActivate() {
+		return IsActivate;
 	}
-	
- public int getAge()
- {
-	 return 100;
- }
-	public String getService()
-	{
-		if(this.service==null)
-		{
-			return "null";
-		}
-		
-		return service.getServiceWebSite();
-	}
-	
-
-	
-	
-	
-	
-	public boolean getIsActivate() {
-		return true; 
-		//activateCode.return is_activate;
-	}
-	public void setIsActivate(boolean is_activate) {
-		this.IsActivate = is_activate;
+	public void setIsActivate(boolean isActivate) {
+		IsActivate = isActivate;
 	}
 	public String getActivateCode() {
-		if(this.activateCode==null)
-				return "none";
-		return this.activateCode;
+		return activateCode;
 	}
-	
 	public void setActivateCode(String activateCode) {
 		this.activateCode = activateCode;
 	}
+	public String getFirstname() {
+		return firstname;
+	}
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+	public String getLastname() {
+		return lastname;
+	}
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	public String getService() {
+		if(this.service==null)
+		 {
+			return "none";
+		 }
+		return this.service.getServiceWebSite();
+	}
+	public void setService(Service service) {
+		this.service = service;
+	}
+	
 	
 
 }
