@@ -22,6 +22,6 @@ public class JwtConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilt
     public void configure(HttpSecurity httpSecurity) throws Exception {
         JwtTokenFilter jwtTokenFilter = new JwtTokenFilter(jwtTokenProvider);
         httpSecurity.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-        //System.out.println("Config--"+SecurityContextHolder.getContext().getAuthentication().getAuthorities().toArray()[0].toString());
+      
     }
 }

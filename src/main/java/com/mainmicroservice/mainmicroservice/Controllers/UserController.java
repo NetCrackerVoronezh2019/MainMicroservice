@@ -22,6 +22,8 @@ import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 import com.mainmicroservice.mainmicroservice.Services.MailService;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 
+import Models.SignInModel;
+
 
 @RestController
 public class UserController {
@@ -40,21 +42,25 @@ public class UserController {
 	
 
 	
+	
+    @CrossOrigin(origins="http://localhost:4200")
 	@GetMapping("/activate/{code}")
 	public void activate(@PathVariable String code)
 	{
+    	System.out.println(code);
 		User user=us.getUserByActivateCode(code);
 	
 		user.setIsActivate(true);
-	  us.saveChanges(user);
+		us.saveChanges(user);
 		
 	}
 	
     @SuppressWarnings("rawtypes")
-    @GetMapping("login/{l}/{p}")
-    public ResponseEntity login(@PathVariable String l, @PathVariable String p) {
+    @CrossOrigin(origins="http://localhost:4200")
+    @PostMapping("signin")
+    public ResponseEntity login(  @RequestBody SignInModel signIn) {
         try {
-            String username =l;
+            String username =signIn.email;
           
             User user = us.findByEmail(username);
 
