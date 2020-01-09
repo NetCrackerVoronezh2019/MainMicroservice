@@ -8,6 +8,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.web.filter.GenericFilterBean;
 
 public class JwtTokenFilter extends GenericFilterBean {
@@ -24,9 +25,9 @@ public class JwtTokenFilter extends GenericFilterBean {
 	            throws IOException, ServletException {
 	    	
 	    	
+	    	
 	        String token = jwtTokenProvider.resolveToken((HttpServletRequest) req);
 	        if (token != null && jwtTokenProvider.validateToken(token)) {
-	        	System.out.println("dddddddsssdd");
 	            Authentication auth = jwtTokenProvider.getAuthentication(token);
 	            System.out.println("InFiler-"+auth.getAuthorities().toArray()[0].toString());
 

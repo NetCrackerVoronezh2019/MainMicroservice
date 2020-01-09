@@ -18,7 +18,8 @@ import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private JwtTokenProvider jwtTokenProvider;	 
+	private JwtTokenProvider jwtTokenProvider;
+	
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -34,9 +35,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         .csrf().disable()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
-       // .antMatcher("/**")
-        .authorizeRequests()
-        
+        .authorizeRequests()    
         .antMatchers("/user/**").hasRole("USER")
         .antMatchers("/**").permitAll()
         .anyRequest().authenticated()
