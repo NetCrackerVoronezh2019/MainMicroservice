@@ -10,15 +10,19 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.mainmicroservice.mainmicroservice.Security.JwtTokenFilter;
 import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 
 
 @Configuration
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
+	//@Autowired
+	//private JwtTokenProvider jwtTokenProvider;
 	@Autowired
-	private JwtTokenProvider jwtTokenProvider;
+	public JwtTokenFilter jwtFilter;
 	
     @Bean
     @Override
@@ -28,6 +32,9 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     
 	@Override
     protected void configure(HttpSecurity http) throws Exception {
+		
+		//JwtTokenFilter jwtTokenFilter = new JwtTokenFilter(jwtTokenProvider);
+		
 		http
 		.cors()
 		.and()
@@ -40,9 +47,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         .antMatchers("/**").permitAll()
         .anyRequest().authenticated()
         .and()
-        .apply(new JwtConfigurer(jwtTokenProvider));
-        
-    
+		 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
                 
     }

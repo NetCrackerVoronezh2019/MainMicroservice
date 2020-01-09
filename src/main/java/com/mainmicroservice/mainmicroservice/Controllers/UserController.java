@@ -61,6 +61,12 @@ public class UserController {
 		us.saveChanges(user);
 		
 	}
+    
+    @GetMapping("/user/1")
+    public String get()
+    {
+    	return "auth";
+    }
 	
    
     @CrossOrigin(origins="http://localhost:4200")
