@@ -26,6 +26,7 @@ import com.mainmicroservice.mainmicroservice.Services.MailService;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 
 import Models.AuthModel;
+import Models.RegistrationModel;
 import Models.SignInModel;
 
 
@@ -37,6 +38,7 @@ public class UserController {
 	
 	@Autowired 
 	private PasswordEncoder encoder;
+	
     @Autowired
     private UserService us;
 
@@ -62,6 +64,7 @@ public class UserController {
 		
 	}
     
+	 @CrossOrigin(origins="http://localhost:4200")
     @GetMapping("/user/1")
     public String get()
     {
@@ -92,12 +95,16 @@ public class UserController {
 	
 	@PostMapping("/registration")
 	@CrossOrigin(origins="http://localhost:4200")
-	public ResponseEntity<User> registation( @RequestBody User us)
+	public ResponseEntity<User> registation( @RequestBody RegistrationModel regModel)
 	{
+		User us=new User();
 		us.setIsActivate(false);
-		us.setPassword(encoder.encode(us.getPassword()));
+		us.setFirstname(regModel.firstname);
+		us.setLastname(regModel.lastname);
+		us.setEmail(regModel.email);
+		us.setPassword(encoder.encode(regModel.password));
 		us.setActivateCode(UUID.randomUUID().toString());
-		us.setRole(this.roleRepository.findByRoleName("ROLE_USER"));
+		us.setRole(this.roleRepository.findByRoleName("ROLE_"+regModel.role));
 		this.us.addNewUser(us);
 		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+us.getActivateCode(), us.getEmail());
 		return new ResponseEntity<>(us,HttpStatus.OK);
