@@ -25,7 +25,7 @@ public class ConsumerThread implements Runnable{
     	properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,PortModelDeserializer.class.getName());
     	properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
     	properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupName);
-    	KafkaConsumer<String,PortModel> consumer=new KafkaConsumer<String,PortModel>(properties);
+    	this.consumer=new KafkaConsumer<String,PortModel>(properties);
     	consumer.subscribe(Arrays.asList(topicName));
 	}
 	@Override
@@ -36,7 +36,10 @@ public class ConsumerThread implements Runnable{
 	    		ConsumerRecords<String,PortModel> records=consumer.poll(Duration.ofMillis(100));	
 	    		for(ConsumerRecord<String,PortModel> recordx:records)
 	    		{
-	    		  System.out.println("Key "+recordx.key()+"      Value "+recordx.value().port + "portition"+ recordx.partition());	
+	    		 
+	    		  System.out.println("MainMicroservice	Consumer Start !!");
+	    		  System.out.println("Key "+recordx.key()+"      Value "+recordx.value().port + "portition"+ recordx.partition());
+	    		  System.out.println("MainMicroservice	Consumer  End  !!");
 	    		}
 	    	}
 		}

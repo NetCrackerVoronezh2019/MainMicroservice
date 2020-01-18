@@ -52,7 +52,6 @@ public class UserController {
 	private  AuthenticationManager authenticationManager;
 
 	
-	
     @CrossOrigin(origins="http://localhost:4200")
 	@GetMapping("/activate/{code}")
 	public void activate(@PathVariable String code)
