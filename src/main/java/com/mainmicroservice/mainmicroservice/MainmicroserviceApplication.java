@@ -14,6 +14,7 @@ public class MainmicroserviceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MainmicroserviceApplication.class, args);
+		
 		PortModel model=new PortModel();
 		model.microServiceName="mainmicroservice";
 		model.port="8083";	

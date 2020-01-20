@@ -31,7 +31,7 @@ import Models.SignInModel;
 
 
 @RestController
-public class UserController {
+public class AuthentificationController {
 
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
@@ -63,14 +63,7 @@ public class UserController {
 		
 	}
     
-	 @CrossOrigin(origins="http://localhost:4200")
-    @GetMapping("/user/1")
-    public String get()
-    {
-    	return "auth";
-    }
-	
-   
+	   
     @CrossOrigin(origins="http://localhost:4200")
     @PostMapping("signin")
     public ResponseEntity<?> signIn(@RequestBody SignInModel signIn) {
@@ -104,6 +97,7 @@ public class UserController {
 		us.setPassword(encoder.encode(regModel.password));
 		us.setActivateCode(UUID.randomUUID().toString());
 		us.setRole(this.roleRepository.findByRoleName("ROLE_"+regModel.role));
+	//	us.setRole(this.roleRepository.findByRoleName("ROLE_"+"ADMIN"));
 		this.us.addNewUser(us);
 		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+us.getActivateCode(), us.getEmail());
 		return new ResponseEntity<>(us,HttpStatus.OK);

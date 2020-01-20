@@ -19,8 +19,6 @@ import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 @Configuration
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
-	//@Autowired
-	//private JwtTokenProvider jwtTokenProvider;
 	@Autowired
 	public JwtTokenFilter jwtFilter;
 	
@@ -33,8 +31,6 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 	@Override
     protected void configure(HttpSecurity http) throws Exception {
 		
-		//JwtTokenFilter jwtTokenFilter = new JwtTokenFilter(jwtTokenProvider);
-		
 		http
 		.cors()
 		.and()
@@ -43,7 +39,9 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .authorizeRequests()    
-        .antMatchers("/user/**").hasRole("ADMIN")
+        .antMatchers("/student/**").hasRole("STUDENT")
+        .antMatchers("/admin/**").hasRole("ADMIN")
+        .antMatchers("/teacher/**").hasRole("TEACHER")
         .antMatchers("/**").permitAll()
         .anyRequest().authenticated()
         .and()

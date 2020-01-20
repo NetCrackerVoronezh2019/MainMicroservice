@@ -2,18 +2,23 @@ package com.mainmicroservice.mainmicroservice.Services;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.*;
 import com.mainmicroservice.mainmicroservice.Entities.User;
 import com.mainmicroservice.mainmicroservice.Repositories.UserRepository;
 
 
 @Service
+@Transactional
 public class UserService {
 	
 	@Autowired
 	private UserRepository userRepository;
 	
-	@Transactional
+
+	public List<User> getAllUsers()
+	{
+		return this.userRepository.findAll();
+	}
 	public User getUserById(Long id)
 	{
 		return userRepository.findById(id).get();
@@ -29,7 +34,7 @@ public class UserService {
         return result;
     }
 	
-	@Transactional
+
 	public User getUserByActivateCode(String code) 
 	{
 		try
@@ -43,7 +48,6 @@ public class UserService {
 		
 	}
 	
-	@Transactional
 	public void addNewUser(User us)
 	{
 		userRepository.save(us);

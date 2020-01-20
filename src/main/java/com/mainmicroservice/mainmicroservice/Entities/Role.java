@@ -5,6 +5,11 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import Jacson.Views;
+
 @Entity
 @Table(name="ROLES")
 public class Role {
@@ -13,8 +18,10 @@ public class Role {
 	@Column(name="ROLEID")
 	private long roleId;
 	@Column(name="ROLENAME")
+	@JsonView(Views.UserInfoForChangeProps.class)
 	private String roleName;
 	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL,
 		    fetch = FetchType.EAGER,
 		    mappedBy = "role")
