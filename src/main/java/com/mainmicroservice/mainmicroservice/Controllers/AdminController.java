@@ -12,6 +12,7 @@ import com.mainmicroservice.mainmicroservice.Repositories.RoleRepository;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 
 import Jacson.Views;
+import Models.ChangeUserProp;
 import Models.UserInfoModel;
 
 @RestController
@@ -33,20 +34,18 @@ public class AdminController {
 	}
 	
 	@PostMapping("admin/changeuser")
-	public boolean changeRole(@RequestBody String id)
+	public boolean changeRole(@RequestBody ChangeUserProp model)
 	{
-		try
-		{
-			User changedUser=us.getUserById(Long.getLong(id));
-			Role role=roleRepository.findByRoleName("ROLE_ADMIN");
+			User changedUser=us.getUserById(new Long(model.userId));
+			changedUser.setFirstname(model.firstname);
+			changedUser.setLastname(model.lastname);
+			changedUser.setIsActivate(model.isActivate);
+			changedUser.setEmail(model.email);
+			Role role=roleRepository.findByRoleName(model.role);
 			changedUser.setRole(role);
 			us.saveChanges(changedUser);
+			System.out.println("end");
 			return true;
-		}
-		catch(Exception e)
-		{
-			System.out.println(e.getMessage());
-			return false;
-		}
+
 	}
 }

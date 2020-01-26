@@ -31,6 +31,7 @@ import Models.SignInModel;
 
 
 @RestController
+@CrossOrigin(origins="http://localhost:4200")
 public class AuthentificationController {
 
 	@Autowired
@@ -52,7 +53,7 @@ public class AuthentificationController {
 	private  AuthenticationManager authenticationManager;
 
 	
-    @CrossOrigin(origins="http://localhost:4200")
+    
 	@GetMapping("/activate/{code}")
 	public void activate(@PathVariable String code)
 	{
@@ -64,7 +65,7 @@ public class AuthentificationController {
 	}
     
 	   
-    @CrossOrigin(origins="http://localhost:4200")
+   
     @PostMapping("signin")
     public ResponseEntity<?> signIn(@RequestBody SignInModel signIn) {
         try {
@@ -86,7 +87,6 @@ public class AuthentificationController {
     }
 	
 	@PostMapping("/registration")
-	@CrossOrigin(origins="http://localhost:4200")
 	public ResponseEntity<User> registation( @RequestBody RegistrationModel regModel)
 	{
 		User us=new User();
@@ -97,7 +97,6 @@ public class AuthentificationController {
 		us.setPassword(encoder.encode(regModel.password));
 		us.setActivateCode(UUID.randomUUID().toString());
 		us.setRole(this.roleRepository.findByRoleName("ROLE_"+regModel.role));
-	//	us.setRole(this.roleRepository.findByRoleName("ROLE_"+"ADMIN"));
 		this.us.addNewUser(us);
 		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+us.getActivateCode(), us.getEmail());
 		return new ResponseEntity<>(us,HttpStatus.OK);

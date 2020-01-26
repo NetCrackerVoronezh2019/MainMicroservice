@@ -15,6 +15,7 @@ public class MainmicroserviceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MainmicroserviceApplication.class, args);
 		
+		/*
 		PortModel model=new PortModel();
 		model.microServiceName="mainmicroservice";
 		model.port="8083";	
@@ -22,6 +23,7 @@ public class MainmicroserviceApplication {
 		CountDownLatch latch=new CountDownLatch(1);
 	    Thread consumerThread =new Thread(new ConsumerThread(latch,"ports_topic","mainGroup"));
 	    consumerThread.start();
+		*/
 	}
 
 }

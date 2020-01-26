@@ -18,7 +18,7 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@JsonView(Views.UserInfoForChangeProps.class)
 	@Column(name="USERID")
-	private long Userid;
+	private Long userId;
 	
 	@Column(name="ISACTIVATE")
 	@JsonView(Views.UserInfoForChangeProps.class)
@@ -71,11 +71,11 @@ public class User {
 	 
 	 
 	public long getUserid() {
-		return Userid;
+		return userId;
 	}
 	 
 	public void setUserid(long userid) {
-		Userid = userid;
+		userId = userid;
 	}
 
 	public boolean isIsActivate() {
