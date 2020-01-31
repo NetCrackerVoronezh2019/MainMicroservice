@@ -1,5 +1,7 @@
 package com.mainmicroservice.mainmicroservice.Controllers;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +9,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +33,9 @@ import com.mainmicroservice.mainmicroservice.Services.UserService;
 import Models.AuthModel;
 import Models.RegistrationModel;
 import Models.SignInModel;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 
 
 @RestController
@@ -53,6 +61,16 @@ public class AuthentificationController {
 	private  AuthenticationManager authenticationManager;
 
 	
+	@GetMapping("/getrole")
+	public ResponseEntity<AuthModel> getRole(ServletRequest req)
+	{	
+		String r=this.jwtTokenProvider.getRole((HttpServletRequest) req);
+		AuthModel m = new AuthModel();
+		m.email="gmail.com";
+		m.token=r;
+		return new ResponseEntity<>(m,HttpStatus.OK);
+	}
+	
     
 	@GetMapping("/activate/{code}")
 	public void activate(@PathVariable String code)
@@ -74,6 +92,8 @@ public class AuthentificationController {
             User user = us.findByEmail(username);
             List<Role> roles=new ArrayList<Role>();
             roles.add(user.getRole());
+            user.setLastLogin(LocalDateTime.now());
+            us.saveChanges(user);
             String token = jwtTokenProvider.createToken(username, roles);
             AuthModel am=new AuthModel();
             am.email=username;

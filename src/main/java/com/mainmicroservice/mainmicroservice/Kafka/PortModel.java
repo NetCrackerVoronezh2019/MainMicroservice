@@ -2,7 +2,7 @@ package com.mainmicroservice.mainmicroservice.Kafka;
 
 public class PortModel {
 
-	public String microServiceName;
+	public MicroservicesEnum microServiceName;
 	public String port;
 	
 	

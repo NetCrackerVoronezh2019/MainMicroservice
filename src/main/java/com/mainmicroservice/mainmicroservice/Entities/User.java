@@ -1,4 +1,6 @@
 package com.mainmicroservice.mainmicroservice.Entities;
+import java.time.LocalDateTime;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
@@ -45,6 +47,13 @@ public class User {
 	@Column(name="PASSWORD")
 	private String password;
 	
+	@Column(name="ISDELETED")
+	private Boolean isDeleted;
+	
+	@Column(name="LASTLOGIN")
+	private LocalDateTime lastLogin;
+	
+	
 	@Max(90)
 	@Column(name="AGE")
 	private int age;
@@ -60,7 +69,28 @@ public class User {
     @JoinColumn(name = "ROLEID", nullable = false)
     private Role role ;
 	
-	 
+	
+	
+	public Boolean getIsDeleted() {
+		return this.isDeleted;
+	}
+
+	public void setIsDeleted(Boolean isDeleted) {
+		
+		this.isDeleted = isDeleted;
+	
+		
+	}
+
+	public LocalDateTime getLastLogin() {
+		return lastLogin;
+	}
+
+	public void setLastLogin(LocalDateTime lastLogin) {
+		this.lastLogin = lastLogin;
+	}
+
+	
 	public Role getRole() {
 		return this.role;
 	}

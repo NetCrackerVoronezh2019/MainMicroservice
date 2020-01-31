@@ -68,7 +68,6 @@ public class JwtTokenProvider {
     
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
-        System.out.println("getAuth----"+userDetails.getAuthorities().toArray()[0].toString());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
@@ -84,11 +83,20 @@ public class JwtTokenProvider {
         return null;
     }
     
+    public String getRole(HttpServletRequest req)
+    {
+        
+    	String token = this.resolveToken((HttpServletRequest) req);
+		Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+        @SuppressWarnings("unchecked")
+		List<String> roles=(List<String>)claims.getBody().get("roles");
+        return roles.get(0);
+    }
+    
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             if (claims.getBody().getExpiration().before(new Date())) {
-            	System.out.println("fff");
                 return false;
             }
 
