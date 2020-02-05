@@ -1,41 +1,28 @@
 package com.mainmicroservice.mainmicroservice.Controllers;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import java.util.*;
 import org.springframework.http.HttpStatus;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 import com.mainmicroservice.mainmicroservice.Entities.Role;
 import com.mainmicroservice.mainmicroservice.Entities.User;
 import com.mainmicroservice.mainmicroservice.Repositories.RoleRepository;
 import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 import com.mainmicroservice.mainmicroservice.Services.MailService;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
-
 import Models.AuthModel;
 import Models.RegistrationModel;
 import Models.SignInModel;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
+import Models.UserInfoModel;
+
 
 
 @RestController
@@ -62,48 +49,55 @@ public class AuthentificationController {
 
 	
 	@GetMapping("/getrole")
-	public ResponseEntity<AuthModel> getRole(ServletRequest req)
+	public ResponseEntity<UserInfoModel> getRole(ServletRequest req)
 	{	
-		String r=this.jwtTokenProvider.getRole((HttpServletRequest) req);
-		AuthModel m = new AuthModel();
-		m.email="gmail.com";
-		m.token=r;
-		return new ResponseEntity<>(m,HttpStatus.OK);
+		String roleName=this.jwtTokenProvider.getRole((HttpServletRequest) req);
+		UserInfoModel userInfo=new UserInfoModel();
+		userInfo.roleName=roleName;
+		return new ResponseEntity<>(userInfo,HttpStatus.OK);
 	}
 	
+	@GetMapping("/islogin")
+	public ResponseEntity<UserInfoModel> isLogIn(ServletRequest req)
+	{
+	    String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+	    if(userName==null)
+	    {
+	    	return new ResponseEntity<>(null,HttpStatus.OK);
+	    }
+	    User user=us.findByEmail(userName);
+	    UserInfoModel res=new UserInfoModel(userName,user.getRole().getRoleName());
+	    return new ResponseEntity<>(res,HttpStatus.OK);
+	}
     
 	@GetMapping("/activate/{code}")
 	public void activate(@PathVariable String code)
 	{
-    	System.out.println(code);
 		User user=us.getUserByActivateCode(code);
 		user.setIsActivate(true);
-		us.saveChanges(user);
-		
+		us.saveChanges(user);	
 	}
     
 	   
-   
     @PostMapping("signin")
     public ResponseEntity<?> signIn(@RequestBody SignInModel signIn) {
-        try {
-            String username =signIn.email;
+    	
+    	try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signIn.email, signIn.password));
-            User user = us.findByEmail(username);
+            User user = us.findByEmail(signIn.email);
             List<Role> roles=new ArrayList<Role>();
             roles.add(user.getRole());
             user.setLastLogin(LocalDateTime.now());
             us.saveChanges(user);
-            String token = jwtTokenProvider.createToken(username, roles);
-            AuthModel am=new AuthModel();
-            am.email=username;
-            am.token=token;
+            String token = jwtTokenProvider.createToken(signIn.email, roles);
+            AuthModel am=new AuthModel(signIn.email,token);
             return new ResponseEntity<>(am,HttpStatus.OK);
-        } catch (AuthenticationException e) {
-        	
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
-            
-        }
+    	}
+    	catch(AuthenticationException ex)
+    	{
+    		return new ResponseEntity<>(ex.getMessage(),HttpStatus.BAD_REQUEST);
+    	}
+       
     }
 	
 	@PostMapping("/registration")
@@ -111,6 +105,7 @@ public class AuthentificationController {
 	{
 		User us=new User();
 		us.setIsActivate(false);
+		us.setIsDeleted(false);
 		us.setFirstname(regModel.firstname);
 		us.setLastname(regModel.lastname);
 		us.setEmail(regModel.email);

@@ -20,9 +20,14 @@ public class ConsumerThreadService {
 
 	@Autowired
 	private Microservices micro;
+	
 	private KafkaConsumer<String,PortModel> consumer;
+	
+	// Kafka Topic Name
 	@Value("${kafka.porttopicname}")
 	private String portTopicName;
+	
+	// Kafka Group
 	@Value("${kafka.porttopicgroup}")
 	private String portTopicGroup;
 	
@@ -62,9 +67,9 @@ public class ConsumerThreadService {
         	    	}
         		}
         		
-        		catch(WakeupException e)
+        		catch(Exception e)
         		{
-        			System.out.println(e.getMessage()+" ------WakeupException");
+        			System.out.println(e.getMessage());
         		}
         		finally
         		{

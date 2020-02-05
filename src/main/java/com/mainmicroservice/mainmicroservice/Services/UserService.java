@@ -34,7 +34,6 @@ public class UserService {
         return result;
     }
 	
-
 	public User getUserByActivateCode(String code) 
 	{
 		try

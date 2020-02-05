@@ -10,7 +10,7 @@ import com.mainmicroservice.mainmicroservice.Entities.User;
 
 @Repository
 @Transactional
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface UserRepository extends CrudRepository<User,Long> {
 
 	User findByActivateCode(String activationCode);
 	
@@ -19,4 +19,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
 	List<User> findAll();
 	
 	User findByUserId(Long id);
+	
+	
 }

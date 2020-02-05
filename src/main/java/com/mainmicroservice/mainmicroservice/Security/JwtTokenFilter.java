@@ -32,8 +32,6 @@ public class JwtTokenFilter extends GenericFilterBean {
 	               
 	            }
 	        }
-	        
-	        System.out.println("filter");
 	        filterChain.doFilter(req, res);
 	    }
 }

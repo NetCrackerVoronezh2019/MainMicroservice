@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import com.mainmicroservice.mainmicroservice.Entities.Role;
 
+import Models.UserInfoModel;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -54,7 +55,6 @@ public class JwtTokenProvider {
 
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("roles", getRoleNames(roles));
-
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
@@ -81,6 +81,22 @@ public class JwtTokenProvider {
             return bearerToken.substring(7, bearerToken.length());
         }
         return null;
+    }
+    
+    public String getUsername(HttpServletRequest req)
+    {
+    	String token = this.resolveToken((HttpServletRequest) req);
+    	if(token==null)
+    		return null;
+    	else {
+	    		if(this.validateToken(token))
+	    		{
+		    		String userName=this.getUsername(token);
+		    		return userName;
+	    		}
+    	}
+    	return null;
+    	
     }
     
     public String getRole(HttpServletRequest req)

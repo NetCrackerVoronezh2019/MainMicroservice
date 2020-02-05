@@ -36,12 +36,12 @@ public class AuthUserDetails implements UserDetails {
 
 	@Override
 	public boolean isAccountNonExpired() {
-		return true;
+		return this.user.IsActivate;
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return this.user.IsActivate;
+		return !this.user.getIsDeleted();
 	}
 
 	@Override

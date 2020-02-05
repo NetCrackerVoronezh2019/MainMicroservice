@@ -12,8 +12,7 @@ import com.mainmicroservice.mainmicroservice.Repositories.RoleRepository;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 
 import Jacson.Views;
-import Models.ChangeUserProp;
-import Models.UserInfoModel;
+import Models.UserProp;
 
 @RestController
 @CrossOrigin(origins="http://localhost:4200")
@@ -33,14 +32,17 @@ public class AdminController {
 		return new ResponseEntity<>(list,HttpStatus.OK);
 	}
 	
+	
 	@PostMapping("admin/changeuser")
-	public boolean changeRole(@RequestBody ChangeUserProp model)
+	public boolean changeRole(@RequestBody UserProp model)
 	{
-			User changedUser=us.getUserById(new Long(model.userId));
+			//User changedUser=us.getUserById(Long.parseLong(model.userId));
+			User changedUser=us.getUserById(model.userId);
 			changedUser.setFirstname(model.firstname);
 			changedUser.setLastname(model.lastname);
 			changedUser.setIsActivate(model.isActivate);
 			changedUser.setEmail(model.email);
+			changedUser.setIsDeleted(model.isDeleted);
 			Role role=roleRepository.findByRoleName(model.role);
 			changedUser.setRole(role);
 			us.saveChanges(changedUser);

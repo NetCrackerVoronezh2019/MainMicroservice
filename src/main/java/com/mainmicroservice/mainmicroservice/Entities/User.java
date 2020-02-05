@@ -47,6 +47,7 @@ public class User {
 	@Column(name="PASSWORD")
 	private String password;
 	
+	@JsonView(Views.UserInfoForChangeProps.class)
 	@Column(name="ISDELETED")
 	private Boolean isDeleted;
 	
