@@ -4,14 +4,11 @@ import org.apache.kafka.common.serialization.Deserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-@SuppressWarnings("rawtypes")
-public class PortModelDeserializer implements Deserializer{
-	
+public class PortModelDeserializer implements Deserializer<PortModel>{
 	
 	 @Override public void close() {
 	 }
-	 
-	 
+	  
 	@Override
 	 public PortModel deserialize(String arg0, byte[] arg1) {
 	   ObjectMapper mapper = new ObjectMapper();
@@ -24,8 +21,7 @@ public class PortModelDeserializer implements Deserializer{
 	   return user;
 	 }
 
-
-
+	
 	@Override
 	public void configure(Map configs, boolean isKey) {
 		// TODO Auto-generated method stub
