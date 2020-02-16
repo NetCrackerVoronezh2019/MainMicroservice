@@ -16,6 +16,7 @@ public class Role {
 	
 	@Id
 	@Column(name="ROLEID")
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long roleId;
 	@Column(name="ROLENAME")
 	@JsonView(Views.UserInfoForChangeProps.class)

@@ -1,17 +1,24 @@
 package com.mainmicroservice.mainmicroservice.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.mainmicroservice.mainmicroservice.Entities.*;
 import com.mainmicroservice.mainmicroservice.Repositories.RoleRepository;
+import com.mainmicroservice.mainmicroservice.Services.RoleService;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 
 import Jacson.Views;
+import Models.AdvertisementModel;
 import Models.UserProp;
 
 @RestController
@@ -21,6 +28,9 @@ public class AdminController {
 	@Autowired
     private UserService us;
 
+	@Autowired 
+	private RoleService roleService;
+	
 	@Autowired
 	private RoleRepository roleRepository;
 	
@@ -32,11 +42,28 @@ public class AdminController {
 		return new ResponseEntity<>(list,HttpStatus.OK);
 	}
 	
+	@PostMapping("admin/setroles")
+	public void setRoles(@RequestBody Role _role)
+	{    
+		 List<String> _roles=new ArrayList<String>();
+		 _roles.add(_role.getRoleName());
+		 RestTemplate restTemplate=new RestTemplate();
+	     HttpEntity<List<String>> entity=new HttpEntity<List<String>>(_roles);
+		 ResponseEntity<List<String>> res= restTemplate.exchange("http://localhost:"+"7082"+"/setroles",HttpMethod.POST,entity,new ParameterizedTypeReference<List<String>>(){});
+	}
+	
+	
+	
+	@GetMapping("admin/getallroles")
+	public List<Role> getallroles()
+	{
+		return roleService.allRoles();
+	}
+	
 	
 	@PostMapping("admin/changeuser")
-	public boolean changeRole(@RequestBody UserProp model)
+	public ResponseEntity<?> changeRole(@RequestBody UserProp model)
 	{
-			//User changedUser=us.getUserById(Long.parseLong(model.userId));
 			User changedUser=us.getUserById(model.userId);
 			changedUser.setFirstname(model.firstname);
 			changedUser.setLastname(model.lastname);
@@ -46,8 +73,8 @@ public class AdminController {
 			Role role=roleRepository.findByRoleName(model.role);
 			changedUser.setRole(role);
 			us.saveChanges(changedUser);
-			System.out.println("end");
-			return true;
-
+			return new ResponseEntity<>(HttpStatus.OK);
 	}
+	
+
 }

@@ -2,9 +2,14 @@ package com.mainmicroservice.mainmicroservice.Controllers;
 
 import java.time.LocalDateTime;
 import java.util.*;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -71,16 +76,17 @@ public class AuthentificationController {
 	}
     
 	@GetMapping("/activate/{code}")
-	public void activate(@PathVariable String code)
+	public ResponseEntity<?> activate(@PathVariable String code)
 	{
 		User user=us.getUserByActivateCode(code);
 		user.setIsActivate(true);
-		us.saveChanges(user);	
+		us.saveChanges(user);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
     
 	   
     @PostMapping("signin")
-    public ResponseEntity<?> signIn(@RequestBody SignInModel signIn) {
+    public ResponseEntity<?> signIn(@RequestBody SignInModel signIn,ServletResponse response) {
     	
     	try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signIn.email, signIn.password));
@@ -95,7 +101,9 @@ public class AuthentificationController {
     	}
     	catch(AuthenticationException ex)
     	{
-    		return new ResponseEntity<>(ex.getMessage(),HttpStatus.BAD_REQUEST);
+      		HttpHeaders httpHeaders = new HttpHeaders();
+      	    httpHeaders.add("ErrorMessage", "error");
+    		return new ResponseEntity<>(httpHeaders,HttpStatus.FORBIDDEN);
     	}
        
     }

@@ -68,7 +68,7 @@ public class User {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JsonView(Views.UserInfoForChangeProps.class)
     @JoinColumn(name = "ROLEID", nullable = false)
-    private Role role ;
+    private Role role;
 	
 	
 	

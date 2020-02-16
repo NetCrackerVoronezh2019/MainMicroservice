@@ -17,12 +17,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.mainmicroservice.mainmicroservice.Services.RoleService;
+
 
 @Service
 public class ConsumerThreadService {
 
 	@Autowired
 	private Microservices micro;
+	
+	@Autowired
+	private RoleService roleService;
 	private KafkaConsumer<String,PortModel> consumer;
 	private KafkaConsumer<String,List<String>> consumer2;
 	
@@ -37,7 +42,7 @@ public class ConsumerThreadService {
 	@PostConstruct
 	public void init()
 	{
-		String bootstrapServers2="127.0.0.1:9092";
+		String bootstrapServers2="192.168.99.100:9092";
     	Properties properties=new Properties();
     	properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServers2);
     	properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
@@ -47,7 +52,8 @@ public class ConsumerThreadService {
     	this.consumer=new KafkaConsumer<String,PortModel>(properties);
     	consumer.subscribe(Arrays.asList(this.portTopicName));
     	
-    	String topic="rolestopic";
+    	
+    	String topic="roles_topic";
     	Properties properties2=new Properties();
     	properties2.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServers2);
     	properties2.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
@@ -68,6 +74,8 @@ public class ConsumerThreadService {
         	    		ConsumerRecords<String,PortModel> records=consumer.poll(Duration.ofMillis(100));	
         	    		for(ConsumerRecord<String,PortModel> recordx:records)
         	    		{
+        	    			System.out.println("recordx_port"+recordx.value().port);
+        	    			
         	    			if(recordx.value().microServiceName==MicroservicesEnum.ADVERTISMENT)
         	    				micro.setAdvertismentmicroserviceport(recordx.value().port);
         	    			else {
@@ -102,7 +110,7 @@ public class ConsumerThreadService {
                 		ConsumerRecords<String,List<String>> records=consumer2.poll(Duration.ofMillis(100));
                 		for(ConsumerRecord<String,List<String>> recordx:records)
                 		{
-                		  System.out.println("Key "+recordx.key()+"      Value "+recordx.value().get(1));	
+                			roleService.addNewRoles(recordx.value());	
                 		}
                 	}
         		}
@@ -113,7 +121,7 @@ public class ConsumerThreadService {
         		}
         		finally
         		{
-        			consumer.close();
+        			consumer2.close();
         			
         		}
             }
