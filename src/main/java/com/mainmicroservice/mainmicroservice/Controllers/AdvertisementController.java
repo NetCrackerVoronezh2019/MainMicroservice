@@ -1,15 +1,28 @@
 package com.mainmicroservice.mainmicroservice.Controllers;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mainmicroservice.mainmicroservice.Entities.User;
 import com.mainmicroservice.mainmicroservice.Kafka.Microservices;
 import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
@@ -32,17 +45,43 @@ public class AdvertisementController {
 	@Autowired
 	private UserService us;
 	
-	@PostMapping("student/addadvertisement")
-	public ResponseEntity<?> addAdvertisement(@RequestBody AdvertisementModel model, ServletRequest req)
+	@RequestMapping(value="addadvertisement",method = RequestMethod.POST)
+	public ResponseEntity<String> addAdvertisement(@RequestParam String advertisement,@RequestParam("file") MultipartFile _file, ServletRequest req) throws IOException
 	{
-		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
-		User user=us.findByEmail(userName);
-		Long id=user.getUserid();
-		model.setAuthorId(id);
-		RestTemplate restTemplate = new RestTemplate();
-		HttpEntity<AdvertisementModel> entity = new HttpEntity<AdvertisementModel>(model);
-		restTemplate.exchange("http://localhost:1122/student/addadvertisement",HttpMethod.POST,entity, AdvertisementModel.class );
-		 return new ResponseEntity<>(HttpStatus.OK);
+		
+		  //создаем запрос для отправки файла
+		  byte[] somebyteArray=_file.getBytes();
+		  HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+	        MultiValueMap<String, String> fileMap = new LinkedMultiValueMap<>();
+	        ContentDisposition contentDisposition = ContentDisposition
+	                .builder("form-data")
+	                .name("file")
+	                .filename("file")
+	                .build();
+	        fileMap.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+	        HttpEntity<byte[]> fileEntity = new HttpEntity<>(somebyteArray, fileMap);
+	        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+	        
+	        // получаем токен
+	        String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
+			User user=us.findByEmail(userName);
+			Long id=user.getUserid();
+			
+			 // JSON TO Java class
+			 ObjectMapper mapper = new ObjectMapper();
+			 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			 AdvertisementModel advertisementModel = mapper.readValue(advertisement,AdvertisementModel.class);
+			 advertisementModel.setAuthorId(id);
+			 
+			//Java class to JSON
+			 advertisement = mapper.writeValueAsString(advertisementModel);
+	        body.add("file", fileEntity);
+	        body.add("advertisement",advertisementModel);
+	        HttpEntity<MultiValueMap<String, Object>> requestEntity =new HttpEntity<>(body, headers);
+		    RestTemplate restTemplate = new RestTemplate();
+			ResponseEntity<String> res=restTemplate.exchange("http://localhost:1122/student/addadvertisement",HttpMethod.POST,requestEntity, String.class );
+			return res;
 	}
 
 	@GetMapping("alladvertisements")

@@ -10,18 +10,19 @@ public class AdvertisementModel {
 	private Long advertisementId;
 	private Long authorId;
 	private String advertisementName;
-	private LocalDateTime deadline;
+	//private LocalDateTime deadline;
 	private String description;
 	private LocalDateTime dateOfPublication;
 	private String budget;
 	private String section;
-	private String imageUrl;
+	private String imageKey;
 
-	public String getImageUrl() {
-		return imageUrl;
+	
+	public String getImageKey() {
+		return imageKey;
 	}
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
+	public void setImageKey(String imageKey) {
+		this.imageKey = imageKey;
 	}
 	public String getSection() {
 		return section;
@@ -53,12 +54,14 @@ public class AdvertisementModel {
 	public void setAdvertisementName(String advertisementName) {
 		this.advertisementName = advertisementName;
 	}
+	/*
 	public String getDeadline() {
 		return deadline.toString();
 	}
 	public void setDeadline(LocalDateTime deadline) {
 		this.deadline = deadline;
 	}
+	*/
 	public String getDescription() {
 		return description;
 	}
