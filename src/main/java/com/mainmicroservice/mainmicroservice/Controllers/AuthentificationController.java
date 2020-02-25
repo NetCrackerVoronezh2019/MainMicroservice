@@ -68,7 +68,7 @@ public class AuthentificationController {
 	    String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
 	    if(userName==null)
 	    {
-	    	return new ResponseEntity<>(null,HttpStatus.OK);
+	    	return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
 	    }
 	    User user=us.findByEmail(userName);
 	    UserInfoModel res=new UserInfoModel(userName,user.getRole().getRoleName());
