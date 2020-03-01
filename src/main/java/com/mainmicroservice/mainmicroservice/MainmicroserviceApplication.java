@@ -16,12 +16,12 @@ public class MainmicroserviceApplication {
 		ConfigurableApplicationContext app=SpringApplication.run(MainmicroserviceApplication.class, args);
 		
 		ConsumerThreadService a = (ConsumerThreadService) app.getBean("consumerThreadService");		
-	     //	Utility utility=(Utility) app.getBean("utility");	
-	    //   utility.sendPortModelToConfig("http://localhost:7082/setPortModel");
-	   // Thread consumerThread =new Thread(a.getRunnable());
-	    //consumerThread.start();
-	   // Thread RoleThread =new Thread(a.RoleThread());
-	   // RoleThread.start();
+	    Utility utility=(Utility) app.getBean("utility");	
+	    utility.sendPortModelToConfig("http://localhost:7082/setPortModel");
+	    Thread consumerThread =new Thread(a.getRunnable());
+	    consumerThread.start();
+	    Thread RoleThread =new Thread(a.RoleThread());
+	    RoleThread.start();
 	    
 	}
 }

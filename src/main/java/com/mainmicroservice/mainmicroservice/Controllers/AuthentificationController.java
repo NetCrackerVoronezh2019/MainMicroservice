@@ -3,7 +3,9 @@ package com.mainmicroservice.mainmicroservice.Controllers;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -17,6 +19,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
 import com.mainmicroservice.mainmicroservice.Entities.Role;
 import com.mainmicroservice.mainmicroservice.Entities.User;
 import com.mainmicroservice.mainmicroservice.Repositories.RoleRepository;
@@ -27,6 +31,7 @@ import Models.AuthModel;
 import Models.RegistrationModel;
 import Models.SignInModel;
 import Models.UserInfoModel;
+import Models.UserModel;
 
 
 
@@ -108,6 +113,26 @@ public class AuthentificationController {
        
     }
 	
+    /*
+		@PostMapping("/registration")
+		public ResponseEntity<User> registation( @RequestBody RegistrationModel regModel)
+		{
+			User us=new User();
+			us.setIsActivate(false);
+			us.setIsDeleted(false);
+			us.setFirstname(regModel.firstname);
+			us.setLastname(regModel.lastname);
+			us.setEmail(regModel.email);
+			us.setPassword(encoder.encode(regModel.password));
+			us.setActivateCode(UUID.randomUUID().toString());
+			us.setRole(this.roleRepository.findByRoleName("ROLE_"+regModel.role));
+			this.us.addNewUser(us);
+			ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+us.getActivateCode(), us.getEmail());
+			return new ResponseEntity<>(us,HttpStatus.OK);
+		}
+	
+	*/
+
 	@PostMapping("/registration")
 	public ResponseEntity<User> registation( @RequestBody RegistrationModel regModel)
 	{
@@ -120,7 +145,13 @@ public class AuthentificationController {
 		us.setPassword(encoder.encode(regModel.password));
 		us.setActivateCode(UUID.randomUUID().toString());
 		us.setRole(this.roleRepository.findByRoleName("ROLE_"+regModel.role));
-		this.us.addNewUser(us);
+		us = this.us.addNewUser(us);
+		String portConversation="8088";
+		String routeConversation="/createUser";;
+		RestTemplate restTemplate = new RestTemplate();
+		UserModel usConversationModel = new UserModel(us);
+		HttpEntity<UserModel> entity = new HttpEntity<UserModel>(usConversationModel);
+		restTemplate.exchange("http://localhost:8088/createUser", HttpMethod.POST,entity, Object.class );
 		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+us.getActivateCode(), us.getEmail());
 		return new ResponseEntity<>(us,HttpStatus.OK);
 	}
