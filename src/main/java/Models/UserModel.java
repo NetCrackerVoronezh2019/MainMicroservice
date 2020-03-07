@@ -28,5 +28,7 @@ public class UserModel {
 		name = user.getEmail();
 	}
 	
+	public UserModel() {}
+	
 	
 }

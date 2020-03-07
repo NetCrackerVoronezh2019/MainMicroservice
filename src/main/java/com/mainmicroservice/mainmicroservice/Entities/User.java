@@ -51,9 +51,8 @@ public class User {
 	@Column(name="ISDELETED")
 	private Boolean isDeleted;
 	
-	@Column(name="LASTLOGIN")
-	private LocalDateTime lastLogin;
-	
+	@Column(name="LASTTIMEWASONLINE")
+	private LocalDateTime lastTimeWasONLINE;
 	
 	@Max(90)
 	@Column(name="AGE")
@@ -82,16 +81,15 @@ public class User {
 	
 		
 	}
-
-	public LocalDateTime getLastLogin() {
-		return lastLogin;
-	}
-
-	public void setLastLogin(LocalDateTime lastLogin) {
-		this.lastLogin = lastLogin;
-	}
-
 	
+	public LocalDateTime getLastTimeWasONLINE() {
+		return lastTimeWasONLINE;
+	}
+
+	public void setLastTimeWasONLINE(LocalDateTime lastTimeWasONLINE) {
+		this.lastTimeWasONLINE = lastTimeWasONLINE;
+	}
+
 	public Role getRole() {
 		return this.role;
 	}

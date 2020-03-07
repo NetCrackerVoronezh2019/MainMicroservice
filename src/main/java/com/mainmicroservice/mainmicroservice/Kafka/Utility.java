@@ -19,9 +19,10 @@ public class Utility {
 	{
 		    RestTemplate restTemplate = new RestTemplate();
 		    PortModel model=new PortModel();
-		    model.microServiceName=MicroservicesEnum.MAIN;
-		    model.port=this.port;
+		    model.setMicroserviceName(MicroservicesEnum.MAIN);
+		    model.setPort(Integer.parseInt(this.port));
 			HttpEntity<PortModel> entity = new HttpEntity<PortModel>(model);
+			System.out.println("Send port");
 			ResponseEntity<PortModel> response = restTemplate.exchange(configURL,HttpMethod.POST,entity, PortModel.class );
 	}
 }

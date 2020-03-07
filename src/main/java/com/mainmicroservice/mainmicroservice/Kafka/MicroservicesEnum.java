@@ -1,7 +1,11 @@
 package com.mainmicroservice.mainmicroservice.Kafka;
 
 public enum MicroservicesEnum {
-MAIN,
-ADVERTISMENT
+	
+	MAIN,
+	ADVERTISEMENT,
+	CONVERSATION,
+	USERANDGROUPS,
+	AMAZON,
 }
 

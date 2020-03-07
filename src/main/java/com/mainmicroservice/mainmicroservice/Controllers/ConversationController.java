@@ -1,8 +1,5 @@
 package com.mainmicroservice.mainmicroservice.Controllers;
 
-
-	
-	
 import java.util.List;
 
 import javax.servlet.ServletRequest;
@@ -36,7 +33,11 @@ public class ConversationController {
 	public List<UserModel> getDialogMembers(@RequestParam Integer dialogId,ServletRequest req)
 	{
 		RestTemplate restTemplate = new RestTemplate();
+	    //номер порта Conversation микросервиса(потом это будет автоматически,но сейчас
+		// твой мискросервис не отправлеят свой порт в конфиг,ну и еще как то не очень хочется 
+		// каждый раз поднять кафку
 		String port="8088";
+		// пиши свой роут 
 		String route="/getDialogMembers/";
 		String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
 		User user=us.findByEmail(userName);
@@ -170,4 +171,3 @@ public class ConversationController {
 		return res;
 	}
 }
-

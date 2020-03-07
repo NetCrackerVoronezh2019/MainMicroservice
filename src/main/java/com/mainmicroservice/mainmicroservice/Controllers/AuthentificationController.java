@@ -79,6 +79,21 @@ public class AuthentificationController {
 	    UserInfoModel res=new UserInfoModel(userName,user.getRole().getRoleName());
 	    return new ResponseEntity<>(res,HttpStatus.OK);
 	}
+	
+	@GetMapping("/isonline")
+	public ResponseEntity<String> isOnline(ServletRequest req)
+	{
+		System.out.println("isLogin");
+	    String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+	    if(userName==null)
+	    {
+	    	return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+	    }
+	    User user=us.findByEmail(userName);
+	    user.setLastTimeWasONLINE(LocalDateTime.now());
+	    us.saveChanges(user);
+	    return new ResponseEntity<>(null,HttpStatus.OK);
+	}
     
 	@GetMapping("/activate/{code}")
 	public ResponseEntity<?> activate(@PathVariable String code)
@@ -98,7 +113,7 @@ public class AuthentificationController {
             User user = us.findByEmail(signIn.email);
             List<Role> roles=new ArrayList<Role>();
             roles.add(user.getRole());
-            user.setLastLogin(LocalDateTime.now());
+            user.setLastTimeWasONLINE(LocalDateTime.now());
             us.saveChanges(user);
             String token = jwtTokenProvider.createToken(signIn.email, roles);
             AuthModel am=new AuthModel(signIn.email,token);
@@ -113,26 +128,6 @@ public class AuthentificationController {
        
     }
 	
-    /*
-		@PostMapping("/registration")
-		public ResponseEntity<User> registation( @RequestBody RegistrationModel regModel)
-		{
-			User us=new User();
-			us.setIsActivate(false);
-			us.setIsDeleted(false);
-			us.setFirstname(regModel.firstname);
-			us.setLastname(regModel.lastname);
-			us.setEmail(regModel.email);
-			us.setPassword(encoder.encode(regModel.password));
-			us.setActivateCode(UUID.randomUUID().toString());
-			us.setRole(this.roleRepository.findByRoleName("ROLE_"+regModel.role));
-			this.us.addNewUser(us);
-			ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+us.getActivateCode(), us.getEmail());
-			return new ResponseEntity<>(us,HttpStatus.OK);
-		}
-	
-	*/
-
 	@PostMapping("/registration")
 	public ResponseEntity<User> registation( @RequestBody RegistrationModel regModel)
 	{

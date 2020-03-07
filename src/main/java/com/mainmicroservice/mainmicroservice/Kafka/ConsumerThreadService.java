@@ -76,11 +76,12 @@ public class ConsumerThreadService {
         			while(true)
         	    	{
         	    		ConsumerRecords<String,String> records=consumer.poll(Duration.ofMillis(100));	
-        	    		for(ConsumerRecord<String,String> recordx:records)
-        	    		{
-        	    			System.out.println("Message"+recordx.value());
-        	    			
-        	    		}
+        	    		if(records.count()>0)
+                		{
+                			RestTemplate template=new RestTemplate();
+                			ResponseEntity<List<PortModel>> res=template.exchange("http://localhost:7082/getallports",HttpMethod.GET,null,new ParameterizedTypeReference<List<PortModel>>(){});
+                			micro.setPorts(res.getBody());
+                		}
         	    	}
         		}
         		

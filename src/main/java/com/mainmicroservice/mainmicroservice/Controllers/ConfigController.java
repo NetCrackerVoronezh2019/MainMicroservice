@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import com.mainmicroservice.mainmicroservice.Entities.Role;
+import com.mainmicroservice.mainmicroservice.Kafka.Microservices;
 import com.mainmicroservice.mainmicroservice.Services.RoleService;
 
 import Models.AdvertisementModel;
@@ -20,6 +21,9 @@ public class ConfigController {
 	@Autowired
 	private RoleService roleService;
 	
+	@Autowired
+	private Microservices microservices;
+	
 	@GetMapping("getallroles")
 	private List<Role> getAllroles()
 	{
@@ -27,6 +31,12 @@ public class ConfigController {
 		ResponseEntity<List<String>> res=template.exchange("http://localhost:7082/getallroles",HttpMethod.GET,null,new ParameterizedTypeReference<List<String>>(){});
 		roleService.addNewRoles(res.getBody());
 		return roleService.allRoles();
+	}
+	
+	@GetMapping("getallports")
+	private String getAllPorts()
+	{
+		return microservices.toString();
 	}
 	
 }
