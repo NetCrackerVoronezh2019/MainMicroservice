@@ -1,5 +1,6 @@
 package com.mainmicroservice.mainmicroservice.Controllers;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -96,6 +97,7 @@ public class AdvertisementController {
 	{
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<AdvertisementModel> res=restTemplate.exchange("http://localhost:1122/student/advertisement/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<AdvertisementModel>(){});
+		res.getBody().setDeadline(LocalDateTime.now());
 		return new ResponseEntity<>(res.getBody(),HttpStatus.OK);
 	}
 	

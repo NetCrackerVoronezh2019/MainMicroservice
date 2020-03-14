@@ -10,7 +10,7 @@ public class AdvertisementModel {
 	private Long advertisementId;
 	private Long authorId;
 	private String advertisementName;
-	//private LocalDateTime deadline;
+	private LocalDateTime deadline;
 	private String description;
 	private LocalDateTime dateOfPublication;
 	private String budget;
@@ -18,6 +18,13 @@ public class AdvertisementModel {
 	private String imageKey;
 
 	
+	
+	public LocalDateTime getDeadline() {
+		return deadline;
+	}
+	public void setDeadline(LocalDateTime deadline) {
+		this.deadline = deadline;
+	}
 	public String getImageKey() {
 		return imageKey;
 	}

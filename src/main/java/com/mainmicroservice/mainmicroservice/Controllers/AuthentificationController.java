@@ -70,6 +70,7 @@ public class AuthentificationController {
 	@GetMapping("/islogin")
 	public ResponseEntity<UserInfoModel> isLogIn(ServletRequest req)
 	{
+		System.out.println("isLogin");
 	    String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
 	    if(userName==null)
 	    {
