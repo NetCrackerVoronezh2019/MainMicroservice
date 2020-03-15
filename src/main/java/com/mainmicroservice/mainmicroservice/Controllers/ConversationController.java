@@ -31,7 +31,7 @@ public class ConversationController {
 
 	
 
-	@GetMapping("student/getDialogMembers/")
+	@GetMapping("user/getDialogMembers/")
 	public List<UserModel> getDialogMembers(@RequestParam Integer dialogId,ServletRequest req)
 	{
 		RestTemplate restTemplate = new RestTemplate();
@@ -49,7 +49,7 @@ public class ConversationController {
 		return res.getBody();
 	}
 	
-	@GetMapping("student/getDialogMessages/")
+	@GetMapping("user/getDialogMessages/")
 	public List<MessagesModel> getDialogMessages(@RequestParam Integer dialogId, ServletRequest req)
 	{
 		RestTemplate restTemplate = new RestTemplate();
@@ -63,7 +63,7 @@ public class ConversationController {
 		return res.getBody();
 	}
 	
-	@GetMapping("student/getDialog")
+	@GetMapping("user/getDialog")
 	public ResponseEntity<DialogModel> getDialog(@RequestParam Integer dialogId, ServletRequest req)
 	{
 		String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
@@ -82,7 +82,7 @@ public class ConversationController {
 		return res;
 	}
 	
-	@GetMapping("student/addUserInDialog/")
+	@GetMapping("user/addUserInDialog/")
 	public ResponseEntity<?> addUserInDialog(@RequestParam String userName,@RequestParam Integer dialogId, ServletRequest req)
 	{
 		RestTemplate restTemplate = new RestTemplate();
@@ -97,7 +97,7 @@ public class ConversationController {
 	}
 	
 	
-	@GetMapping("student/getUser/")
+	@GetMapping("user/getUser/")
 	public ResponseEntity<UserModel> getUser(ServletRequest req)
 	{
 		RestTemplate restTemplate = new RestTemplate();
@@ -111,7 +111,7 @@ public class ConversationController {
 		return res;
 	}
 	
-	@GetMapping("student/getUserDialogs/")
+	@GetMapping("user/getUserDialogs/")
 	public ResponseEntity<List<DialogModel>> getUserDialogs(ServletRequest req)
 	{
 		RestTemplate restTemplate = new RestTemplate();
@@ -125,7 +125,7 @@ public class ConversationController {
 		return res;
 	}
 	
-	@PostMapping("student/dialogCreate/")
+	@PostMapping("user/dialogCreate/")
 	public ResponseEntity<?> dialogCreate(@RequestBody DialogModel dialog, ServletRequest req)
 	{
 		String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
@@ -147,7 +147,7 @@ public class ConversationController {
 	    return new ResponseEntity<>(null,HttpStatus.OK);
 	}
 
-	@DeleteMapping("student/liveDialog/")
+	@DeleteMapping("user/liveDialog/")
 	public  ResponseEntity<?> liveDialog(@RequestParam(name = "dialogId") Integer dialogId,ServletRequest req) {
 		RestTemplate restTemplate = new RestTemplate();
 		String port="8088";
@@ -160,7 +160,7 @@ public class ConversationController {
 		return res;
 	}
 
-	@DeleteMapping("student/deleteDialog/")
+	@DeleteMapping("user/deleteDialog/")
 	public  ResponseEntity<?> deleteDialog(@RequestParam(name = "dialogId") Integer dialogId,ServletRequest req) {
 		RestTemplate restTemplate = new RestTemplate();
 		String port="8088";
