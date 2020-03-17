@@ -1,11 +1,12 @@
 package com.mainmicroservice.mainmicroservice.Kafka;
 
 
-public class PortModel {
+public class MicroserviceInfo {
 
 
 	private MicroservicesEnum microserviceName;
 	private Integer port;
+	private String token;
 	
 	public MicroservicesEnum getMicroserviceName() {
 		return microserviceName;
@@ -19,6 +20,16 @@ public class PortModel {
 	public void setPort(Integer port) {
 		this.port = port;
 	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
+	
+	
+	
 	
 	
 	

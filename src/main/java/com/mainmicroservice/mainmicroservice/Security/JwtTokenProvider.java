@@ -35,6 +35,9 @@ public class JwtTokenProvider {
 
     @Value("${jwt.token.expired}")
     private long validityInMilliseconds;
+    
+    @Value("${jwt.token.microserviceSecret}")
+    private String microserviceSecret;
 
     
     @Autowired
@@ -50,9 +53,33 @@ public class JwtTokenProvider {
     protected void init() {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
+    
+    
+    public String createTokenForMicroservice()
+    {
+    	Claims claims=Jwts.claims().setSubject("MainMicroservice");
+    	 return Jwts.builder()
+                 .setClaims(claims)
+                 .signWith(SignatureAlgorithm.HS256, this.microserviceSecret)
+                 .compact();
+    }
+    
+    
+    public boolean validateMicroserviceToken(String token)
+    {
+    	 try {
+             Jws<Claims> claims = Jwts.parser().setSigningKey(this.microserviceSecret).parseClaimsJws(token);
+             if (!claims.getBody().getSubject().equals("MainMicroservice")) {
+                 return false;
+             }
+
+             return true;
+         } catch (JwtException |IllegalArgumentException e) {
+            return false;
+         }
+    }
 
     public String createToken(String username, List<Role> roles) {
-
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("roles", getRoleNames(roles));
         Date now = new Date();
@@ -60,7 +87,7 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setClaims(claims)
-            .setIssuedAt(now)
+                .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();

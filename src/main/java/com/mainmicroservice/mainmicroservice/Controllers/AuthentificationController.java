@@ -58,6 +58,18 @@ public class AuthentificationController {
 	private  AuthenticationManager authenticationManager;
 
 	
+	@GetMapping("gettoken")
+	public String mytoken()
+	{
+		return jwtTokenProvider.createTokenForMicroservice();
+	}
+	
+	@GetMapping("vtoken/{token}")
+	public boolean validate(@PathVariable String token)
+	{
+		System.out.println(token);
+		return jwtTokenProvider.validateMicroserviceToken(token);
+	}
 	@GetMapping("/getrole")
 	public ResponseEntity<UserInfoModel> getRole(ServletRequest req)
 	{	

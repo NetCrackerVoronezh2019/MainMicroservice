@@ -79,7 +79,7 @@ public class ConsumerThreadService {
         	    		if(records.count()>0)
                 		{
                 			RestTemplate template=new RestTemplate();
-                			ResponseEntity<List<PortModel>> res=template.exchange("http://localhost:7082/getallports",HttpMethod.GET,null,new ParameterizedTypeReference<List<PortModel>>(){});
+                			ResponseEntity<List<MicroserviceInfo>> res=template.exchange("http://localhost:7082/getallports",HttpMethod.GET,null,new ParameterizedTypeReference<List<MicroserviceInfo>>(){});
                 			micro.setPorts(res.getBody());
                 		}
         	    	}
