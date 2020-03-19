@@ -1,6 +1,8 @@
 package Models;
 
 import java.time.LocalDateTime;
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -16,15 +18,34 @@ public class AdvertisementModel {
 	private String budget;
 	private String section;
 	private String imageKey;
+	private String content;
+	
 
 	
 	
+	
+	@Override
+	public String toString() {
+		return "AdvertisementModel [advertisementId=" + advertisementId + ", authorId=" + authorId
+				+ ", advertisementName=" + advertisementName + ", deadline=" + deadline + ", description=" + description
+				+ ", dateOfPublication=" + dateOfPublication + ", budget=" + budget + ", section=" + section
+				+ ", imageKey=" + imageKey + "]";
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
 	public LocalDateTime getDeadline() {
 		return deadline;
 	}
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
 	public void setDeadline(LocalDateTime deadline) {
 		this.deadline = deadline;
 	}
+
 	public String getImageKey() {
 		return imageKey;
 	}

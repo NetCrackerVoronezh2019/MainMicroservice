@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,18 +18,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
 import com.mainmicroservice.mainmicroservice.Entities.Role;
 import com.mainmicroservice.mainmicroservice.Entities.User;
 import com.mainmicroservice.mainmicroservice.Repositories.RoleRepository;
 import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 import com.mainmicroservice.mainmicroservice.Services.MailService;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
-import Models.AuthModel;
-import Models.RegistrationModel;
-import Models.SignInModel;
-import Models.UserInfoModel;
-import Models.UserModel;
+import Models.*;
 
 
 
@@ -138,7 +131,6 @@ public class AuthentificationController {
       	    httpHeaders.add("ErrorMessage", "error");
     		return new ResponseEntity<>(httpHeaders,HttpStatus.FORBIDDEN);
     	}
-       
     }
 	
 	@PostMapping("/registration")
@@ -154,12 +146,15 @@ public class AuthentificationController {
 		us.setActivateCode(UUID.randomUUID().toString());
 		us.setRole(this.roleRepository.findByRoleName("ROLE_"+regModel.role));
 		us = this.us.addNewUser(us);
-		String portConversation="8088";
-		String routeConversation="/createUser";;
-		RestTemplate restTemplate = new RestTemplate();
+		UploadFileModel file=new UploadFileModel();
+		file.content=regModel.content;
+		file.key="user_"+us.getUserid();
 		UserModel usConversationModel = new UserModel(us);
+		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<UserModel> entity = new HttpEntity<UserModel>(usConversationModel);
 		restTemplate.exchange("http://localhost:8088/createUser", HttpMethod.POST,entity, Object.class );
+		HttpEntity<UploadFileModel> requestEntity =new HttpEntity<>(file);
+		restTemplate.exchange("http://localhost:1234/uploaduserfile",HttpMethod.POST,requestEntity,String.class);
 		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+us.getActivateCode(), us.getEmail());
 		return new ResponseEntity<>(us,HttpStatus.OK);
 	}

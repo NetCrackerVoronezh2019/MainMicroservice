@@ -46,43 +46,19 @@ public class AdvertisementController {
 	@Autowired
 	private UserService us;
 	
+	
 	@RequestMapping(value="addadvertisement",method = RequestMethod.POST)
-	public ResponseEntity<String> addAdvertisement(@RequestParam String advertisement,@RequestParam("file") MultipartFile _file, ServletRequest req) throws IOException
+	public ResponseEntity<String> addAdvertisement(@RequestBody AdvertisementModel advertisementModel, ServletRequest req) throws IOException
 	{
+	    String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
+	    User user=us.findByEmail(userName);
+	    Long id=user.getUserid();
+		advertisementModel.setAuthorId(id);	
+	    HttpEntity<AdvertisementModel> requestEntity =new HttpEntity<>(advertisementModel);
+		RestTemplate restTemplate = new RestTemplate();
+	    ResponseEntity<String> res=restTemplate.exchange("http://localhost:1122/student/addadvertisement",HttpMethod.POST,requestEntity, String.class );
+		return res;
 		
-		  //создаем запрос для отправки файла
-		  byte[] somebyteArray=_file.getBytes();
-		  HttpHeaders headers = new HttpHeaders();
-	        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-	        MultiValueMap<String, String> fileMap = new LinkedMultiValueMap<>();
-	        ContentDisposition contentDisposition = ContentDisposition
-	                .builder("form-data")
-	                .name("file")
-	                .filename("file")
-	                .build();
-	        fileMap.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-	        HttpEntity<byte[]> fileEntity = new HttpEntity<>(somebyteArray, fileMap);
-	        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-	        
-	        // получаем токен
-	        String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
-			User user=us.findByEmail(userName);
-			Long id=user.getUserid();
-			
-			 // JSON TO Java class
-			 ObjectMapper mapper = new ObjectMapper();
-			 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			 AdvertisementModel advertisementModel = mapper.readValue(advertisement,AdvertisementModel.class);
-			 advertisementModel.setAuthorId(id);
-			 
-			//Java class to JSON
-			 advertisement = mapper.writeValueAsString(advertisementModel);
-	        body.add("file", fileEntity);
-	        body.add("advertisement",advertisementModel);
-	        HttpEntity<MultiValueMap<String, Object>> requestEntity =new HttpEntity<>(body, headers);
-		    RestTemplate restTemplate = new RestTemplate();
-			ResponseEntity<String> res=restTemplate.exchange("http://localhost:1122/student/addadvertisement",HttpMethod.POST,requestEntity, String.class );
-			return res;
 	}
 
 	@GetMapping("alladvertisements")
@@ -97,7 +73,6 @@ public class AdvertisementController {
 	{
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<AdvertisementModel> res=restTemplate.exchange("http://localhost:1122/student/advertisement/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<AdvertisementModel>(){});
-		res.getBody().setDeadline(LocalDateTime.now());
 		return new ResponseEntity<>(res.getBody(),HttpStatus.OK);
 	}
 	
