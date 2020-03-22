@@ -35,9 +35,6 @@ public class ConversationController {
 	public List<UserModel> getDialogMembers(@RequestParam Integer dialogId,ServletRequest req)
 	{
 		RestTemplate restTemplate = new RestTemplate();
-	    //номер порта Conversation микросервиса(потом это будет автоматически,но сейчас
-		// твой мискросервис не отправлеят свой порт в конфиг,ну и еще как то не очень хочется 
-		// каждый раз поднять кафку
 		String port="8088";
 		// пиши свой роут 
 		String route="/getDialogMembers/";
@@ -135,7 +132,6 @@ public class ConversationController {
 	    }
 	    
 	    User user=us.findByEmail(userName);
-	    // у меня userId - Long у тебя Int
 	    int userId=(int)(long)user.getUserid();
 	    
 	    dialog.setCreatorId(userId);

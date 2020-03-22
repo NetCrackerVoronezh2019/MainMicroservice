@@ -26,7 +26,7 @@ import Models.UserProp;
 public class AdminController {
 
 	@Autowired
-    private UserService us;
+    private UserService userService;
 
 	@Autowired 
 	private RoleService roleService;
@@ -34,15 +34,15 @@ public class AdminController {
 	@Autowired
 	private RoleRepository roleRepository;
 	
-	@GetMapping("admin/getallusers")
+	@GetMapping("admin/getAllUsers")
 	@JsonView(Views.UserInfoForChangeProps.class)
 	public ResponseEntity<List<User>> getAllUsers()
 	{
-		List<User> list=this.us.getAllUsers();
+		List<User> list=this.userService.getAllUsers();
 		return new ResponseEntity<>(list,HttpStatus.OK);
 	}
 	
-	@PostMapping("admin/setroles")
+	@PostMapping("admin/setRoles")
 	public void setRoles(@RequestBody Role _role)
 	{    
 		 List<String> _roles=new ArrayList<String>();
@@ -54,17 +54,17 @@ public class AdminController {
 	
 	
 	
-	@GetMapping("admin/getallroles")
+	@GetMapping("admin/getAllRoles")
 	public List<Role> getallroles()
 	{
 		return roleService.allRoles();
 	}
 	
 	
-	@PostMapping("admin/changeuser")
+	@PostMapping("admin/changeUser")
 	public ResponseEntity<?> changeRole(@RequestBody UserProp model)
 	{
-			User changedUser=us.getUserById(model.userId);
+			User changedUser=userService.getUserById(model.userId);
 			changedUser.setFirstname(model.firstname);
 			changedUser.setLastname(model.lastname);
 			changedUser.setIsActivate(model.isActivate);
@@ -72,7 +72,7 @@ public class AdminController {
 			changedUser.setIsDeleted(model.isDeleted);
 			Role role=roleRepository.findByRoleName(model.role);
 			changedUser.setRole(role);
-			us.saveChanges(changedUser);
+			userService.saveChanges(changedUser);
 			return new ResponseEntity<>(HttpStatus.OK);
 	}
 	

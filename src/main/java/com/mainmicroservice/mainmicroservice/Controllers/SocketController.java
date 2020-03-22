@@ -39,12 +39,7 @@ public class SocketController {
         UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8088/getMessageNotifications/").queryParam("messageId", messagesModel.getMessageId());
         ResponseEntity<List<ConversationNotificationModel>> notificationListResponseEntity= restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<ConversationNotificationModel>>() {});
         List<ConversationNotificationModel> notifications = notificationListResponseEntity.getBody();
-    /*    for (int i = 0; i < notifications.size(); i++) {
-            template.convertAndSend("/notification/" + notifications.get(i).getUserName(),notifications.get(i));
-        }
-        
-     */
-       
+   
         for(ConversationNotificationModel n:notifications)
         {
         	User user=us.findByEmail(n.getUserName());

@@ -24,19 +24,19 @@ public class ConfigController {
 	@Autowired
 	private Microservices microservices;
 	
-	@GetMapping("getallroles")
+	@GetMapping("getAllRoles")
 	private List<Role> getAllroles()
 	{
 		RestTemplate template=new RestTemplate();
-		ResponseEntity<List<String>> res=template.exchange("http://localhost:7082/getallroles",HttpMethod.GET,null,new ParameterizedTypeReference<List<String>>(){});
+		ResponseEntity<List<String>> res=template.exchange("http://localhost:7082/getAllRoles",HttpMethod.GET,null,new ParameterizedTypeReference<List<String>>(){});
 		roleService.addNewRoles(res.getBody());
 		return roleService.allRoles();
 	}
 	
-	@GetMapping("getallports")
-	private String getAllPorts()
+	@GetMapping("getAllInfo")
+	private Microservices getAllPorts()
 	{
-		return microservices.toString();
+		return microservices;
 	}
 	
 }

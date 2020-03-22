@@ -26,7 +26,7 @@ public class NotificationsController {
 	@Autowired
     private UserService us;
 	
-	@GetMapping("user/getmessagenotificationcount")
+	@GetMapping("user/getMessageNotificationCount")
 	public ResponseEntity<?> getMessageNotificationCount(ServletRequest req)
 	{
 		

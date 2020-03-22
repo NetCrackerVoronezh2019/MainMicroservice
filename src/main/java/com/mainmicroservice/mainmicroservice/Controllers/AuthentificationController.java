@@ -50,20 +50,7 @@ public class AuthentificationController {
 	@Autowired
 	private  AuthenticationManager authenticationManager;
 
-	
-	@GetMapping("gettoken")
-	public String mytoken()
-	{
-		return jwtTokenProvider.createTokenForMicroservice();
-	}
-	
-	@GetMapping("vtoken/{token}")
-	public boolean validate(@PathVariable String token)
-	{
-		System.out.println(token);
-		return jwtTokenProvider.validateMicroserviceToken(token);
-	}
-	@GetMapping("/getrole")
+	@GetMapping("/getRole")
 	public ResponseEntity<UserInfoModel> getRole(ServletRequest req)
 	{	
 		String roleName=this.jwtTokenProvider.getRole((HttpServletRequest) req);
@@ -72,7 +59,7 @@ public class AuthentificationController {
 		return new ResponseEntity<>(userInfo,HttpStatus.OK);
 	}
 	
-	@GetMapping("/islogin")
+	@GetMapping("/isLogin")
 	public ResponseEntity<UserInfoModel> isLogIn(ServletRequest req)
 	{
 		System.out.println("isLogin");
@@ -86,7 +73,7 @@ public class AuthentificationController {
 	    return new ResponseEntity<>(res,HttpStatus.OK);
 	}
 	
-	@GetMapping("/isonline")
+	@GetMapping("/isOnline")
 	public ResponseEntity<String> isOnline(ServletRequest req)
 	{
 		System.out.println("isLogin");
@@ -111,7 +98,7 @@ public class AuthentificationController {
 	}
     
 	   
-    @PostMapping("signin")
+    @PostMapping("signIn")
     public ResponseEntity<?> signIn(@RequestBody SignInModel signIn,ServletResponse response) {
     	
     	try {
