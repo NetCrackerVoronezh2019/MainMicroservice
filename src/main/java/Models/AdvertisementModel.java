@@ -37,11 +37,13 @@ public class AdvertisementModel {
 	public void setContent(String content) {
 		this.content = content;
 	}
+	
+	
 	public LocalDateTime getDeadline() {
 		return deadline;
 	}
 	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	public void setDeadline(LocalDateTime deadline) {
 		this.deadline = deadline;
 	}
@@ -82,14 +84,7 @@ public class AdvertisementModel {
 	public void setAdvertisementName(String advertisementName) {
 		this.advertisementName = advertisementName;
 	}
-	/*
-	public String getDeadline() {
-		return deadline.toString();
-	}
-	public void setDeadline(LocalDateTime deadline) {
-		this.deadline = deadline;
-	}
-	*/
+	
 	public String getDescription() {
 		return description;
 	}

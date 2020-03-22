@@ -3,33 +3,23 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mainmicroservice.mainmicroservice.Entities.User;
 import com.mainmicroservice.mainmicroservice.Kafka.Microservices;
 import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
-import Models.AdvertisementModel;
-import Models.SubjectModel;
+import Models.*;
 
 
 @RestController
@@ -40,14 +30,48 @@ public class AdvertisementController {
 	private JwtTokenProvider tokenProvider;
 	
 	@Autowired
-	private Microservices microPorts;
+	private Microservices microInfo;
 	
 	
 	@Autowired
 	private UserService us;
 	
 	
-	@RequestMapping(value="addadvertisement",method = RequestMethod.POST)
+	
+	@PostMapping("student/getMyAdvertisements")
+	public ResponseEntity<List<AdvertisementModel>> getStudentAdvertisements(@RequestBody UserAdvertisementsModel userAdv,ServletRequest req)
+	{
+		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
+	    User user=us.findByEmail(userName);
+	    userAdv.setUserId(user.getUserid());
+		RestTemplate restTemplate = new RestTemplate();
+		HttpEntity<UserAdvertisementsModel> entity=new HttpEntity<>(userAdv);
+		ResponseEntity<List<AdvertisementModel>> res=restTemplate.exchange("http://localhost:1122/getStudentAdvertisements",HttpMethod.POST,entity,new ParameterizedTypeReference<List<AdvertisementModel>>(){});
+		return res;
+	}
+	@GetMapping("getAllSubjects")
+	public ResponseEntity<List<SubjectModel>> getAllSubjects()
+	{
+		
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<List<SubjectModel>> res=restTemplate.exchange("http://localhost:1122/allSubjects",HttpMethod.GET,null,new ParameterizedTypeReference<List<SubjectModel>>(){});
+		return new ResponseEntity<>(res.getBody(),HttpStatus.OK);
+	}
+	
+	@GetMapping("getAllFilters")
+	public ResponseEntity<AdvFilters> getAllFilters()
+	{
+		
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<List<SubjectModel>> res=restTemplate.exchange("http://localhost:1122/allSubjects",HttpMethod.GET,null,new ParameterizedTypeReference<List<SubjectModel>>(){});
+		AdvFilters filter=new AdvFilters();
+		filter.setSubjects(res.getBody());
+		return new ResponseEntity<>(filter,HttpStatus.OK);
+	}
+	
+	
+	
+	@RequestMapping(value="student/addAdvertisement",method = RequestMethod.POST)
 	public ResponseEntity<String> addAdvertisement(@RequestBody AdvertisementModel advertisementModel, ServletRequest req) throws IOException
 	{
 	    String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
@@ -56,32 +80,36 @@ public class AdvertisementController {
 		advertisementModel.setAuthorId(id);	
 	    HttpEntity<AdvertisementModel> requestEntity =new HttpEntity<>(advertisementModel);
 		RestTemplate restTemplate = new RestTemplate();
-	    ResponseEntity<String> res=restTemplate.exchange("http://localhost:1122/student/addadvertisement",HttpMethod.POST,requestEntity, String.class );
+	    ResponseEntity<String> res=restTemplate.exchange("http://localhost:1122/addAdvertisement",HttpMethod.POST,requestEntity, String.class );
 		return res;
 		
 	}
 
-	@GetMapping("alladvertisements")
-	public ResponseEntity<List<AdvertisementModel>> getall() {
+	@GetMapping("allAdvertisements")
+	public ResponseEntity<List<AdvertisementModel>> getAll() {
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+		HttpEntity<Object> entity = new HttpEntity<>(null, headers);
 		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<List<AdvertisementModel>> res=restTemplate.exchange("http://localhost:"+"1122"+"/student/alladvertisements",HttpMethod.GET,null,new ParameterizedTypeReference<List<AdvertisementModel>>(){});
+		ResponseEntity<List<AdvertisementModel>> res=restTemplate.exchange("http://localhost:"+"1122"+"allAdvertisements",HttpMethod.GET,entity,new ParameterizedTypeReference<List<AdvertisementModel>>(){});
 	    return new ResponseEntity<>(res.getBody(),HttpStatus.OK);
 	}
 	
 	@GetMapping("advertisement/{id}")
-	public ResponseEntity<AdvertisementModel> getadv(@PathVariable String id)
+	public ResponseEntity<AdvertisementModel> getAdvertisementById(@PathVariable String id)
 	{
 		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<AdvertisementModel> res=restTemplate.exchange("http://localhost:1122/student/advertisement/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<AdvertisementModel>(){});
+		ResponseEntity<AdvertisementModel> res=restTemplate.exchange("http://localhost:1122/advertisement/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<AdvertisementModel>(){});
 		return new ResponseEntity<>(res.getBody(),HttpStatus.OK);
 	}
 	
-	@PostMapping("addnewsubject")
+	@PostMapping("admin/addNewSubject")
 	public SubjectModel addNewSubject(@RequestBody SubjectModel _model)
 	{
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<SubjectModel> entity = new HttpEntity<SubjectModel>(_model);
-		ResponseEntity<SubjectModel> res=restTemplate.exchange("http://localhost:7082/addnewsubject",HttpMethod.POST,entity, SubjectModel.class );
+		ResponseEntity<SubjectModel> res=restTemplate.exchange("http://localhost:7082/setNewSubject",HttpMethod.POST,entity, SubjectModel.class );
 		return res.getBody();
 	}
 	
