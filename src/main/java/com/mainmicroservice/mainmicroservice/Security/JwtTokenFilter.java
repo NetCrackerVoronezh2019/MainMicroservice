@@ -21,6 +21,9 @@ public class JwtTokenFilter extends GenericFilterBean {
 	 private JwtTokenProvider jwtTokenProvider;
 	 
 	   
+	    /**
+	     *
+	     */
 	    @Override
 	    public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)
 	            throws IOException, ServletException {
@@ -31,6 +34,24 @@ public class JwtTokenFilter extends GenericFilterBean {
 	                SecurityContextHolder.getContext().setAuthentication(auth);
 	               
 	            }
+	        }
+	        else
+	        {
+	        	System.out.println("Я тут");
+	        	token=jwtTokenProvider.resolveMicroToken((HttpServletRequest) req);
+	        	System.out.println("Прошли Resolve");
+	        	if(token!=null && jwtTokenProvider.validateMicroserviceToken(token))
+	        	{
+	        		System.out.println("Прошли null и validate");
+	        		Authentication auth=jwtTokenProvider.getAuthenticationForMicro(token);
+	        		System.out.println("получили Authentication ");
+	        		if (auth != null) {
+	        			System.out.println("положили Authentication в SecurityContext");
+		                SecurityContextHolder.getContext().setAuthentication(auth);
+		               
+		            }
+	        		
+	        	}
 	        }
 	        filterChain.doFilter(req, res);
 	    }
