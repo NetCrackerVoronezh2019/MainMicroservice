@@ -21,7 +21,7 @@ public class Utility {
 	private JwtTokenProvider jwtProvider;
 	
 	
-	public void sendPortModelToConfig(String configURL)
+	public void sendInfoModelToConfig(String configURL)
 	{
 		    RestTemplate restTemplate = new RestTemplate();
 		    MicroserviceInfo model=new MicroserviceInfo();

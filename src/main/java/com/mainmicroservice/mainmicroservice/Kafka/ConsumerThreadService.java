@@ -78,8 +78,9 @@ public class ConsumerThreadService {
         	    		ConsumerRecords<String,String> records=consumer.poll(Duration.ofMillis(100));	
         	    		if(records.count()>0)
                 		{
+        	    			System.out.println("Microoooooo");
                 			RestTemplate template=new RestTemplate();
-                			ResponseEntity<List<MicroserviceInfo>> res=template.exchange("http://localhost:7082/getallports",HttpMethod.GET,null,new ParameterizedTypeReference<List<MicroserviceInfo>>(){});
+                			ResponseEntity<List<MicroserviceInfo>> res=template.exchange("http://localhost:7082/getAllInfo",HttpMethod.GET,null,new ParameterizedTypeReference<List<MicroserviceInfo>>(){});
                 			micro.setPorts(res.getBody());
                 		}
         	    	}
@@ -110,7 +111,7 @@ public class ConsumerThreadService {
                 		if(records.count()>0)
                 		{
                 			RestTemplate template=new RestTemplate();
-                			ResponseEntity<List<String>> res=template.exchange("http://localhost:7082/getallroles",HttpMethod.GET,null,new ParameterizedTypeReference<List<String>>(){});
+                			ResponseEntity<List<String>> res=template.exchange("http://localhost:7082/getAllRoles",HttpMethod.GET,null,new ParameterizedTypeReference<List<String>>(){});
                 			roleService.addNewRoles(res.getBody());
                 		}
                 	}

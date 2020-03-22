@@ -84,8 +84,8 @@ public class Microservices {
 	@Override
 	public String toString()
 	{
-		String ret="main-"+this.getMainPort()+"// advertisement - "+this.getAdvertismentPort()+
-				"// amazon- "+this.getAmazonPort()+"// conversation - "+this.getConversationPort();
+		String ret="main-"+this.getMainPort()+this.getMain_token()+"// advertisement - "+this.getAdvertismentPort()+
+			this.getAdvertisement_token()+	"// amazon- "+this.getAmazonPort()+"// conversation - "+this.getConversationPort();
 		return ret;
 	}
 	
@@ -136,38 +136,5 @@ public class Microservices {
 	}
 	
 	
-	/*
-	private void setPort(MicroserviceInfo portModel)
-	{
-		
-		
-		if(portModel!=null)
-		{
-			
-			System.out.println(portModel.getMicroserviceName());
-			if(portModel.getMicroserviceName()!=null && portModel.getPort()!=null)
-			{
-				if(portModel.getMicroserviceName()==MicroservicesEnum.MAIN)
-					this.setMainPort(portModel.getPort().toString());
-				else
-				{
-					if(portModel.getMicroserviceName()==MicroservicesEnum.ADVERTISEMENT)
-						this.setAdvertismentPort(portModel.getPort().toString());
-					else
-					{
-						if(portModel.getMicroserviceName()==MicroservicesEnum.CONVERSATION)
-						{
-							this.setConversationPort(portModel.getPort().toString());
-						}
-						else
-						{
-							this.setAmazonPort(portModel.getPort().toString());
-						}
-					}
-				}
-			}
-		}
-	}
-	*/
 	
 }
