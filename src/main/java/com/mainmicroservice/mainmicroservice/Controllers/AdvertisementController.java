@@ -37,6 +37,15 @@ public class AdvertisementController {
 	private UserService us;
 	
 	
+	@PostMapping("filterAdvertisements")
+	public ResponseEntity<List<AdvertisementModel>> filterAdvertisements(@RequestBody AdvFilters advFilters)
+	{
+		RestTemplate restTemplate = new RestTemplate();
+		HttpEntity<AdvFilters> entity=new HttpEntity<>(advFilters);
+		ResponseEntity<List<AdvertisementModel>> res=restTemplate.exchange("http://localhost:1122/filterAdvertisements",HttpMethod.POST,entity,new ParameterizedTypeReference<List<AdvertisementModel>>(){});
+		System.out.println(res.getBody().size());
+		return res;		
+	}
 	
 	@PostMapping("student/getMyAdvertisements")
 	public ResponseEntity<List<AdvertisementModel>> getStudentAdvertisements(@RequestBody UserAdvertisementsModel userAdv,ServletRequest req)
@@ -61,7 +70,6 @@ public class AdvertisementController {
 	@GetMapping("getAllFilters")
 	public ResponseEntity<AdvFilters> getAllFilters()
 	{
-		
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<List<SubjectModel>> res=restTemplate.exchange("http://localhost:1122/allSubjects",HttpMethod.GET,null,new ParameterizedTypeReference<List<SubjectModel>>(){});
 		AdvFilters filter=new AdvFilters();
