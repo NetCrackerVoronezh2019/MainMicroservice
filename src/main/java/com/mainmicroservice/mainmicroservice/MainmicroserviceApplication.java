@@ -23,8 +23,6 @@ public class MainmicroserviceApplication {
 	    consumerThread.start();
 	    Thread RoleThread =new Thread(a.RoleThread());
 	    RoleThread.start();
-	    System.out.println("gdfdfgdf");
-	    */
-		
+		*/
 	}
 }

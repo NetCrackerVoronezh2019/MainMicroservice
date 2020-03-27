@@ -37,6 +37,19 @@ public class AdvertisementController {
 	private UserService us;
 	
 	
+	
+	@PostMapping("isMyAdvertisement")
+	public ResponseEntity<?> isMyAdvertisement(@RequestBody IsUserAdvertisementModel model, ServletRequest req)
+	{
+		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
+	    User user=us.findByEmail(userName);	
+	    model.userId=user.getUserid();
+	    RestTemplate restTemplate = new RestTemplate();
+	 
+		HttpEntity<IsUserAdvertisementModel> entity=new HttpEntity<>(model);
+		ResponseEntity<Object> res=restTemplate.exchange("http://localhost:1122/isUserAdvertisement",HttpMethod.POST,entity,new ParameterizedTypeReference<Object>(){});
+		return res;
+	}
 	@PostMapping("filterAdvertisements")
 	public ResponseEntity<List<AdvertisementModel>> filterAdvertisements(@RequestBody AdvFilters advFilters)
 	{
@@ -79,12 +92,13 @@ public class AdvertisementController {
 	
 	
 	
-	@RequestMapping(value="student/addAdvertisement",method = RequestMethod.POST)
+	@RequestMapping(value="user/addAdvertisement",method = RequestMethod.POST)
 	public ResponseEntity<String> addAdvertisement(@RequestBody AdvertisementModel advertisementModel, ServletRequest req) throws IOException
 	{
 	    String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
 	    User user=us.findByEmail(userName);
 	    Long id=user.getUserid();
+	    advertisementModel.setAuthorRole(user.getRole().getRoleName());
 		advertisementModel.setAuthorId(id);	
 	    HttpEntity<AdvertisementModel> requestEntity =new HttpEntity<>(advertisementModel);
 		RestTemplate restTemplate = new RestTemplate();

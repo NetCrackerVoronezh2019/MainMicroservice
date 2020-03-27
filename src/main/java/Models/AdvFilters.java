@@ -1,14 +1,26 @@
 package Models;
 import java.util.*;
 
+import Models.Enums.AdvertisementType;
+
 public class AdvFilters {
 
 	private List<SubjectModel> subjects;
 	private Integer minPrice;
 	private Integer maxPrice;
 	private String searchRow;
+	private AdvertisementType type;
 	
 	
+	
+	public AdvertisementType getType() {
+		return type;
+	}
+
+	public void setType(AdvertisementType type) {
+		this.type = type;
+	}
+
 	public String getSearchRow() {
 		return searchRow;
 	}

@@ -6,6 +6,8 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
+import Models.Enums.AdvertisementType;
+
 public class AdvertisementModel {
 	
 	
@@ -19,18 +21,18 @@ public class AdvertisementModel {
 	private String section;
 	private String imageKey;
 	private String content;
+	private String authorRole;
+	private AdvertisementType type;
 	
-
 	
 	
-	
-	@Override
-	public String toString() {
-		return "AdvertisementModel [advertisementId=" + advertisementId + ", authorId=" + authorId
-				+ ", advertisementName=" + advertisementName + ", deadline=" + deadline + ", description=" + description
-				+ ", dateOfPublication=" + dateOfPublication + ", budget=" + budget + ", section=" + section
-				+ ", imageKey=" + imageKey + "]";
+	public AdvertisementType getType() {
+		return type;
 	}
+	public void setType(AdvertisementType type) {
+		this.type = type;
+	}
+	
 	public String getContent() {
 		return content;
 	}
@@ -39,6 +41,14 @@ public class AdvertisementModel {
 	}
 	
 	
+	public String getAuthorRole() {
+		return authorRole;
+	}
+	public void setAuthorRole(String authorRole) {
+		this.authorRole = authorRole;
+	}
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	public LocalDateTime getDeadline() {
 		return deadline;
 	}
