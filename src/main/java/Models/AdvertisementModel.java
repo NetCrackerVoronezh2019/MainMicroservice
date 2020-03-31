@@ -22,10 +22,17 @@ public class AdvertisementModel {
 	private String imageKey;
 	private String content;
 	private String authorRole;
+	private String authorUsername;
 	private AdvertisementType type;
 	
 	
 	
+	public String getAuthorUsername() {
+		return authorUsername;
+	}
+	public void setAuthorUsername(String authorUsername) {
+		this.authorUsername = authorUsername;
+	}
 	public AdvertisementType getType() {
 		return type;
 	}

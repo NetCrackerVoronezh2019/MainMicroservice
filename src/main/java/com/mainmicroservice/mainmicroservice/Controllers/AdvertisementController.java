@@ -37,17 +37,94 @@ public class AdvertisementController {
 	private UserService us;
 	
 	
+	@GetMapping("user/getMyOrders")
+	public ResponseEntity<?> getMyOrders(ServletRequest req)
+	{
+		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
+	    User user=us.findByEmail(userName);
+	    String roleName=user.getRole().getRoleName();
+	    Long id=user.getUserid();
+		MyOrderModel myOrder=new MyOrderModel();
+		myOrder.setRoleName(roleName);
+		myOrder.setId(id);
+		HttpEntity<MyOrderModel> entity=new HttpEntity<>(myOrder);
+	    RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<List<OrderModel>> res=restTemplate.exchange("http://localhost:1122/getMyOrders",HttpMethod.POST,entity,new ParameterizedTypeReference<List<OrderModel>>(){});
+		return res;
+	}
 	
-	@PostMapping("isMyAdvertisement")
-	public ResponseEntity<?> isMyAdvertisement(@RequestBody IsUserAdvertisementModel model, ServletRequest req)
+	@GetMapping("canSendRequest/{advertisementId}")
+	public ResponseEntity<Boolean> canSendRequest(@PathVariable Long advertisementId,ServletRequest req)
+	{
+		String roleName;
+		Long id;
+		try
+		{
+			String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
+		    User user=us.findByEmail(userName);
+		    roleName=user.getRole().getRoleName();
+		    id=user.getUserid();
+		}
+		catch(Exception ex)
+		{   
+			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+		}
+		
+	    SendAdvertisementNotificationModel sendModel=new SendAdvertisementNotificationModel();
+	    sendModel.setRoleName(roleName);
+	    sendModel.setAdvertisementId(advertisementId);
+	    sendModel.setSenderId(id);
+	    HttpEntity<SendAdvertisementNotificationModel> entity=new HttpEntity<>(sendModel);
+	    RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<Boolean> res=restTemplate.exchange("http://localhost:1122/canSendRequest",HttpMethod.POST,entity,new ParameterizedTypeReference<Boolean>(){});
+		return res;
+	}
+	
+	@GetMapping("user/getMyAllNotifications") 
+	public ResponseEntity<List<NotificationModel>> getAllNotifications(ServletRequest req)
+	{
+
+		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
+	    User user=us.findByEmail(userName);
+	    Long id=user.getUserid();
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<List<NotificationModel>> res=restTemplate.exchange("http://localhost:1122/getMyAllNotifications/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<List<NotificationModel>>(){});
+		List<NotificationModel> not=res.getBody();
+		for(NotificationModel model:not)
+		{	
+			Long id1=model.getAddresseeId();
+			Long id2=model.getSenderId();
+			model.setAddresseeUsername(this.us.getUserById(id1).getEmail());
+			model.setSenderUsername(this.us.getUserById(id2).getEmail());		
+			model.generateMessage();
+		}	
+		return new ResponseEntity<>(not,HttpStatus.OK);	
+	}
+	
+	@PostMapping("user/newNotification")
+	public ResponseEntity<?> newNotification(@RequestBody NotificationModel model,ServletRequest req)
 	{
 		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
 	    User user=us.findByEmail(userName);	
+	    model.setSenderId(user.getUserid());
+	    RestTemplate restTemplate = new RestTemplate();
+	    HttpEntity<NotificationModel> entity=new HttpEntity<>(model);
+		ResponseEntity<Object> res=restTemplate.exchange("http://localhost:1122/newNotification",HttpMethod.POST,entity,new ParameterizedTypeReference<Object>(){});
+		return res;
+	}
+	
+	
+	@PostMapping("isMyAdvertisement")
+	public ResponseEntity<Boolean> isMyAdvertisement(@RequestBody IsUserAdvertisementModel model, ServletRequest req)
+	{
+		
+		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
+	    User user=us.findByEmail(userName);	
+	   
 	    model.userId=user.getUserid();
 	    RestTemplate restTemplate = new RestTemplate();
-	 
 		HttpEntity<IsUserAdvertisementModel> entity=new HttpEntity<>(model);
-		ResponseEntity<Object> res=restTemplate.exchange("http://localhost:1122/isUserAdvertisement",HttpMethod.POST,entity,new ParameterizedTypeReference<Object>(){});
+		ResponseEntity<Boolean> res=restTemplate.exchange("http://localhost:1122/isUserAdvertisement",HttpMethod.POST,entity,new ParameterizedTypeReference<Boolean>(){});
 		return res;
 	}
 	@PostMapping("filterAdvertisements")
@@ -123,7 +200,9 @@ public class AdvertisementController {
 	{
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<AdvertisementModel> res=restTemplate.exchange("http://localhost:1122/advertisement/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<AdvertisementModel>(){});
-		return new ResponseEntity<>(res.getBody(),HttpStatus.OK);
+		AdvertisementModel m=res.getBody();
+		m.setAuthorUsername(us.getUserById(m.getAuthorId()).getEmail());
+		return new ResponseEntity<>(m,HttpStatus.OK);
 	}
 	
 	@PostMapping("admin/addNewSubject")
