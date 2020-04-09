@@ -1,6 +1,8 @@
 package Models;
 
 import Models.Enums.AdvertisementNotificationType;
+import Models.Enums.NotificationResponseStatus;
+import Models.Enums.NotificationStatus;
 
 public class NotificationModel {
 	
@@ -12,10 +14,29 @@ public class NotificationModel {
 	private String advertisementName;
 	private Long addresseeId;
 	private AdvertisementNotificationType type;
+	private NotificationResponseStatus responseStatus;
+	private NotificationStatus status;
 	private String message;
 
 	
 	
+	
+	public NotificationStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(NotificationStatus status) {
+		this.status = status;
+	}
+
+	public NotificationResponseStatus getResponseStatus() {
+		return responseStatus;
+	}
+
+	public void setResponseStatus(NotificationResponseStatus responseStatus) {
+		this.responseStatus = responseStatus;
+	}
+
 	public String getAdvertisementName() {
 		return advertisementName;
 	}
@@ -49,7 +70,17 @@ public class NotificationModel {
 				this.setMessage("принял ваш запрос - ");
 			else
 				if(type==AdvertisementNotificationType.REJECTED_TAKE_ADVERTISEMENT)
-					this.setMessage("оклонил ваш запрос");
+					this.setMessage("отклонил ваш запрос");
+				else
+					if(type==AdvertisementNotificationType.RECEIVE_SERVICE)
+						this.setMessage("хочет получить услугу");
+					else
+						if(type==AdvertisementNotificationType.ACCEPTED_RECEIVE_SERVICE)
+							this.setMessage("готов оказать услугу");
+						else
+							if(type==AdvertisementNotificationType.REJECTED_RECEIVE_SERVICE)
+								this.setMessage("не готов оказать услугу");
+						
 		}
 	
 	
@@ -93,6 +124,14 @@ public class NotificationModel {
 	}
 	public void setType(AdvertisementNotificationType type) {
 		this.type = type;
+	}
+
+	@Override
+	public String toString() {
+		return "NotificationModel [notificationId=" + notificationId + ", senderUsername=" + senderUsername
+				+ ", addresseeUsername=" + addresseeUsername + ", senderId=" + senderId + ", advertisementId="
+				+ advertisementId + ", advertisementName=" + advertisementName + ", addresseeId=" + addresseeId
+				+ ", type=" + type + ", message=" + message + "]";
 	}
 	
 	

@@ -1,8 +1,5 @@
 package com.mainmicroservice.mainmicroservice.Config;
 
-
-import java.util.Arrays;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,8 +10,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.mainmicroservice.mainmicroservice.Security.JwtTokenFilter;
-import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
-
 
 @Configuration
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {

@@ -19,14 +19,28 @@ public class AdvertisementModel {
 	private LocalDateTime dateOfPublication;
 	private String budget;
 	private String section;
-	private String imageKey;
+	private String[] imageKeys;
 	private String content;
 	private String authorRole;
 	private String authorUsername;
 	private AdvertisementType type;
+	private Tag[] tags;
+	private String[] allFiles;
+
 	
+	public Tag[] getTags() {
+		return tags;
+	}
+	public void setTags(Tag[] tags) {
+		this.tags = tags;
+	}
 	
-	
+	public String[] getAllFiles() {
+		return allFiles;
+	}
+	public void setAllFiles(String[] allFiles) {
+		this.allFiles = allFiles;
+	}
 	public String getAuthorUsername() {
 		return authorUsername;
 	}
@@ -65,11 +79,11 @@ public class AdvertisementModel {
 		this.deadline = deadline;
 	}
 
-	public String getImageKey() {
-		return imageKey;
+	public String[] getImageKeys() {
+		return imageKeys;
 	}
-	public void setImageKey(String imageKey) {
-		this.imageKey = imageKey;
+	public void setImageKeys(String[] imageKeys) {
+		this.imageKeys = imageKeys;
 	}
 	public String getSection() {
 		return section;

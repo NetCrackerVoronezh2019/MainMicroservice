@@ -1,0 +1,8 @@
+package Models.Enums;
+
+public enum EducationLevel {
+	SECONDARY_GENERAL_EDUCATION,
+	SECONDARY_PROFESSIONAL_EDUCATION,
+	HIGHER_EDUCATION
+
+}

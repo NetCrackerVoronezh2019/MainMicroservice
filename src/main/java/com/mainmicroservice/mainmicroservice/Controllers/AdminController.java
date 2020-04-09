@@ -34,7 +34,7 @@ public class AdminController {
 	@Autowired
 	private RoleRepository roleRepository;
 	
-	@GetMapping("admin/getAllUsers")
+	@GetMapping("user/getAllUsers")
 	@JsonView(Views.UserInfoForChangeProps.class)
 	public ResponseEntity<List<User>> getAllUsers()
 	{

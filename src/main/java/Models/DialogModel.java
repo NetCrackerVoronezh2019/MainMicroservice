@@ -6,8 +6,27 @@ public class DialogModel {
 
 	 private String name ;
 	 private Date creationDate;
+	 private Date lastMessageDate;
 	 private Integer creatorId;
 	 private Integer dialogId;
+	 private Integer countNotification;
+
+	public Date getLastMessageDate() {
+		return lastMessageDate;
+	}
+
+	public void setLastMessageDate(Date lastMessageDate) {
+		this.lastMessageDate = lastMessageDate;
+	}
+
+	public Integer getCountNotification() {
+		return countNotification;
+	}
+
+	public void setCountNotification(Integer countNotification) {
+		this.countNotification = countNotification;
+	}
+
 	public String getName() {
 		return name;
 	}

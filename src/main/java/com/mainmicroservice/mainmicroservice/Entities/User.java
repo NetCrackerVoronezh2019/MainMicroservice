@@ -1,15 +1,14 @@
 package com.mainmicroservice.mainmicroservice.Entities;
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
-
 import com.fasterxml.jackson.annotation.*;
-
 import Jacson.Views;
-
-
-
+import Models.Enums.EducationLevel;
+import Models.Enums.Gender;
 
 @Entity
 @Table(name = "USERS")
@@ -21,6 +20,9 @@ public class User {
 	@JsonView(Views.UserInfoForChangeProps.class)
 	@Column(name="USERID")
 	private Long userId;
+	
+	@Column(name="USERIMAGEKEY")
+	private String userImageKey;
 	
 	@Column(name="ISACTIVATE")
 	@JsonView(Views.UserInfoForChangeProps.class)
@@ -40,9 +42,19 @@ public class User {
 	private String lastname;
 	
 	@Email
-	@Column(name="EMAIL")
+	@Column(name="EMAIL",unique=true)
 	@JsonView(Views.UserInfoForChangeProps.class)
 	private String email;
+	
+	@Column(name="EDUCATIONLEVEL")
+	@Enumerated(EnumType.STRING) 
+	private EducationLevel educationLevel;
+	
+	
+	@Column(name="GENDER")
+	@JsonView(Views.UserInfoForChangeProps.class)
+	@Enumerated(EnumType.STRING) 
+	private Gender gender;
 	
 	@Column(name="PASSWORD")
 	private String password;
@@ -52,11 +64,21 @@ public class User {
 	private Boolean isDeleted;
 	
 	@Column(name="LASTTIMEWASONLINE")
+	@JsonView(Views.UserInfoForChangeProps.class)
 	private LocalDateTime lastTimeWasONLINE;
 	
-	@Max(90)
-	@Column(name="AGE")
-	private int age;
+	@Column(name="CertificationKeys")
+	@JsonView(Views.UserInfoForChangeProps.class)
+	private String certificationKeys;
+	
+	@Column(name="BIRTHDATE")
+	@JsonView(Views.UserInfoForChangeProps.class)
+	private Date birthDate;
+	
+	@Column(name="ABOUTME")
+	@JsonView(Views.UserInfoForChangeProps.class)
+	private String aboutMe;
+	
 	
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -69,8 +91,6 @@ public class User {
     @JoinColumn(name = "ROLEID", nullable = false)
     private Role role;
 	
-	
-	
 	public Boolean getIsDeleted() {
 		return this.isDeleted;
 	}
@@ -82,6 +102,63 @@ public class User {
 		
 	}
 	
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	public String getUserImageKey() {
+		return userImageKey;
+	}
+
+	public void setUserImageKey(String userImageKey) {
+		this.userImageKey = userImageKey;
+	}
+
+	public String getCertificationKeys() {
+		return certificationKeys;
+	}
+
+	public void setCertificationKeys(String certificationKeys) {
+		this.certificationKeys = certificationKeys;
+	}
+
+	public Date getBirthDate() {
+		return birthDate;
+	}
+
+	
+	public String getAboutMe() {
+		return aboutMe;
+	}
+
+	public void setAboutMe(String aboutMe) {
+		this.aboutMe = aboutMe;
+	}
+
+	public EducationLevel getEducationLevel() {
+		return educationLevel;
+	}
+
+	public void setEducationLevel(EducationLevel educationLevel) {
+		this.educationLevel = educationLevel;
+	}
+
+	public Gender getGender() {
+		return gender;
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public void setBirthDate(Date birthDate) {
+		this.birthDate = birthDate;
+	}
+
 	public LocalDateTime getLastTimeWasONLINE() {
 		return lastTimeWasONLINE;
 	}
@@ -155,14 +232,6 @@ public class User {
 		this.password = password;
 	}
 	 
-	public int getAge() {
-		return age;
-	}
-	
-	public void setAge(int age) {
-		this.age = age;
-	}
-	
 	public String getService() {
 		if(this.service==null)
 		 {
@@ -175,6 +244,22 @@ public class User {
 		this.service = service;
 	}
 	
+	
+	public String[] setCerteficationKeys(List<String> keys)
+	{
+		String str="";
+		String[] arr=new String[keys.size()];
+		String newKey="";
+		for(int i=0;i<keys.size();i++)
+		{
+		  	newKey="user"+this.getUserid()+"_certification"+i;
+		  	arr[i]=newKey;
+		  	str+=newKey+",";
+		}
+		
+		this.setCertificationKeys(str);
+		return arr;
+	}
 	
 
 }

@@ -53,10 +53,18 @@ public class AuthentificationController {
 	@GetMapping("/getRole")
 	public ResponseEntity<UserInfoModel> getRole(ServletRequest req)
 	{	
-		String roleName=this.jwtTokenProvider.getRole((HttpServletRequest) req);
-		UserInfoModel userInfo=new UserInfoModel();
-		userInfo.roleName=roleName;
-		return new ResponseEntity<>(userInfo,HttpStatus.OK);
+		try
+		{
+			String roleName=this.jwtTokenProvider.getRole((HttpServletRequest) req);
+			UserInfoModel userInfo=new UserInfoModel();
+			userInfo.roleName=roleName;
+			return new ResponseEntity<>(userInfo,HttpStatus.OK);
+		}
+		catch(Exception ex)
+		{
+			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 	
 	@GetMapping("/isLogin")
@@ -70,6 +78,7 @@ public class AuthentificationController {
 	    }
 	    User user=us.findByEmail(userName);
 	    UserInfoModel res=new UserInfoModel(userName,user.getRole().getRoleName());
+	    res.userId=user.getUserid();
 	    return new ResponseEntity<>(res,HttpStatus.OK);
 	}
 	
@@ -120,9 +129,11 @@ public class AuthentificationController {
     	}
     }
 	
-	@PostMapping("/registration")
-	public ResponseEntity<User> registation( @RequestBody RegistrationModel regModel)
+	
+    @PostMapping("/registration")
+	public ResponseEntity<?> registation( @RequestBody RegistrationModel regModel)
 	{
+    	
 		User us=new User();
 		us.setIsActivate(false);
 		us.setIsDeleted(false);
@@ -131,19 +142,40 @@ public class AuthentificationController {
 		us.setEmail(regModel.email);
 		us.setPassword(encoder.encode(regModel.password));
 		us.setActivateCode(UUID.randomUUID().toString());
+		us.setBirthDate(regModel.birthDate);
+		us.setGender(regModel.gender);
+		if(regModel.role.equals("TEACHER"))
+		{
+			us.setAboutMe(regModel.aboutMe);
+			us.setEducationLevel(regModel.education);
+		}
 		us.setRole(this.roleRepository.findByRoleName("ROLE_"+regModel.role));
 		us = this.us.addNewUser(us);
-		UploadFileModel file=new UploadFileModel();
-		file.content=regModel.content;
-		file.key="user_"+us.getUserid();
+		
+		String[] keys=us.setCerteficationKeys(regModel.allFiles);
+		this.us.addNewUser(us);
+		UploadFilesModel files=new UploadFilesModel(keys.length);
+		for(int i=0;i<keys.length;i++)
+		{
+			files.allFiles[i]=new UploadFileModel(keys[i],regModel.allFiles.get(i));
+		}
+		
+		
+		/*
+		RestTemplate restTemplate = new RestTemplate();
+		HttpEntity<UploadFilesModel> entity = new HttpEntity<UploadFilesModel>(files);
+		restTemplate.exchange("http://localhost:1234/uploadCertificationFiles", HttpMethod.POST,entity, Object.class);
 		UserModel usConversationModel = new UserModel(us);
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<UserModel> entity = new HttpEntity<UserModel>(usConversationModel);
 		restTemplate.exchange("http://localhost:8088/createUser", HttpMethod.POST,entity, Object.class );
-		HttpEntity<UploadFileModel> requestEntity =new HttpEntity<>(file);
-		restTemplate.exchange("http://localhost:1234/uploaduserfile",HttpMethod.POST,requestEntity,String.class);
+		UserAndGroupUserModel userAndGroupUserModel = new UserAndGroupUserModel(us);
+		HttpEntity<UserAndGroupUserModel> entityUG = new HttpEntity<UserAndGroupUserModel>(userAndGroupUserModel);
+		restTemplate.exchange("http://localhost:8090/createUser/", HttpMethod.POST,entityUG, Object.class );
+		*/
 		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+us.getActivateCode(), us.getEmail());
+		
 		return new ResponseEntity<>(us,HttpStatus.OK);
+		
 	}
-	
 }

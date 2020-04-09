@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,22 @@ public class AdvertisementController {
 	@Autowired
 	private UserService us;
 	
+	@Autowired
+    private SimpMessagingTemplate template;
+	
+	
+	@GetMapping("user/setNotificatiosAsReaded")
+	public ResponseEntity<?> setNotificationsAsReaded(ServletRequest req)
+	{
+		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
+	    User user=us.findByEmail(userName);
+	    Long userId=user.getUserid();
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<Object> res=restTemplate.exchange("http://localhost:1122/setNotificatiosAsReaded/"+userId,HttpMethod.GET,null,Object.class);
+		ResponseEntity<Integer> res2=restTemplate.exchange("http://localhost:1122/getMyAllNotificationsSize/"+userId,HttpMethod.GET,null,new ParameterizedTypeReference<Integer>(){});
+	    template.convertAndSend("/notification/"+userId,res2.getBody());
+		return res;
+	}
 	
 	@GetMapping("user/getMyOrders")
 	public ResponseEntity<?> getMyOrders(ServletRequest req)
@@ -104,13 +121,42 @@ public class AdvertisementController {
 	@PostMapping("user/newNotification")
 	public ResponseEntity<?> newNotification(@RequestBody NotificationModel model,ServletRequest req)
 	{
+		// отправляем новое уведомление 
 		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
 	    User user=us.findByEmail(userName);	
 	    model.setSenderId(user.getUserid());
 	    RestTemplate restTemplate = new RestTemplate();
 	    HttpEntity<NotificationModel> entity=new HttpEntity<>(model);
 		ResponseEntity<Object> res=restTemplate.exchange("http://localhost:1122/newNotification",HttpMethod.POST,entity,new ParameterizedTypeReference<Object>(){});
-		return res;
+		//getMyAllNotificationsSize
+		ResponseEntity<Integer> res2=restTemplate.exchange("http://localhost:1122/getMyAllNotificationsSize/"+model.getAddresseeId(),HttpMethod.GET,entity,new ParameterizedTypeReference<Integer>(){});
+	    template.convertAndSend("/notification/"+model.getAddresseeId(),res2.getBody());
+		return new ResponseEntity<>(null,res2.getStatusCode());
+	}
+	
+	@PostMapping("user/notificationResponse")
+	public ResponseEntity<?> responseNotification(@RequestBody NotificationModel model,ServletRequest req)
+	{
+
+	    RestTemplate restTemplate = new RestTemplate();
+	    HttpEntity<NotificationModel> entity=new HttpEntity<>(model);
+		ResponseEntity<Object> res=restTemplate.exchange("http://localhost:1122/notificationResponse",HttpMethod.POST,entity,new ParameterizedTypeReference<Object>(){});
+		ResponseEntity<Integer> res2=restTemplate.exchange("http://localhost:1122/getMyAllNotificationsSize/"+model.getSenderId(),HttpMethod.GET,entity,new ParameterizedTypeReference<Integer>(){});
+		ResponseEntity<Integer> res3=restTemplate.exchange("http://localhost:1122/getMyAllNotificationsSize/"+model.getAddresseeId(),HttpMethod.GET,entity,new ParameterizedTypeReference<Integer>(){});
+	    template.convertAndSend("/notification/"+model.getSenderId(),res2.getBody());
+	    template.convertAndSend("/notification/"+model.getAddresseeId(),res3.getBody());
+		return new ResponseEntity<>(null,res2.getStatusCode());
+	}
+	
+	@GetMapping("user/getMyAllNotificationsSize")
+	public ResponseEntity<String> notSize(ServletRequest req)
+	{
+		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
+	    User user=us.findByEmail(userName);	
+	    Long id=user.getUserid();
+	    RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<Integer> res=restTemplate.exchange("http://localhost:1122/getMyAllNotificationsSize/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<Integer>(){});
+		return new ResponseEntity<>(res.getBody().toString(),res.getStatusCode());
 	}
 	
 	
@@ -170,7 +216,7 @@ public class AdvertisementController {
 	
 	
 	@RequestMapping(value="user/addAdvertisement",method = RequestMethod.POST)
-	public ResponseEntity<String> addAdvertisement(@RequestBody AdvertisementModel advertisementModel, ServletRequest req) throws IOException
+	public ResponseEntity<Boolean> addAdvertisement(@RequestBody AdvertisementModel advertisementModel, ServletRequest req) throws IOException
 	{
 	    String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
 	    User user=us.findByEmail(userName);
@@ -179,7 +225,7 @@ public class AdvertisementController {
 		advertisementModel.setAuthorId(id);	
 	    HttpEntity<AdvertisementModel> requestEntity =new HttpEntity<>(advertisementModel);
 		RestTemplate restTemplate = new RestTemplate();
-	    ResponseEntity<String> res=restTemplate.exchange("http://localhost:1122/addAdvertisement",HttpMethod.POST,requestEntity, String.class );
+	    ResponseEntity<Boolean> res=restTemplate.exchange("http://localhost:1122/addAdvertisement",HttpMethod.POST,requestEntity, Boolean.class );
 		return res;
 		
 	}
