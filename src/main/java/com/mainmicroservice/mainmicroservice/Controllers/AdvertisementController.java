@@ -54,21 +54,7 @@ public class AdvertisementController {
 		return res;
 	}
 	
-	@GetMapping("user/getMyOrders")
-	public ResponseEntity<?> getMyOrders(ServletRequest req)
-	{
-		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
-	    User user=us.findByEmail(userName);
-	    String roleName=user.getRole().getRoleName();
-	    Long id=user.getUserid();
-		MyOrderModel myOrder=new MyOrderModel();
-		myOrder.setRoleName(roleName);
-		myOrder.setId(id);
-		HttpEntity<MyOrderModel> entity=new HttpEntity<>(myOrder);
-	    RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<List<OrderModel>> res=restTemplate.exchange("http://localhost:1122/getMyOrders",HttpMethod.POST,entity,new ParameterizedTypeReference<List<OrderModel>>(){});
-		return res;
-	}
+
 	
 	@GetMapping("canSendRequest/{advertisementId}")
 	public ResponseEntity<Boolean> canSendRequest(@PathVariable Long advertisementId,ServletRequest req)
@@ -183,7 +169,7 @@ public class AdvertisementController {
 		return res;		
 	}
 	
-	@PostMapping("student/getMyAdvertisements")
+	@PostMapping("user/getMyAdvertisements")
 	public ResponseEntity<List<AdvertisementModel>> getStudentAdvertisements(@RequestBody UserAdvertisementsModel userAdv,ServletRequest req)
 	{
 		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
@@ -247,7 +233,8 @@ public class AdvertisementController {
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<AdvertisementModel> res=restTemplate.exchange("http://localhost:1122/advertisement/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<AdvertisementModel>(){});
 		AdvertisementModel m=res.getBody();
-		m.setAuthorUsername(us.getUserById(m.getAuthorId()).getEmail());
+		m.setFirstName(us.getUserById(m.getAuthorId()).getFirstname());
+		m.setSurName(us.getUserById(m.getAuthorId()).getLastname());
 		return new ResponseEntity<>(m,HttpStatus.OK);
 	}
 	

@@ -22,7 +22,8 @@ public class AdvertisementModel {
 	private String[] imageKeys;
 	private String content;
 	private String authorRole;
-	private String authorUsername;
+	private String firstName;
+	private String surName;
 	private AdvertisementType type;
 	private Tag[] tags;
 	private String[] allFiles;
@@ -41,11 +42,19 @@ public class AdvertisementModel {
 	public void setAllFiles(String[] allFiles) {
 		this.allFiles = allFiles;
 	}
-	public String getAuthorUsername() {
-		return authorUsername;
+	
+	
+	public String getFirstName() {
+		return firstName;
 	}
-	public void setAuthorUsername(String authorUsername) {
-		this.authorUsername = authorUsername;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getSurName() {
+		return surName;
+	}
+	public void setSurName(String surName) {
+		this.surName = surName;
 	}
 	public AdvertisementType getType() {
 		return type;

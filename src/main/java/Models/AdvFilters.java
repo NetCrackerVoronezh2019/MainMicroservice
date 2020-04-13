@@ -10,9 +10,16 @@ public class AdvFilters {
 	private Integer maxPrice;
 	private String searchRow;
 	private AdvertisementType type;
+	private Tag[] tags;
 	
-	
-	
+	public Tag[] getTags() {
+		return tags;
+	}
+
+	public void setTags(Tag[] tags) {
+		this.tags = tags;
+	}
+
 	public AdvertisementType getType() {
 		return type;
 	}

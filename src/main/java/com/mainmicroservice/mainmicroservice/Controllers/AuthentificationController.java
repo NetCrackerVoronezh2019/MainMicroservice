@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -131,7 +133,7 @@ public class AuthentificationController {
 	
 	
     @PostMapping("/registration")
-	public ResponseEntity<?> registation( @RequestBody RegistrationModel regModel)
+	public ResponseEntity<?> registation( @RequestBody @Valid RegistrationModel regModel)
 	{
     	
 		User us=new User();
@@ -148,6 +150,7 @@ public class AuthentificationController {
 		{
 			us.setAboutMe(regModel.aboutMe);
 			us.setEducationLevel(regModel.education);
+			us.setReiting(4.0);
 		}
 		us.setRole(this.roleRepository.findByRoleName("ROLE_"+regModel.role));
 		us = this.us.addNewUser(us);
@@ -161,10 +164,17 @@ public class AuthentificationController {
 		}
 		
 		
-		/*
-		RestTemplate restTemplate = new RestTemplate();
-		HttpEntity<UploadFilesModel> entity = new HttpEntity<UploadFilesModel>(files);
-		restTemplate.exchange("http://localhost:1234/uploadCertificationFiles", HttpMethod.POST,entity, Object.class);
+		try
+		{
+			RestTemplate restTemplate = new RestTemplate();
+			HttpEntity<UploadFilesModel> entity = new HttpEntity<UploadFilesModel>(files);
+			restTemplate.exchange("http://localhost:1234/uploadCertificationFiles", HttpMethod.POST,entity, Object.class);
+		}
+		catch(Exception ex)
+		{
+			
+		}
+	 /*
 		UserModel usConversationModel = new UserModel(us);
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<UserModel> entity = new HttpEntity<UserModel>(usConversationModel);

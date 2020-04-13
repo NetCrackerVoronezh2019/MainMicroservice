@@ -17,10 +17,17 @@ public class NotificationModel {
 	private NotificationResponseStatus responseStatus;
 	private NotificationStatus status;
 	private String message;
+	private Long orderId;
+	
+	
+	public Long getOrderId() {
+		return orderId;
+	}
 
-	
-	
-	
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
+	}
+
 	public NotificationStatus getStatus() {
 		return status;
 	}
@@ -80,6 +87,16 @@ public class NotificationModel {
 						else
 							if(type==AdvertisementNotificationType.REJECTED_RECEIVE_SERVICE)
 								this.setMessage("не готов оказать услугу");
+							else
+								if(type==AdvertisementNotificationType.CHANGE_ORDER_STATUS_TO_INPROGRESS)
+									this.setMessage("изменил статус на <<В процессе>>");
+								else
+									if(type==AdvertisementNotificationType.CHANGE_ORDER_STATUS_TO_COMPLETED)
+									this.setMessage("изменил статус на <<Завершен>>");
+								else
+									if(type==AdvertisementNotificationType.CHANGE_REITING)
+										this.setMessage("оценил вашу работу");
+									
 						
 		}
 	

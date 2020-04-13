@@ -21,7 +21,6 @@ public class RegistrationModel {
 	public List<String> allFiles=new ArrayList<String>();
 	public Gender gender;
 	public String aboutMe;
-	
 	public EducationLevel education;
 	
 	@Override

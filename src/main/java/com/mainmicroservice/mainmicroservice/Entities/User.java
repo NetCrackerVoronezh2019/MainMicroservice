@@ -41,6 +41,10 @@ public class User {
 	@Size(min=4, max=20)
 	private String lastname;
 	
+	@Column(name="REITING")
+	@JsonView(Views.UserInfoForChangeProps.class)
+	private double reiting;
+	
 	@Email
 	@Column(name="EMAIL",unique=true)
 	@JsonView(Views.UserInfoForChangeProps.class)
@@ -165,6 +169,15 @@ public class User {
 
 	public void setLastTimeWasONLINE(LocalDateTime lastTimeWasONLINE) {
 		this.lastTimeWasONLINE = lastTimeWasONLINE;
+	}
+	
+	
+	public double getReiting() {
+		return reiting;
+	}
+
+	public void setReiting(double reiting) {
+		this.reiting = reiting;
 	}
 
 	public Role getRole() {
