@@ -5,6 +5,15 @@ public class GroupModel {
     private String name;
     private Long dialogId;
     private Long creatorId;
+    private String subjectName;
+
+    public String getSubjectName() {
+        return subjectName;
+    }
+
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
+    }
 
     public Long getGroupId() {
         return groupId;

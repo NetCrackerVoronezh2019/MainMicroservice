@@ -11,12 +11,22 @@ public class UserAndGroupUserModel {
     private String middleName;
     private String lastName;
     private Date birthday;
+    private String role;
 
     public UserAndGroupUserModel(User user) {
         userId = user.getUserid();
         email = user.getEmail();
         firstName = user.getFirstname();
         lastName = user.getLastname();
+        role = user.getRole().getRoleName();
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public UserAndGroupUserModel() {

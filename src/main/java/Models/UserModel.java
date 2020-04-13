@@ -25,7 +25,7 @@ public class UserModel {
 
 	public UserModel(User user) {
 		userId = (int)user.getUserid();
-		name = user.getEmail();
+		name = user.getLastname() + ' ' + user.getFirstname();
 	}
 	
 	public UserModel() {}

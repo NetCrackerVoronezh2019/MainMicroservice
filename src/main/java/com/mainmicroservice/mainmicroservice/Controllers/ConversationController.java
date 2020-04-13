@@ -80,7 +80,7 @@ public class ConversationController {
 	}
 	
 	@GetMapping("user/addUserInDialog/")
-	public ResponseEntity<?> addUserInDialog(@RequestParam String userName,@RequestParam Integer dialogId, ServletRequest req)
+	public ResponseEntity<?> addUserInDialog(@RequestParam Long userId,@RequestParam Integer dialogId, ServletRequest req)
 	{
 		RestTemplate restTemplate = new RestTemplate();
 		String port="8088";
@@ -88,7 +88,7 @@ public class ConversationController {
 		String adderName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
 		User user=us.findByEmail(adderName);
 		int adderId=(int)(long)user.getUserid();
-		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:"+port+route).queryParam("adderId", adderId).queryParam("userName",userName).queryParam("dialogId",dialogId);
+		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:"+port+route).queryParam("adderId", adderId).queryParam("userId",userId).queryParam("dialogId",dialogId);
 		restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.GET,null,new ParameterizedTypeReference<Object>(){});
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
