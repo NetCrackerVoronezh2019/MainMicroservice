@@ -27,8 +27,7 @@ import com.mainmicroservice.mainmicroservice.Services.UserService;
 
 import Models.ChangeOrderStatus;
 import Models.ChangeReiting;
-import Models.MyOrderModel;
-import Models.MyOrdersModel;
+import Models.UserOrdersModel;
 import Models.OrderModel;
 
 @RestController
@@ -54,10 +53,10 @@ public class OrderController {
 	    User user=us.findByEmail(userName);
 	    String roleName=user.getRole().getRoleName();
 	    Long id=user.getUserid();
-		MyOrdersModel myOrder=new MyOrdersModel();
+		UserOrdersModel myOrder=new UserOrdersModel();
 		myOrder.setRoleName(roleName);
 		myOrder.setId(id);
-		HttpEntity<MyOrdersModel> entity=new HttpEntity<>(myOrder);
+		HttpEntity<UserOrdersModel> entity=new HttpEntity<>(myOrder);
 	    RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<List<OrderModel>> res=restTemplate.exchange("http://localhost:1122/getMyOrders",HttpMethod.POST,entity,new ParameterizedTypeReference<List<OrderModel>>(){});
 		return res;

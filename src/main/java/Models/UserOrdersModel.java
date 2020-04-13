@@ -1,10 +1,9 @@
 package Models;
 
-public class MyOrderModel {
+public class UserOrdersModel {
 	
 	private String roleName;
 	private Long id;
-	
 	public String getRoleName() {
 		return roleName;
 	}
@@ -17,6 +16,4 @@ public class MyOrderModel {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
-	
 }
