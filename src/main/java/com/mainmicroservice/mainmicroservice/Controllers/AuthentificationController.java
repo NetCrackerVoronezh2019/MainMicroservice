@@ -66,7 +66,14 @@ public class AuthentificationController {
 		{
 			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
 		}
-		
+	}
+	
+	@GetMapping("/getMyId")
+	public ResponseEntity<Long> getMyId(ServletRequest req)
+	{
+		String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+	    User user=us.findByEmail(userName);
+	    return new ResponseEntity<>(user.getUserid(),HttpStatus.OK);
 	}
 	
 	@GetMapping("/isLogin")
@@ -174,7 +181,7 @@ public class AuthentificationController {
 		{
 			
 		}
-	 /*
+	 
 		UserModel usConversationModel = new UserModel(us);
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<UserModel> entity = new HttpEntity<UserModel>(usConversationModel);
@@ -182,7 +189,6 @@ public class AuthentificationController {
 		UserAndGroupUserModel userAndGroupUserModel = new UserAndGroupUserModel(us);
 		HttpEntity<UserAndGroupUserModel> entityUG = new HttpEntity<UserAndGroupUserModel>(userAndGroupUserModel);
 		restTemplate.exchange("http://localhost:8090/createUser/", HttpMethod.POST,entityUG, Object.class );
-		*/
 		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+us.getActivateCode(), us.getEmail());
 		
 		return new ResponseEntity<>(us,HttpStatus.OK);

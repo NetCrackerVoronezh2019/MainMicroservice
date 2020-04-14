@@ -150,7 +150,7 @@ public class UserAndGroupController {
         RestTemplate restTemplate = new RestTemplate();
         String adderName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
         User user=us.findByEmail(adderName);
-        UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/groups/friends").queryParam("userId",user.getUserid());
+        UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/friends").queryParam("userId",user.getUserid());
         return restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<UserAndGroupUserModel>>() {}).getBody();
     }
 
@@ -274,5 +274,30 @@ public class UserAndGroupController {
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/groups/searchUser").queryParam("groupId",groupId).queryParam("firstName",firstName).queryParam("lastName",lastName);
         return restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.GET, null, new ParameterizedTypeReference<List<UserAndGroupUserModel>>(){}).getBody();
+    }
+
+    @GetMapping("users/search")
+    public List<UserAndGroupUserModel> userSearch(@RequestParam String firstName, @RequestParam String lastName) {
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/user/search").queryParam("firstName",firstName).queryParam("lastName",lastName);
+        return restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.GET, null, new ParameterizedTypeReference<List<UserAndGroupUserModel>>(){}).getBody();
+    }
+
+    @PutMapping("friend/add")
+    public void addFriend(@RequestParam Long ingoingId, ServletRequest req) {
+        RestTemplate restTemplate = new RestTemplate();
+        String adderName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+        User user=us.findByEmail(adderName);
+        UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/addToFriends").queryParam("ingoingId",ingoingId).queryParam("outgoingId",user.getUserid());
+        restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.PUT, null, Object.class);
+    }
+
+    @PutMapping("friend/remove")
+    public void removeFriend(@RequestParam Long ingoingId, ServletRequest req) {
+        RestTemplate restTemplate = new RestTemplate();
+        String adderName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+        User user=us.findByEmail(adderName);
+        UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/removeFriend").queryParam("ingoingId",ingoingId).queryParam("outgoingId",user.getUserid());
+        restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.PUT, null, Object.class);
     }
 }
