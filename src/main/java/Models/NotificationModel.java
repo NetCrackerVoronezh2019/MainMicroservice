@@ -71,10 +71,10 @@ public class NotificationModel {
 	public void generateMessage()
 	{
 		if(type==AdvertisementNotificationType.TAKE_ADVERTISEMENT)
-			this.setMessage("хочет получить объявление - ");
+			this.setMessage("хочет получить объявление");
 		else
 			if(type==AdvertisementNotificationType.ACCEPTED_TAKE_ADVERTISEMENT)
-				this.setMessage("принял ваш запрос - ");
+				this.setMessage("принял ваш запрос");
 			else
 				if(type==AdvertisementNotificationType.REJECTED_TAKE_ADVERTISEMENT)
 					this.setMessage("отклонил ваш запрос");
@@ -89,10 +89,10 @@ public class NotificationModel {
 								this.setMessage("не готов оказать услугу");
 							else
 								if(type==AdvertisementNotificationType.CHANGE_ORDER_STATUS_TO_INPROGRESS)
-									this.setMessage("изменил статус на <<В процессе>>");
+									this.setMessage("изменил статус заказа на <<В процессе>>");
 								else
 									if(type==AdvertisementNotificationType.CHANGE_ORDER_STATUS_TO_COMPLETED)
-									this.setMessage("изменил статус на <<Завершен>>");
+									this.setMessage("изменил статус заказа на <<Завершен>>");
 								else
 									if(type==AdvertisementNotificationType.CHANGE_REITING)
 										this.setMessage("оценил вашу работу");

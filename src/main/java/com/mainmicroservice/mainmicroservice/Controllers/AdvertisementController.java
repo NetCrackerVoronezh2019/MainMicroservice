@@ -70,7 +70,7 @@ public class AdvertisementController {
 		}
 		catch(Exception ex)
 		{   
-			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(false,HttpStatus.OK);
 		}
 		
 	    SendAdvertisementNotificationModel sendModel=new SendAdvertisementNotificationModel();

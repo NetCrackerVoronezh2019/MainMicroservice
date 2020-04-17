@@ -5,13 +5,18 @@ import java.util.Date;
 public class ConversationNotificationModel{
     private Integer notificationId;
     private Integer messageId;
-    private String userName;
+    private Long userId;
     private String senderName;
     private Date date;
     private boolean isread;
 
-    public String getUserName() {
-        return userName;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getSenderName() {
@@ -36,10 +41,6 @@ public class ConversationNotificationModel{
 
     public void setMessageId(Integer messageId) {
         this.messageId = messageId;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public Date getDate() {

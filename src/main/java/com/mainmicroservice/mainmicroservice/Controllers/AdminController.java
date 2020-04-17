@@ -11,14 +11,19 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.mainmicroservice.mainmicroservice.Entities.*;
 import com.mainmicroservice.mainmicroservice.Repositories.RoleRepository;
+import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 import com.mainmicroservice.mainmicroservice.Services.RoleService;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 
 import Jacson.Views;
 import Models.AdvertisementModel;
+import Models.UserPageModel;
 import Models.UserProp;
 
 @RestController
@@ -34,6 +39,9 @@ public class AdminController {
 	@Autowired
 	private RoleRepository roleRepository;
 	
+	@Autowired
+	private JwtTokenProvider tokenProvider;
+	
 	@GetMapping("user/getAllUsers")
 	@JsonView(Views.UserInfoForChangeProps.class)
 	public ResponseEntity<List<User>> getAllUsers()
@@ -41,6 +49,16 @@ public class AdminController {
 		List<User> list=this.userService.getAllUsers();
 		return new ResponseEntity<>(list,HttpStatus.OK);
 	}
+	
+	@GetMapping("getUser/{userId}")
+	public ResponseEntity<UserPageModel> getUser(@PathVariable Long userId,ServletRequest req)
+	{
+		User user=userService.getUserById(userId);
+		UserPageModel m=UserPageModel.UserToModel(user);
+	    return new ResponseEntity<>(m,HttpStatus.OK);
+	}
+	
+	
 	
 	@PostMapping("admin/setRoles")
 	public void setRoles(@RequestBody Role _role)

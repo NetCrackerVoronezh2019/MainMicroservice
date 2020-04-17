@@ -52,6 +52,20 @@ public class AuthentificationController {
 	@Autowired
 	private  AuthenticationManager authenticationManager;
 
+	
+	@PostMapping("user/updateUserImage")
+	public ResponseEntity<?> updateUserImage(@RequestBody UploadFileModel fileModel, ServletRequest req)
+	{
+		String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+	    User user=us.findByEmail(userName);
+	    user.setUserImageKey("userImageKey_"+user.getUserid());
+	    us.saveChanges(user);
+	    fileModel.key=user.getUserImageKey();
+	    
+	    RestTemplate restTemplate = new RestTemplate();
+		HttpEntity<UploadFileModel> entity = new HttpEntity<>(fileModel);
+		return restTemplate.exchange("http://localhost:1234/uploadUserfile", HttpMethod.POST,entity, Object.class);
+	}
 	@GetMapping("/getRole")
 	public ResponseEntity<UserInfoModel> getRole(ServletRequest req)
 	{	
@@ -71,8 +85,16 @@ public class AuthentificationController {
 	@GetMapping("/getMyId")
 	public ResponseEntity<Long> getMyId(ServletRequest req)
 	{
-		String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
-	    User user=us.findByEmail(userName);
+		User user;
+		try {
+			String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+			user=us.findByEmail(userName);
+		}
+		catch(Exception ex)
+		{
+			 return new ResponseEntity<>(null,HttpStatus.OK); 
+		}
+		
 	    return new ResponseEntity<>(user.getUserid(),HttpStatus.OK);
 	}
 	

@@ -1,5 +1,7 @@
 package Models;
 
+
+
 public class OrderModel {
 
 	private Long orderId;
@@ -8,6 +10,16 @@ public class OrderModel {
 	private Long advertisementId;
 	private String advertisementName;
 	private String status;
+	private String nextStatus;
+	
+	
+	
+	public String getNextStatus() {
+		return nextStatus;
+	}
+	public void setNextStatus(String nextStatus) {
+		this.nextStatus = nextStatus;
+	}
 	public Long getOrderId() {
 		return orderId;
 	}

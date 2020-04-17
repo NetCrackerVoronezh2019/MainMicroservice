@@ -1,8 +1,11 @@
 package Models;
 
+import javax.validation.constraints.NotNull;
+
 public class UploadFileModel {
 	
 	public String key;
+	@NotNull
 	public String content;
 	public String bucket;
 	

@@ -22,6 +22,7 @@ public class User {
 	private Long userId;
 	
 	@Column(name="USERIMAGEKEY")
+	@JsonView(Views.UserInfoForChangeProps.class)
 	private String userImageKey;
 	
 	@Column(name="ISACTIVATE")
@@ -52,6 +53,7 @@ public class User {
 	
 	@Column(name="EDUCATIONLEVEL")
 	@Enumerated(EnumType.STRING) 
+	@JsonView(Views.UserInfoForChangeProps.class)
 	private EducationLevel educationLevel;
 	
 	
@@ -162,6 +164,8 @@ public class User {
 	public void setBirthDate(Date birthDate) {
 		this.birthDate = birthDate;
 	}
+	
+	
 
 	public LocalDateTime getLastTimeWasONLINE() {
 		return lastTimeWasONLINE;

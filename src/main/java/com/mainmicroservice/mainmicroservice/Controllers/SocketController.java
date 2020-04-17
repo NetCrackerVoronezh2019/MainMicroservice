@@ -1,5 +1,6 @@
 package com.mainmicroservice.mainmicroservice.Controllers;
 
+import Models.CleanConversationNotificationModel;
 import Models.ConversationNotificationModel;
 import Models.MessagesModel;
 import Models.NotificationModel;
@@ -49,10 +50,9 @@ public class SocketController {
    
         for(ConversationNotificationModel n:notifications)
         {
-        	User user=us.findByEmail(n.getUserName());
-        	uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8088/getUserNotificationsSize/").queryParam("userId",user.getUserid());
+        	uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8088/getUserNotificationsSize/").queryParam("userId",n.getUserId());
         	ResponseEntity<String> res = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<String>() {});
-        	template.convertAndSend("/notificationCount/" + n.getUserName(),res.getBody());	
+        	template.convertAndSend("/notificationCount/" + n.getUserId(),res.getBody());
         }
         
     }
@@ -68,5 +68,18 @@ public class SocketController {
         template.convertAndSend("/notification/",1006);
         System.out.println(model.toString());
     }
+
+    @MessageMapping("dialog/cleanNotifications")
+    @CrossOrigin(origins="http://localhost:4200")
+    public void cleanNotifications(CleanConversationNotificationModel cleanConversationNotificationModel) {
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl("http://localhost:8088/cleanUserNotifications/").queryParam("userId",cleanConversationNotificationModel.getUserId()).
+                                                                                                                            queryParam("dialogId",cleanConversationNotificationModel.getDialogId());
+        restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.DELETE, null, Object.class);
+        uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8088/getUserNotificationsSize/").queryParam("userId",cleanConversationNotificationModel.getUserId());
+        ResponseEntity<String> res = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<String>() {});
+        template.convertAndSend("/notificationCount/" + cleanConversationNotificationModel.getUserId(),res.getBody());
+    }
+
 }
 

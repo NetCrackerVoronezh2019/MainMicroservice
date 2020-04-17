@@ -10,6 +10,15 @@ public class DialogModel {
 	 private Integer creatorId;
 	 private Integer dialogId;
 	 private Integer countNotification;
+	 private String type;
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 
 	public Date getLastMessageDate() {
 		return lastMessageDate;

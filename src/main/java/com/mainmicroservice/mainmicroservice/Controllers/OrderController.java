@@ -49,11 +49,11 @@ public class OrderController {
     private SimpMessagingTemplate template;
 	
 	@PostMapping("user/getAccessibleStatuses")
-	public ResponseEntity<List<OrderStatus>> getAccessibleStatuses(@RequestBody  @NotNull OrderModel model)
+	public ResponseEntity<OrderStatus> getAccessibleStatuses(@RequestBody  @NotNull OrderModel model)
 	{
 		HttpEntity<OrderModel> entity=new HttpEntity<>(model);
 	    RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<List<OrderStatus>> res=restTemplate.exchange("http://localhost:1122/getAccessibleStatuses",HttpMethod.POST,entity,new ParameterizedTypeReference<List<OrderStatus>>(){});
+		ResponseEntity<OrderStatus> res=restTemplate.exchange("http://localhost:1122/getAccessibleStatuses",HttpMethod.POST,entity,new ParameterizedTypeReference<OrderStatus>(){});
 		return res;
 	}
 	
@@ -79,16 +79,16 @@ public class OrderController {
 		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
 	    User user=us.findByEmail(userName);
 	    String roleName=user.getRole().getRoleName();
-	    Long id=user.getUserid();
-	    model.setUserId(id);
 	    model.setRoleName(roleName);
-	    
+	    model.setUserId(user.getUserId());
 	    
 	    HttpEntity<ChangeOrderStatus> entity=new HttpEntity<>(model);
 	    RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<Object> res=restTemplate.exchange("http://localhost:1122/changeOrderStatus",HttpMethod.POST,entity,Object.class);
-		ResponseEntity<Integer> res2=restTemplate.exchange("http://localhost:1122/getMyAllNotificationsSize/"+model.getCustomerId(),HttpMethod.GET,entity,new ParameterizedTypeReference<Integer>(){});
-	    template.convertAndSend("/notification/"+model.getCustomerId(),res2.getBody());
+		ResponseEntity<OrderModel> res=restTemplate.exchange("http://localhost:1122/changeOrderStatus",HttpMethod.POST,entity,OrderModel.class);
+		OrderModel orderModel=res.getBody();
+		ResponseEntity<Integer> res2=restTemplate.exchange("http://localhost:1122/getMyAllNotificationsSize/"+orderModel.getCustomerId(),HttpMethod.GET,null,new ParameterizedTypeReference<Integer>(){});
+		
+	    template.convertAndSend("/notification/"+orderModel.getCustomerId(),res2.getBody());
 		return res;
 	        
 	}

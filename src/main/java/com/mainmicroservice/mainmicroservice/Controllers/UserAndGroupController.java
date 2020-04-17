@@ -130,12 +130,13 @@ public class UserAndGroupController {
     }
 
     @PostMapping("users/startDialog")
-    public void startPrivateDialog(@RequestParam Long userId, ServletRequest req) {
+    public Long startPrivateDialog(@RequestParam Long userId, ServletRequest req) {
         RestTemplate restTemplate = new RestTemplate();
         String adderName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
         User user=us.findByEmail(adderName);
         UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/startDialogWithUser").queryParam("userId",userId).queryParam("creatorId",user.getUserid());
-        restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.POST, null, Object.class);
+        ResponseEntity<Long> res = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.POST, null, new ParameterizedTypeReference<Long>() {});
+        return res.getBody();
     }
 
     @GetMapping("user/friends")
@@ -300,4 +301,6 @@ public class UserAndGroupController {
         UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/removeFriend").queryParam("ingoingId",ingoingId).queryParam("outgoingId",user.getUserid());
         restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.PUT, null, Object.class);
     }
+
+
 }
