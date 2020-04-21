@@ -13,16 +13,19 @@ import java.util.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.mainmicroservice.mainmicroservice.Entities.*;
 import com.mainmicroservice.mainmicroservice.Repositories.RoleRepository;
 import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 import com.mainmicroservice.mainmicroservice.Services.RoleService;
+import com.mainmicroservice.mainmicroservice.Services.UserDocumentService;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 
 import Jacson.Views;
 import Models.AdvertisementModel;
+import Models.ChangeDocumentValid;
 import Models.UserPageModel;
 import Models.UserProp;
 
@@ -42,22 +45,41 @@ public class AdminController {
 	@Autowired
 	private JwtTokenProvider tokenProvider;
 	
-	@GetMapping("user/getAllUsers")
-	@JsonView(Views.UserInfoForChangeProps.class)
-	public ResponseEntity<List<User>> getAllUsers()
+	@Autowired 
+	private UserDocumentService udService;
+	
+	
+	@GetMapping("getAllValidDocuments")
+	public ResponseEntity<List<UserDocument>> getAllValidDocuments()
 	{
-		List<User> list=this.userService.getAllUsers();
-		return new ResponseEntity<>(list,HttpStatus.OK);
+		List<UserDocument> documents=this.udService.findAllValidDocuments();
+		return new ResponseEntity<>(documents,HttpStatus.OK);
 	}
 	
-	@GetMapping("getUser/{userId}")
-	public ResponseEntity<UserPageModel> getUser(@PathVariable Long userId,ServletRequest req)
+	
+	@GetMapping("getAllUnValidDocuments")
+	public ResponseEntity<List<UserDocument>> getAllUnValidDocuments()
 	{
-		User user=userService.getUserById(userId);
-		UserPageModel m=UserPageModel.UserToModel(user);
-	    return new ResponseEntity<>(m,HttpStatus.OK);
+		List<UserDocument> documents=this.udService.findAllUnValidDocuments();
+		return new ResponseEntity<>(documents,HttpStatus.OK);
+		
 	}
 	
+	
+	@PostMapping("changeDocumentValidation")
+	public ResponseEntity<?> changeDocumentValitation(@RequestBody @Valid ChangeDocumentValid model)
+	{
+		System.out.println("Я тут");
+		UserDocument ud=this.udService.findById(model.getId());
+		if(ud!=null)
+		{
+			ud.setIsValid(model.getValidation());
+			this.udService.save(ud);
+		}
+		
+		return new ResponseEntity<>(null,HttpStatus.OK);
+
+	}
 	
 	
 	@PostMapping("admin/setRoles")
@@ -92,6 +114,22 @@ public class AdminController {
 			changedUser.setRole(role);
 			userService.saveChanges(changedUser);
 			return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@GetMapping("user/getAllUsers")
+	@JsonView(Views.UserInfoForChangeProps.class)
+	public ResponseEntity<List<User>> getAllUsers()
+	{
+		List<User> list=this.userService.getAllUsers();
+		return new ResponseEntity<>(list,HttpStatus.OK);
+	}
+	
+	@GetMapping("getUser/{userId}")
+	public ResponseEntity<UserPageModel> getUser(@PathVariable Long userId,ServletRequest req)
+	{
+		User user=userService.getUserById(userId);
+		UserPageModel m=UserPageModel.UserToModel(user);
+	    return new ResponseEntity<>(m,HttpStatus.OK);
 	}
 	
 

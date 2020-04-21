@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import com.mainmicroservice.mainmicroservice.Entities.Role;
 import com.mainmicroservice.mainmicroservice.Entities.User;
+import com.mainmicroservice.mainmicroservice.Entities.UserDocument;
 import com.mainmicroservice.mainmicroservice.Repositories.RoleRepository;
 import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 import com.mainmicroservice.mainmicroservice.Services.MailService;
+import com.mainmicroservice.mainmicroservice.Services.UserDocumentService;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 import Models.*;
 
@@ -52,6 +54,8 @@ public class AuthentificationController {
 	@Autowired
 	private  AuthenticationManager authenticationManager;
 
+	@Autowired
+	private UserDocumentService udService;
 	
 	@PostMapping("user/updateUserImage")
 	public ResponseEntity<?> updateUserImage(@RequestBody UploadFileModel fileModel, ServletRequest req)
@@ -165,51 +169,58 @@ public class AuthentificationController {
 	public ResponseEntity<?> registation( @RequestBody @Valid RegistrationModel regModel)
 	{
     	
-		User us=new User();
-		us.setIsActivate(false);
-		us.setIsDeleted(false);
-		us.setFirstname(regModel.firstname);
-		us.setLastname(regModel.lastname);
-		us.setEmail(regModel.email);
-		us.setPassword(encoder.encode(regModel.password));
-		us.setActivateCode(UUID.randomUUID().toString());
-		us.setBirthDate(regModel.birthDate);
-		us.setGender(regModel.gender);
+		User user=new User();
+		user.setIsActivate(false);
+		user.setIsDeleted(false);
+		user.setFirstname(regModel.firstname);
+		user.setLastname(regModel.lastname);
+		user.setEmail(regModel.email);
+		user.setPassword(encoder.encode(regModel.password));
+		user.setActivateCode(UUID.randomUUID().toString());
+		user.setBirthDate(regModel.birthDate);
+		user.setGender(regModel.gender);
 		if(regModel.role.equals("TEACHER"))
 		{
-			us.setAboutMe(regModel.aboutMe);
-			us.setEducationLevel(regModel.education);
-			us.setReiting(4.0);
+			user.setAboutMe(regModel.aboutMe);
+			user.setEducationLevel(regModel.education);
+			user.setReiting(4.0);
 		}
-		us.setRole(this.roleRepository.findByRoleName("ROLE_"+regModel.role));
-		us = this.us.addNewUser(us);
+		user.setRole(this.roleRepository.findByRoleName("ROLE_"+regModel.role));
+		user = this.us.addNewUser(user);
 		
-		String[] keys=us.setCerteficationKeys(regModel.allFiles);
-		this.us.addNewUser(us);
+		String[] keys=user.getDocumentKeys(regModel.allFiles);
 		UploadFilesModel files=new UploadFilesModel(keys.length);
 		for(int i=0;i<keys.length;i++)
 		{
+			UserDocument document=new UserDocument();
+			document.setDocumentKey(keys[i]);
+			document.setIsValid(true);
+			document.setUser(user);
+			udService.save(document);
 			files.allFiles[i]=new UploadFileModel(keys[i],regModel.allFiles.get(i).content,regModel.allFiles.get(i).contentType);
 		}
 		
-		if(us.getRole().getRoleName().equals("ROLE_TEACHER"))
+		
+		if(user.getRole().getRoleName().equals("ROLE_TEACHER"))
 		{
 			RestTemplate restTemplate1 = new RestTemplate();
 			HttpEntity<UploadFilesModel> entity1 = new HttpEntity<UploadFilesModel>(files);
 			restTemplate1.exchange("http://localhost:1234/uploadCertificationFiles", HttpMethod.POST,entity1, Object.class);
 		}
 		
-		UserModel usConversationModel = new UserModel(us);
+		
+		UserModel usConversationModel = new UserModel(user);
 		RestTemplate restTemplate2 = new RestTemplate();
 		HttpEntity<UserModel> entity = new HttpEntity<UserModel>(usConversationModel);
 		restTemplate2.exchange("http://localhost:8088/createUser", HttpMethod.POST,entity, Object.class );
-		UserAndGroupUserModel userAndGroupUserModel = new UserAndGroupUserModel(us);
+		UserAndGroupUserModel userAndGroupUserModel = new UserAndGroupUserModel(user);
 		HttpEntity<UserAndGroupUserModel> entityUG = new HttpEntity<UserAndGroupUserModel>(userAndGroupUserModel);
 		restTemplate2.exchange("http://localhost:8090/createUser/", HttpMethod.POST,entityUG, Object.class );
 		
-		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+us.getActivateCode(), us.getEmail());
+		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+user.getActivateCode(), user.getEmail());
 		
 		return new ResponseEntity<>(us,HttpStatus.OK);
 		
 	}
+	
 }

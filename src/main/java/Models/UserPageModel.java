@@ -2,6 +2,7 @@ package Models;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 import com.mainmicroservice.mainmicroservice.Entities.User;
 
@@ -19,7 +20,7 @@ public class UserPageModel {
 	private String roleName;
 	private String userImageKey;
 	private Boolean isOnline;
-	private String[] documentKeys;
+	private List<String> documentKeys;
 	
 	
 	public static UserPageModel UserToModel(User user)
@@ -37,7 +38,7 @@ public class UserPageModel {
 		model.setRoleName(user.getRole().getRoleName());
 		model.setGender(user.getGender().toString());
 		LocalDateTime t=model.getLastTimeWasONLINE();
-		model.setDocumentKeys(user.getCertKeysArray());
+		model.setDocumentKeys(user.documentsKeys());
 		if(t!=null)
 		{
 			t=t.plusMinutes(2);
@@ -51,13 +52,11 @@ public class UserPageModel {
 	}
 	
 	
-	
-	
-	public String[] getDocumentKeys() {
+	public List<String> getDocumentKeys() {
 		return documentKeys;
 	}
 
-	public void setDocumentKeys(String[] documentKeys) {
+	public void setDocumentKeys(List<String> documentKeys) {
 		this.documentKeys = documentKeys;
 	}
 	

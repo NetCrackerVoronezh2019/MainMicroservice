@@ -1,7 +1,11 @@
 package com.mainmicroservice.mainmicroservice.Entities;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -74,10 +78,7 @@ public class User {
 	@JsonView(Views.UserInfoForChangeProps.class)
 	private LocalDateTime lastTimeWasONLINE;
 	
-	@Column(name="CertificationKeys")
-	@JsonView(Views.UserInfoForChangeProps.class)
-	private String certificationKeys;
-	
+
 	@Column(name="BIRTHDATE")
 	@JsonView(Views.UserInfoForChangeProps.class)
 	private Date birthDate;
@@ -87,17 +88,38 @@ public class User {
 	private String aboutMe;
 	
 	
-	@JsonIgnore
-	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "SERVICEWEBSITE", nullable = false)
-    private Service service;
-	
+
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JsonView(Views.UserInfoForChangeProps.class)
     @JoinColumn(name = "ROLEID", nullable = false)
     private Role role;
 	
+	
+	
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL,
+		    fetch = FetchType.EAGER,
+		    mappedBy = "user")
+	private List<UserDocument> documents=new ArrayList<>();
+	
+	
+	@JsonGetter("documents")
+	public List<String> documentsKeys()
+	{
+		return this.getDocuments().stream()
+			.map(d->d.getDocumentKey())
+			.collect(Collectors.toList());
+	}
+	
+	public List<UserDocument> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<UserDocument> documents) {
+		this.documents = documents;
+	}
+
 	public Boolean getIsDeleted() {
 		return this.isDeleted;
 	}
@@ -105,8 +127,6 @@ public class User {
 	public void setIsDeleted(Boolean isDeleted) {
 		
 		this.isDeleted = isDeleted;
-	
-		
 	}
 	
 	public Long getUserId() {
@@ -125,13 +145,7 @@ public class User {
 		this.userImageKey = userImageKey;
 	}
 
-	public String getCertificationKeys() {
-		return certificationKeys;
-	}
-
-	public void setCertificationKeys(String certificationKeys) {
-		this.certificationKeys = certificationKeys;
-	}
+	
 
 	public Date getBirthDate() {
 		return birthDate;
@@ -250,20 +264,9 @@ public class User {
 		this.password = password;
 	}
 	 
-	public String getService() {
-		if(this.service==null)
-		 {
-			return "none";
-		 }
-		return this.service.getServiceWebSite();
-	}
+
 	
-	public void setService(Service service) {
-		this.service = service;
-	}
-	
-	
-	public String[] setCerteficationKeys(List<FileModel> keys)
+	public String[] getDocumentKeys(List<FileModel> keys)
 	{
 		String str="";
 		String[] arr=new String[keys.size()];
@@ -274,14 +277,9 @@ public class User {
 		  	arr[i]=newKey;
 		  	str+=newKey+",";
 		}
-		
-		this.setCertificationKeys(str);
 		return arr;
 	}
 	
-	public String[] getCertKeysArray()
-	{
-		return this.getCertificationKeys().split(",");
-	}
+
 
 }

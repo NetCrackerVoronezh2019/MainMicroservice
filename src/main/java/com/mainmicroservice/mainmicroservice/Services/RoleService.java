@@ -3,16 +3,15 @@ package com.mainmicroservice.mainmicroservice.Services;
 import java.util.List;
 
 
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mainmicroservice.mainmicroservice.Entities.Role;
 import com.mainmicroservice.mainmicroservice.Repositories.RoleRepository;
 
 @Service
-@Transactional
 public class RoleService {
 
 	@Autowired

@@ -8,7 +8,7 @@ import com.mainmicroservice.mainmicroservice.Repositories.UserRepository;
 
 
 @Service
-@Transactional
+
 public class UserService {
 	
 	@Autowired
