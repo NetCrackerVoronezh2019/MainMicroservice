@@ -18,7 +18,7 @@ public class RegistrationModel {
 	public String role;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	public Date birthDate;
-	public List<String> allFiles=new ArrayList<String>();
+	public List<FileModel> allFiles=new ArrayList<FileModel>();
 	public Gender gender;
 	public String aboutMe;
 	public EducationLevel education;

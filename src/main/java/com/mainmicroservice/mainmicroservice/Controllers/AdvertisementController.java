@@ -97,8 +97,10 @@ public class AdvertisementController {
 		{	
 			Long id1=model.getAddresseeId();
 			Long id2=model.getSenderId();
+			User sender=this.us.getUserById(id2);
 			model.setAddresseeUsername(this.us.getUserById(id1).getEmail());
-			model.setSenderUsername(this.us.getUserById(id2).getEmail());		
+			model.setSenderUsername(sender.getEmail());	
+			model.setSenderFIO(sender.getFirstname()+" "+sender.getLastname());
 			model.generateMessage();
 		}	
 		return new ResponseEntity<>(not,HttpStatus.OK);	

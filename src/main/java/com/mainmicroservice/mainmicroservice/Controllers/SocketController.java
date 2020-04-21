@@ -1,6 +1,5 @@
 package com.mainmicroservice.mainmicroservice.Controllers;
 
-import Models.CleanConversationNotificationModel;
 import Models.ConversationNotificationModel;
 import Models.MessagesModel;
 import Models.NotificationModel;
@@ -68,10 +67,10 @@ public class SocketController {
         template.convertAndSend("/notification/",1006);
         System.out.println(model.toString());
     }
-
+/*
     @MessageMapping("dialog/cleanNotifications")
     @CrossOrigin(origins="http://localhost:4200")
-    public void cleanNotifications(CleanConversationNotificationModel cleanConversationNotificationModel) {
+    public void cleanNotifications(ConversationNotificationModel cleanConversationNotificationModel) {
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl("http://localhost:8088/cleanUserNotifications/").queryParam("userId",cleanConversationNotificationModel.getUserId()).
                                                                                                                             queryParam("dialogId",cleanConversationNotificationModel.getDialogId());
@@ -80,6 +79,6 @@ public class SocketController {
         ResponseEntity<String> res = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<String>() {});
         template.convertAndSend("/notificationCount/" + cleanConversationNotificationModel.getUserId(),res.getBody());
     }
-
+*/
 }
 

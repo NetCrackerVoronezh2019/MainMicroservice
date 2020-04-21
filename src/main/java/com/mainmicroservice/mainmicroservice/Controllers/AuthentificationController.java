@@ -78,7 +78,7 @@ public class AuthentificationController {
 		}
 		catch(Exception ex)
 		{
-			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(null,HttpStatus.OK);
 		}
 	}
 	
@@ -189,28 +189,24 @@ public class AuthentificationController {
 		UploadFilesModel files=new UploadFilesModel(keys.length);
 		for(int i=0;i<keys.length;i++)
 		{
-			files.allFiles[i]=new UploadFileModel(keys[i],regModel.allFiles.get(i));
+			files.allFiles[i]=new UploadFileModel(keys[i],regModel.allFiles.get(i).content,regModel.allFiles.get(i).contentType);
 		}
 		
+		if(us.getRole().getRoleName().equals("ROLE_TEACHER"))
+		{
+			RestTemplate restTemplate1 = new RestTemplate();
+			HttpEntity<UploadFilesModel> entity1 = new HttpEntity<UploadFilesModel>(files);
+			restTemplate1.exchange("http://localhost:1234/uploadCertificationFiles", HttpMethod.POST,entity1, Object.class);
+		}
 		
-		try
-		{
-			RestTemplate restTemplate = new RestTemplate();
-			HttpEntity<UploadFilesModel> entity = new HttpEntity<UploadFilesModel>(files);
-			restTemplate.exchange("http://localhost:1234/uploadCertificationFiles", HttpMethod.POST,entity, Object.class);
-		}
-		catch(Exception ex)
-		{
-			
-		}
-	 
 		UserModel usConversationModel = new UserModel(us);
-		RestTemplate restTemplate = new RestTemplate();
+		RestTemplate restTemplate2 = new RestTemplate();
 		HttpEntity<UserModel> entity = new HttpEntity<UserModel>(usConversationModel);
-		restTemplate.exchange("http://localhost:8088/createUser", HttpMethod.POST,entity, Object.class );
+		restTemplate2.exchange("http://localhost:8088/createUser", HttpMethod.POST,entity, Object.class );
 		UserAndGroupUserModel userAndGroupUserModel = new UserAndGroupUserModel(us);
 		HttpEntity<UserAndGroupUserModel> entityUG = new HttpEntity<UserAndGroupUserModel>(userAndGroupUserModel);
-		restTemplate.exchange("http://localhost:8090/createUser/", HttpMethod.POST,entityUG, Object.class );
+		restTemplate2.exchange("http://localhost:8090/createUser/", HttpMethod.POST,entityUG, Object.class );
+		
 		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+us.getActivateCode(), us.getEmail());
 		
 		return new ResponseEntity<>(us,HttpStatus.OK);

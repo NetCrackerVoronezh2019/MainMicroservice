@@ -26,9 +26,17 @@ public class AdvertisementModel {
 	private String surName;
 	private AdvertisementType type;
 	private Tag[] tags;
-	private String[] allFiles;
+	private FileModel[] allFiles;
+	private String[] attachments;
 
 	
+	
+	public String[] getAttachments() {
+		return attachments;
+	}
+	public void setAttachments(String[] attachments) {
+		this.attachments = attachments;
+	}
 	public Tag[] getTags() {
 		return tags;
 	}
@@ -36,10 +44,10 @@ public class AdvertisementModel {
 		this.tags = tags;
 	}
 	
-	public String[] getAllFiles() {
+	public FileModel[] getAllFiles() {
 		return allFiles;
 	}
-	public void setAllFiles(String[] allFiles) {
+	public void setAllFiles(FileModel[] allFiles) {
 		this.allFiles = allFiles;
 	}
 	

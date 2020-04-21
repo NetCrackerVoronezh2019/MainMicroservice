@@ -17,9 +17,18 @@ public class NotificationModel {
 	private NotificationResponseStatus responseStatus;
 	private NotificationStatus status;
 	private String message;
+	private String senderFIO;
 	private Long orderId;
 	
 	
+	public String getSenderFIO() {
+		return senderFIO;
+	}
+
+	public void setSenderFIO(String senderFIO) {
+		this.senderFIO = senderFIO;
+	}
+
 	public Long getOrderId() {
 		return orderId;
 	}

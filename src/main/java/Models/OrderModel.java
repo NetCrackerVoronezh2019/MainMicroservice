@@ -11,9 +11,37 @@ public class OrderModel {
 	private String advertisementName;
 	private String status;
 	private String nextStatus;
+	private String freelancerFIO;
+	private String customerFIO;
+	private double starsForWork;
+	private String comment;
 	
-	
-	
+
+	public String getComment() {
+		return comment;
+	}
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+	public double getStarsForWork() {
+		return starsForWork;
+	}
+	public void setStarsForWork(double starsForWork) {
+		this.starsForWork = starsForWork;
+	}
+	public String getFreelancerFIO() {
+		return freelancerFIO;
+	}
+	public void setFreelancerFIO(String freelancerFIO) {
+		this.freelancerFIO = freelancerFIO;
+	}
+	public String getCustomerFIO() {
+		return customerFIO;
+	}
+	public void setCustomerFIO(String customerFIO) {
+		this.customerFIO = customerFIO;
+	}
+
 	public String getNextStatus() {
 		return nextStatus;
 	}

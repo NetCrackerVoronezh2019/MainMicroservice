@@ -19,6 +19,7 @@ public class UserPageModel {
 	private String roleName;
 	private String userImageKey;
 	private Boolean isOnline;
+	private String[] documentKeys;
 	
 	
 	public static UserPageModel UserToModel(User user)
@@ -36,15 +37,29 @@ public class UserPageModel {
 		model.setRoleName(user.getRole().getRoleName());
 		model.setGender(user.getGender().toString());
 		LocalDateTime t=model.getLastTimeWasONLINE();
-		t=t.plusMinutes(2);
-		
-		if(LocalDateTime.now().isAfter(t))
-			model.setIsOnline(false);
-		else
-			model.setIsOnline(true);
+		model.setDocumentKeys(user.getCertKeysArray());
+		if(t!=null)
+		{
+			t=t.plusMinutes(2);
+			
+			if(LocalDateTime.now().isAfter(t))
+				model.setIsOnline(false);
+			else
+				model.setIsOnline(true);
+		}
 		return model;
 	}
 	
+	
+	
+	
+	public String[] getDocumentKeys() {
+		return documentKeys;
+	}
+
+	public void setDocumentKeys(String[] documentKeys) {
+		this.documentKeys = documentKeys;
+	}
 	
 	public Long getUserId() {
 		return userId;

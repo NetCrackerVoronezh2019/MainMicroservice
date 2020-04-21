@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import com.fasterxml.jackson.annotation.*;
 import Jacson.Views;
+import Models.FileModel;
 import Models.Enums.EducationLevel;
 import Models.Enums.Gender;
 
@@ -262,14 +263,14 @@ public class User {
 	}
 	
 	
-	public String[] setCerteficationKeys(List<String> keys)
+	public String[] setCerteficationKeys(List<FileModel> keys)
 	{
 		String str="";
 		String[] arr=new String[keys.size()];
 		String newKey="";
 		for(int i=0;i<keys.size();i++)
 		{
-		  	newKey="user"+this.getUserid()+"_certification"+i;
+		  	newKey="user"+this.getUserid()+"_"+keys.get(i).name;
 		  	arr[i]=newKey;
 		  	str+=newKey+",";
 		}
@@ -278,5 +279,9 @@ public class User {
 		return arr;
 	}
 	
+	public String[] getCertKeysArray()
+	{
+		return this.getCertificationKeys().split(",");
+	}
 
 }

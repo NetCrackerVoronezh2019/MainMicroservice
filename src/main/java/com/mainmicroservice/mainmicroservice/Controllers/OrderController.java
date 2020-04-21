@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -70,7 +71,20 @@ public class OrderController {
 		HttpEntity<UserOrdersModel> entity=new HttpEntity<>(myOrder);
 	    RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<List<OrderModel>> res=restTemplate.exchange("http://localhost:1122/getMyOrders",HttpMethod.POST,entity,new ParameterizedTypeReference<List<OrderModel>>(){});
-		return res;
+		List<OrderModel> orderModels=res.getBody();
+		for(OrderModel om:orderModels)
+		{
+			if(roleName.equals("ROLE_TEACHER"))
+			{	User userx=us.getUserById(om.getCustomerId());
+				om.setCustomerFIO(userx.getFirstname()+" "+userx.getLastname());
+			}
+			else
+			{
+				User userx=us.getUserById(om.getFreelancerId());
+				om.setFreelancerFIO(userx.getFirstname()+" "+userx.getLastname());
+			}
+		}
+		return new ResponseEntity<>(orderModels,HttpStatus.OK);
 	}
 	
 	@PostMapping("user/changeOrderStatus")
@@ -99,15 +113,16 @@ public class OrderController {
 		HttpEntity<RatingModel> entity=new HttpEntity<>(model);
 	    RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<Object> res=restTemplate.exchange("http://localhost:1122/changeRating",HttpMethod.POST,entity,Object.class);
-		ResponseEntity<Double> res1=restTemplate.exchange("http://localhost:1122/rating/"+model.getNotif().getSenderId(),HttpMethod.GET,null,Double.class);
-		User user=us.getUserById(model.getNotif().getSenderId());
+		ResponseEntity<Double> res1=restTemplate.exchange("http://localhost:1122/rating/"+model.getOrder().getFreelancerId(),HttpMethod.GET,null,Double.class);
+		User user=us.getUserById(model.getOrder().getFreelancerId());
 		if(res1.getBody()!=null)
 		{
 			user.setReiting(res1.getBody());
 			us.saveChanges(user);
 		}
-		ResponseEntity<Integer> res2=restTemplate.exchange("http://localhost:1122/getMyAllNotificationsSize/"+model.getNotif().getSenderId(),HttpMethod.GET,entity,new ParameterizedTypeReference<Integer>(){});
-	    template.convertAndSend("/notification/"+model.getNotif().getSenderId(),res2.getBody());
+		ResponseEntity<Integer> res2=restTemplate.exchange("http://localhost:1122/getMyAllNotificationsSize/"+model.getOrder().getFreelancerId(),HttpMethod.GET,entity,new ParameterizedTypeReference<Integer>(){});
+	    template.convertAndSend("/notification/"+model.getOrder().getFreelancerId(),res2.getBody());
+	    
 		return res;
 	
 	}
