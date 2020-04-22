@@ -1,6 +1,7 @@
 package Models;
 
 import java.util.Date;
+import java.util.List;
 
 public class MessagesModel {
 
@@ -11,6 +12,16 @@ public class MessagesModel {
     private UserModel sender;
     private boolean isModified;
 	private boolean isReaded;
+	private List<String> files;
+
+	public List<String> getFiles() {
+		return files;
+	}
+
+	public void setFiles(List<String> files) {
+		this.files = files;
+	}
+
 	public Integer getMessageId() {
 		return messageId;
 	}

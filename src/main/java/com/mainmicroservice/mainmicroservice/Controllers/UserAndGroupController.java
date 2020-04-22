@@ -10,6 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -26,6 +27,8 @@ public class UserAndGroupController {
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private UserService us;
+    @Autowired
+    private SimpMessagingTemplate template;
 
     @PutMapping("groups/settings")
     public void groupSettings(@RequestBody GroupModel groupModel) {
@@ -116,10 +119,9 @@ public class UserAndGroupController {
         String adderName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
         User user=us.findByEmail(adderName);
         RestTemplate restTemplate = new RestTemplate();
-        UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/createGroup/").queryParam("creatorId",user.getUserid()).
-                                                                                                                queryParam("groupName",groupModel.getName()).
-                                                                                                                queryParam("subjectName",groupModel.getSubjectName());
-        restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.POST, null, Object.class);
+        groupModel.setCreatorId(user.getUserid());
+        HttpEntity<GroupModel> groupModelHttpEntity = new HttpEntity<>(groupModel);
+        restTemplate.exchange("http://localhost:8090/createGroup/", HttpMethod.POST, groupModelHttpEntity, Object.class);
     }
 
     @PutMapping("users/settings")
@@ -291,6 +293,9 @@ public class UserAndGroupController {
         User user=us.findByEmail(adderName);
         UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/addToFriends").queryParam("ingoingId",ingoingId).queryParam("outgoingId",user.getUserid());
         restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.PUT, null, Object.class);
+        uriBuilder = UriComponentsBuilder.fromHttpUrl("http://localhost:8090/user/countNotifications").queryParam("userId", ingoingId);
+        ResponseEntity<String> res = restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.GET,null, new ParameterizedTypeReference<String>(){});
+        template.convertAndSend("/friends/" + ingoingId, res.getBody());
     }
 
     @PutMapping("friend/remove")
@@ -300,7 +305,34 @@ public class UserAndGroupController {
         User user=us.findByEmail(adderName);
         UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/removeFriend").queryParam("ingoingId",ingoingId).queryParam("outgoingId",user.getUserid());
         restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.PUT, null, Object.class);
+        uriBuilder = UriComponentsBuilder.fromHttpUrl("http://localhost:8090/user/countNotifications").queryParam("userId", ingoingId);
+        ResponseEntity<String> res = restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.GET,null, new ParameterizedTypeReference<String>(){});
+        template.convertAndSend("/friends/" + ingoingId, res.getBody());
     }
 
+    @GetMapping("user/friendsNotifications")
+    public String getFriendsNot(ServletRequest req) {
+        RestTemplate restTemplate = new RestTemplate();
+        String adderName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+        User user=us.findByEmail(adderName);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl("http://localhost:8090/user/countNotifications").queryParam("userId", user.getUserid());
+        ResponseEntity<String> res = restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.GET,null, new ParameterizedTypeReference<String>(){});
+        return res.getBody();
+    }
 
+    @DeleteMapping("user/cleanNotifications")
+    public void cleanNotifications(ServletRequest req) {
+        RestTemplate restTemplate = new RestTemplate();
+        String adderName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+        User user=us.findByEmail(adderName);
+        UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/user/cleanNotifications").queryParam("userId",user.getUserid());
+        restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.DELETE, null, Object.class);
+    }
+
+    @PutMapping("group/setAvatar")
+    public void setAvatar(@RequestBody GroupModel groupModel) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<GroupModel> groupModelHttpEntity = new HttpEntity<>(groupModel);
+        restTemplate.exchange("http://localhost:8090/group/setAvatar", HttpMethod.PUT,groupModelHttpEntity, Object.class );
+    }
 }

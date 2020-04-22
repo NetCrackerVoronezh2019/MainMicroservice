@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.mainmicroservice.mainmicroservice.Entities.Role;
+import com.mainmicroservice.mainmicroservice.Services.UserService;
 
 import Models.UserInfoModel;
 import io.jsonwebtoken.Claims;
@@ -42,6 +43,10 @@ public class JwtTokenProvider {
     
     @Autowired
     private UserDetailsService userDetailsService;
+    
+    @Autowired
+    
+    private UserService us;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -95,12 +100,15 @@ public class JwtTokenProvider {
     
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
+        if(userDetails!=null)
+        {
+        	
+        }
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
     
     
     public Authentication getAuthenticationForMicro(String token) {
-       // UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(new AuthMicroserviceDetails(), "", new AuthMicroserviceDetails().getAuthorities());
     }
     

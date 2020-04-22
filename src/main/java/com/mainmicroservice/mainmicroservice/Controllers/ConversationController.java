@@ -168,4 +168,25 @@ public class ConversationController {
 		ResponseEntity<?> res=restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.DELETE,null,Object.class);
 		return res;
 	}
+
+	@PutMapping("dialog/settings")
+	public void dialogSettings(@RequestBody DialogModel dialogModel) {
+		RestTemplate restTemplate = new RestTemplate();
+		HttpEntity<DialogModel> entity = new HttpEntity<DialogModel>(dialogModel);
+		restTemplate.exchange("http://localhost:8088/dialog/settings",HttpMethod.PUT,entity, Object.class );
+	}
+
+	@PutMapping("dialog/setAvatar")
+	public void setAvatar(@RequestBody DialogModel dialogModel) {
+		RestTemplate restTemplate = new RestTemplate();
+		HttpEntity<DialogModel> entity = new HttpEntity<DialogModel>(dialogModel);
+		restTemplate.exchange("http://localhost:8088/dialog/setAvatar",HttpMethod.PUT,entity, Object.class );
+	}
+
+	@PutMapping("dialog/setMessage")
+	public void messageSettings(@RequestBody MessagesModel messagesModel) {
+		RestTemplate restTemplate = new RestTemplate();
+		HttpEntity<MessagesModel> entity = new HttpEntity<MessagesModel>(messagesModel);
+		restTemplate.exchange("http://localhost:8088/dialog/setMessage",HttpMethod.PUT,entity, Object.class );
+	}
 }

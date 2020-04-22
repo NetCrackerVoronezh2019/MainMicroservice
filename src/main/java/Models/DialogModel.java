@@ -11,6 +11,15 @@ public class DialogModel {
 	 private Integer dialogId;
 	 private Integer countNotification;
 	 private String type;
+	 private String image;
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
 
 	public String getType() {
 		return type;

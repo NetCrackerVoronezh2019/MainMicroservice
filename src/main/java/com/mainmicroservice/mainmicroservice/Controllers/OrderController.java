@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import com.mainmicroservice.mainmicroservice.Services.UserService;
 
 import Models.ChangeOrderStatus;
 import Models.ChangeReiting;
+import Models.IsMyOrder;
 import Models.UserOrdersModel;
 import Models.Enums.OrderStatus;
 import Models.OrderModel;
@@ -48,6 +50,21 @@ public class OrderController {
 	
 	@Autowired
     private SimpMessagingTemplate template;
+	
+	
+	@PostMapping("user/isMyOrder")
+	public ResponseEntity<OrderModel> isMyOrder(@RequestBody @Valid IsMyOrder model,ServletRequest req)
+	{
+		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
+	    User user=us.findByEmail(userName);
+	    model.setUserId(user.getUserId());
+	    
+	    HttpEntity<IsMyOrder> entity=new HttpEntity<>(model);
+	    RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<OrderModel> res=restTemplate.exchange("http://localhost:1122/isMyOrder",HttpMethod.POST,entity,new ParameterizedTypeReference<OrderModel>(){});
+		return res;
+	    
+	}
 	
 	@PostMapping("user/getAccessibleStatuses")
 	public ResponseEntity<OrderStatus> getAccessibleStatuses(@RequestBody  @NotNull OrderModel model)

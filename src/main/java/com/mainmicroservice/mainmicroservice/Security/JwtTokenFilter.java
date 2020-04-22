@@ -29,7 +29,7 @@ public class JwtTokenFilter extends GenericFilterBean {
 	            Authentication auth = jwtTokenProvider.getAuthentication(token);
 	            if (auth != null) {
 	                SecurityContextHolder.getContext().setAuthentication(auth);
-	               
+	         
 	            }
 	        }
 	        else

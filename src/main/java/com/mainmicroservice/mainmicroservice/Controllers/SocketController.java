@@ -1,5 +1,6 @@
 package com.mainmicroservice.mainmicroservice.Controllers;
 
+import Models.CleanConversationNotificationModel;
 import Models.ConversationNotificationModel;
 import Models.MessagesModel;
 import Models.NotificationModel;
@@ -13,6 +14,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.mainmicroservice.mainmicroservice.Entities.User;
@@ -35,9 +38,9 @@ public class SocketController {
     @Autowired
 	private JwtTokenProvider tokenProvider;
 
-    @MessageMapping("/sendMessage/")
+    @PostMapping("/sendMessage/")
     @CrossOrigin(origins="http://localhost:4200")
-    public void sendMessage(MessagesModel messagesModel) {
+    public void sendMessage(@RequestBody MessagesModel messagesModel) {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<MessagesModel> entity = new HttpEntity<MessagesModel>(messagesModel);
         ResponseEntity<MessagesModel> messageResponseEntity = restTemplate.exchange("http://localhost:8088/sendMessage/", HttpMethod.POST,entity,new ParameterizedTypeReference<MessagesModel>(){});
@@ -67,10 +70,10 @@ public class SocketController {
         template.convertAndSend("/notification/",1006);
         System.out.println(model.toString());
     }
-/*
+
     @MessageMapping("dialog/cleanNotifications")
     @CrossOrigin(origins="http://localhost:4200")
-    public void cleanNotifications(ConversationNotificationModel cleanConversationNotificationModel) {
+    public void cleanNotifications(CleanConversationNotificationModel cleanConversationNotificationModel) {
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl("http://localhost:8088/cleanUserNotifications/").queryParam("userId",cleanConversationNotificationModel.getUserId()).
                                                                                                                             queryParam("dialogId",cleanConversationNotificationModel.getDialogId());
@@ -79,6 +82,6 @@ public class SocketController {
         ResponseEntity<String> res = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<String>() {});
         template.convertAndSend("/notificationCount/" + cleanConversationNotificationModel.getUserId(),res.getBody());
     }
-*/
+
 }
 

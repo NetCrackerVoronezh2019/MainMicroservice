@@ -19,7 +19,8 @@ public class AdvertisementModel {
 	private LocalDateTime dateOfPublication;
 	private String budget;
 	private String section;
-	private String[] imageKeys;
+	private FileModel coverImage;
+	private String coverImageKey;
 	private String content;
 	private String authorRole;
 	private String firstName;
@@ -31,6 +32,12 @@ public class AdvertisementModel {
 
 	
 	
+	public String getCoverImageKey() {
+		return coverImageKey;
+	}
+	public void setCoverImageKey(String coverImageKey) {
+		this.coverImageKey = coverImageKey;
+	}
 	public String[] getAttachments() {
 		return attachments;
 	}
@@ -52,6 +59,12 @@ public class AdvertisementModel {
 	}
 	
 	
+	public FileModel getCoverImage() {
+		return coverImage;
+	}
+	public void setCoverImage(FileModel coverImage) {
+		this.coverImage = coverImage;
+	}
 	public String getFirstName() {
 		return firstName;
 	}
@@ -96,12 +109,6 @@ public class AdvertisementModel {
 		this.deadline = deadline;
 	}
 
-	public String[] getImageKeys() {
-		return imageKeys;
-	}
-	public void setImageKeys(String[] imageKeys) {
-		this.imageKeys = imageKeys;
-	}
 	public String getSection() {
 		return section;
 	}
