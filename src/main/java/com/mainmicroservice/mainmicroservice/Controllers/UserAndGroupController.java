@@ -90,7 +90,14 @@ public class UserAndGroupController {
     public void makePost(@RequestBody PostModel postModel) {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<PostModel> postModelHttpEntity = new HttpEntity<>(postModel);
-        restTemplate.exchange("http://localhost:8090/groups/makePost", HttpMethod.POST,postModelHttpEntity, Object.class );
+        List<GroupNotificationsModel> res = restTemplate.exchange("http://localhost:8090/groups/makePost", HttpMethod.POST,postModelHttpEntity, new ParameterizedTypeReference<List<GroupNotificationsModel>>() {}).getBody();
+        for (GroupNotificationsModel not:
+             res) {
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl("http://localhost:8090/group/getNotificationsCount").queryParam("userId", not.getUserid());
+            ResponseEntity<String> c = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<String>() {
+            });
+            template.convertAndSend("/groupsNot/" + not.getUserid(),c.getBody());
+        }
     }
 
     @PutMapping("posts/redact")
@@ -334,5 +341,47 @@ public class UserAndGroupController {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<GroupModel> groupModelHttpEntity = new HttpEntity<>(groupModel);
         restTemplate.exchange("http://localhost:8090/group/setAvatar", HttpMethod.PUT,groupModelHttpEntity, Object.class );
+    }
+
+    @PutMapping("group/notificationsOn")
+    public void notificationsOn(ServletRequest req,@RequestParam Long groupId) {
+        String adderName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+        User user=us.findByEmail(adderName);
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/group/notificationOn").queryParam("userId",user.getUserid()).queryParam("groupId",groupId);
+        restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.PUT, null, Object.class);
+    }
+
+    @PutMapping("group/notificationsOff")
+    public void notificationsOff(ServletRequest req,@RequestParam Long groupId) {
+        String adderName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+        User user=us.findByEmail(adderName);
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/group/notificationsOff").queryParam("userId",user.getUserid()).queryParam("groupId",groupId);
+        restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.PUT, null, Object.class);
+    }
+
+    @GetMapping("groups/notificationsCount")
+    public String groupNotifications(ServletRequest req) {
+        RestTemplate restTemplate = new RestTemplate();
+        String adderName = this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+        User user = us.findByEmail(adderName);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl("http://localhost:8090/group/getNotificationsCount").queryParam("userId", user.getUserid());
+        ResponseEntity<String> res = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<String>() {
+        });
+        return res.getBody();
+    }
+
+    @DeleteMapping("group/cleanNotifications")
+    public void cleanGroupNotifications(ServletRequest req, @RequestParam Long groupId) {
+        RestTemplate restTemplate = new RestTemplate();
+        String adderName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+        User user=us.findByEmail(adderName);
+        UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/group/cleanNotifications").queryParam("userId",user.getUserid()).queryParam("groupId",groupId);
+        restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.DELETE, null, Object.class);
+        uriBuilder = UriComponentsBuilder.fromHttpUrl("http://localhost:8090/group/getNotificationsCount").queryParam("userId", user.getUserid());
+        ResponseEntity<String> c = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<String>() {
+        });
+        template.convertAndSend("/groupsNot/" + user.getUserid(),c.getBody());
     }
 }

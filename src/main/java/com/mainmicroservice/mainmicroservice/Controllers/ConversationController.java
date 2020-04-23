@@ -28,7 +28,6 @@ public class ConversationController {
 	private JwtTokenProvider jwtTokenProvider;
 	@Autowired
     private UserService us;
-
 	
 
 	@GetMapping("user/getDialogMembers/")
@@ -109,7 +108,7 @@ public class ConversationController {
 	}
 	
 	@GetMapping("user/getUserDialogs/")
-	public ResponseEntity<List<DialogModel>> getUserDialogs(ServletRequest req)
+	public ResponseEntity<List<DialogModel>> getUserDialogs(@RequestParam(required = false) String type, ServletRequest req)
 	{
 		RestTemplate restTemplate = new RestTemplate();
 		String port="8088";
@@ -118,6 +117,9 @@ public class ConversationController {
 		User user=us.findByEmail(userName);
 		int userId=(int)(long)user.getUserid();
 		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:"+port+route).queryParam("userId", userId);
+		if (type != null) {
+			uriBuilder.queryParam("type",type);
+		}
 		ResponseEntity<List<DialogModel>> res=restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.GET,null,new ParameterizedTypeReference<List<DialogModel>>(){});
 		return res;
 	}

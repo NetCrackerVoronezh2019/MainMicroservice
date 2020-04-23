@@ -106,6 +106,31 @@ public class AdvertisementController {
 		return new ResponseEntity<>(not,HttpStatus.OK);	
 	}
 	
+	
+	@GetMapping("getCommonNots/{senderId}") 
+	public ResponseEntity<List<NotificationModel>> getCommon(@PathVariable Long senderId,ServletRequest req)
+	{
+
+		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
+	    User user=us.findByEmail(userName);
+	    Long id=user.getUserid();
+	    
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<List<NotificationModel>> res=restTemplate.exchange("http://localhost:1122/getCommonNots/"+senderId+"/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<List<NotificationModel>>(){});
+		List<NotificationModel> not=res.getBody();
+		for(NotificationModel model:not)
+		{	
+			Long id1=model.getAddresseeId();
+			Long id2=model.getSenderId();
+			User sender=this.us.getUserById(id2);
+			model.setAddresseeUsername(this.us.getUserById(id1).getEmail());
+			model.setSenderUsername(sender.getEmail());	
+			model.setSenderFIO(sender.getFirstname()+" "+sender.getLastname());
+			model.generateMessage();
+		}	
+		return new ResponseEntity<>(not,HttpStatus.OK);	
+	}
+	
 	@PostMapping("user/newNotification")
 	public ResponseEntity<?> newNotification(@RequestBody NotificationModel model,ServletRequest req)
 	{

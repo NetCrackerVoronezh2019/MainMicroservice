@@ -202,7 +202,7 @@ public class AuthentificationController {
 			files.allFiles[i]=new UploadFileModel(keys[i],regModel.allFiles.get(i).content,regModel.allFiles.get(i).contentType);
 		}
 		
-		/*
+		
 		if(user.getRole().getRoleName().equals("ROLE_TEACHER"))
 		{
 			RestTemplate restTemplate1 = new RestTemplate();
@@ -218,7 +218,7 @@ public class AuthentificationController {
 		UserAndGroupUserModel userAndGroupUserModel = new UserAndGroupUserModel(user);
 		HttpEntity<UserAndGroupUserModel> entityUG = new HttpEntity<UserAndGroupUserModel>(userAndGroupUserModel);
 		restTemplate2.exchange("http://localhost:8090/createUser/", HttpMethod.POST,entityUG, Object.class );
-		*/
+		
 		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+user.getActivateCode(), user.getEmail());
 		
 		return new ResponseEntity<>(us,HttpStatus.OK);

@@ -116,7 +116,7 @@ public class AdminController {
 			return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
-	@GetMapping("user/getAllUsers")
+	@GetMapping("admin/getAllUsers")
 	@JsonView(Views.UserInfoForChangeProps.class)
 	public ResponseEntity<List<User>> getAllUsers()
 	{

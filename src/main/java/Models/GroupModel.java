@@ -7,6 +7,8 @@ public class GroupModel {
     private Long creatorId;
     private String subjectName;
     private String image;
+    private boolean isNotificationsOn;
+    private Integer countNot;
 
     public String getImage() {
         return image;
@@ -14,6 +16,22 @@ public class GroupModel {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public boolean isNotificationsOn() {
+        return isNotificationsOn;
+    }
+
+    public Integer getCountNot() {
+        return countNot;
+    }
+
+    public void setCountNot(Integer countNot) {
+        this.countNot = countNot;
+    }
+
+    public void setNotificationsOn(boolean notificationsOn) {
+        isNotificationsOn = notificationsOn;
     }
 
     public String getSubjectName() {

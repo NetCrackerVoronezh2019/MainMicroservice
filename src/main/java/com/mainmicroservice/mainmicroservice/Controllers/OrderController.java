@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,13 +53,22 @@ public class OrderController {
     private SimpMessagingTemplate template;
 	
 	
+	@GetMapping("getFreelancerAllFeedBack/{id}")
+	public ResponseEntity<List<OrderModel>> getFreelancerAllFeedBack(@PathVariable Long id,ServletRequest req)
+	{
+	
+	    RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<List<OrderModel>> res=restTemplate.exchange("http://localhost:1122/getFreelancerAllFeedBack/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<List<OrderModel>>(){});
+		return res;
+	    
+	}
+	
 	@PostMapping("user/isMyOrder")
 	public ResponseEntity<OrderModel> isMyOrder(@RequestBody @Valid IsMyOrder model,ServletRequest req)
 	{
 		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
 	    User user=us.findByEmail(userName);
 	    model.setUserId(user.getUserId());
-	    
 	    HttpEntity<IsMyOrder> entity=new HttpEntity<>(model);
 	    RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<OrderModel> res=restTemplate.exchange("http://localhost:1122/isMyOrder",HttpMethod.POST,entity,new ParameterizedTypeReference<OrderModel>(){});

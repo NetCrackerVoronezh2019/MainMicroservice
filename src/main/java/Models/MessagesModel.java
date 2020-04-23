@@ -13,6 +13,15 @@ public class MessagesModel {
     private boolean isModified;
 	private boolean isReaded;
 	private List<String> files;
+	private List<String> names;
+
+	public List<String> getNames() {
+		return names;
+	}
+
+	public void setNames(List<String> names) {
+		this.names = names;
+	}
 
 	public List<String> getFiles() {
 		return files;

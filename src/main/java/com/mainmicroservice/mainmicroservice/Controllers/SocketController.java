@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -40,12 +41,12 @@ public class SocketController {
 
     @PostMapping("/sendMessage/")
     @CrossOrigin(origins="http://localhost:4200")
-    public void sendMessage(@RequestBody MessagesModel messagesModel) {
+    public ResponseEntity<?>  sendMessage(@RequestBody MessagesModel messagesModel) {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<MessagesModel> entity = new HttpEntity<MessagesModel>(messagesModel);
         ResponseEntity<MessagesModel> messageResponseEntity = restTemplate.exchange("http://localhost:8088/sendMessage/", HttpMethod.POST,entity,new ParameterizedTypeReference<MessagesModel>(){});
-        template.convertAndSend("/dialog/" + messagesModel.getDialog(),messagesModel);
         messagesModel= messageResponseEntity.getBody();
+        template.convertAndSend("/dialog/" + messagesModel.getDialog(),messagesModel);
         UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8088/getMessageNotifications/").queryParam("messageId", messagesModel.getMessageId());
         ResponseEntity<List<ConversationNotificationModel>> notificationListResponseEntity= restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<ConversationNotificationModel>>() {});
         List<ConversationNotificationModel> notifications = notificationListResponseEntity.getBody();
@@ -56,7 +57,7 @@ public class SocketController {
         	ResponseEntity<String> res = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<String>() {});
         	template.convertAndSend("/notificationCount/" + n.getUserId(),res.getBody());
         }
-        
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
     
     
