@@ -139,16 +139,17 @@ public class OrderController {
 	{
 		HttpEntity<RatingModel> entity=new HttpEntity<>(model);
 	    RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<Object> res=restTemplate.exchange("http://localhost:1122/changeRating",HttpMethod.POST,entity,Object.class);
-		ResponseEntity<Double> res1=restTemplate.exchange("http://localhost:1122/rating/"+model.getOrder().getFreelancerId(),HttpMethod.GET,null,Double.class);
-		User user=us.getUserById(model.getOrder().getFreelancerId());
+	    ResponseEntity<OrderModel> res=restTemplate.exchange("http://localhost:1122/changeRating",HttpMethod.POST,entity,OrderModel.class);
+	    OrderModel orderModel=res.getBody();
+		ResponseEntity<Double> res1=restTemplate.exchange("http://localhost:1122/rating/"+orderModel.getFreelancerId(),HttpMethod.GET,null,Double.class);
+		User user=us.getUserById(orderModel.getFreelancerId());
 		if(res1.getBody()!=null)
 		{
 			user.setReiting(res1.getBody());
 			us.saveChanges(user);
 		}
-		ResponseEntity<Integer> res2=restTemplate.exchange("http://localhost:1122/getMyAllNotificationsSize/"+model.getOrder().getFreelancerId(),HttpMethod.GET,entity,new ParameterizedTypeReference<Integer>(){});
-	    template.convertAndSend("/notification/"+model.getOrder().getFreelancerId(),res2.getBody());
+		ResponseEntity<Integer> res2=restTemplate.exchange("http://localhost:1122/getMyAllNotificationsSize/"+orderModel.getFreelancerId(),HttpMethod.GET,entity,new ParameterizedTypeReference<Integer>(){});
+	    template.convertAndSend("/notification/"+orderModel.getFreelancerId(),res2.getBody());
 	    
 		return res;
 	

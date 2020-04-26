@@ -124,6 +124,14 @@ public class AdminController {
 		return new ResponseEntity<>(list,HttpStatus.OK);
 	}
 	
+	
+	@GetMapping("getAllUsers")
+	public ResponseEntity<List<User>> allUsers()
+	{
+		List<User> list=this.userService.getAllUsers();
+		return new ResponseEntity<>(list,HttpStatus.OK);
+	}
+	
 	@GetMapping("getUser/{userId}")
 	public ResponseEntity<UserPageModel> getUser(@PathVariable Long userId,ServletRequest req)
 	{

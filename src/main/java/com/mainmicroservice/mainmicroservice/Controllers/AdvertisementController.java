@@ -84,17 +84,18 @@ public class AdvertisementController {
 	}
 	
 	@GetMapping("user/getMyAllNotifications") 
-	public ResponseEntity<List<NotificationModel>> getAllNotifications(ServletRequest req)
+	public ResponseEntity<List<FullNotificationModel>> getAllNotifications(ServletRequest req)
 	{
 
 		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
 	    User user=us.findByEmail(userName);
 	    Long id=user.getUserid();
 		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<List<NotificationModel>> res=restTemplate.exchange("http://localhost:1122/getMyAllNotifications/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<List<NotificationModel>>(){});
-		List<NotificationModel> not=res.getBody();
-		for(NotificationModel model:not)
+		ResponseEntity<List<FullNotificationModel>> res=restTemplate.exchange("http://localhost:1122/getMyAllNotifications/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<List<FullNotificationModel>>(){});
+		List<FullNotificationModel> not=res.getBody();
+		for(FullNotificationModel fullModel:not)
 		{	
+			NotificationModel model=fullModel.getNotification();
 			Long id1=model.getAddresseeId();
 			Long id2=model.getSenderId();
 			User sender=this.us.getUserById(id2);
@@ -102,6 +103,8 @@ public class AdvertisementController {
 			model.setSenderUsername(sender.getEmail());	
 			model.setSenderFIO(sender.getFirstname()+" "+sender.getLastname());
 			model.generateMessage();
+			model.setUserImageKey(sender.getUserImageKey());
+			fullModel.setNotification(model);
 		}	
 		return new ResponseEntity<>(not,HttpStatus.OK);	
 	}

@@ -11,6 +11,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -143,9 +144,20 @@ public class AuthentificationController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
     
+	
+	@GetMapping("checkEmail/{email}")
+	public ResponseEntity<Boolean> checkEmail(@PathVariable @NotNull String email)
+	{
+		User user=us.findByEmail(email);
+		if(user==null)
+			return new ResponseEntity<>(Boolean.FALSE,HttpStatus.OK);
+		
+		return new ResponseEntity<>(Boolean.TRUE,HttpStatus.OK);
+		
+	}
 	   
     @PostMapping("signIn")
-    public ResponseEntity<?> signIn(@RequestBody SignInModel signIn,ServletResponse response) {
+    public ResponseEntity<AuthModel> signIn(@RequestBody SignInModel signIn,ServletResponse response) {
     	
     	try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signIn.email, signIn.password));
@@ -156,14 +168,18 @@ public class AuthentificationController {
             us.saveChanges(user);
             String token = jwtTokenProvider.createToken(signIn.email, roles);
             AuthModel am=new AuthModel(signIn.email,token);
-            return new ResponseEntity<>(am,HttpStatus.OK);
+            if(user.IsActivate==true)
+            	return new ResponseEntity<>(am,HttpStatus.OK);
+            else
+            	return new ResponseEntity<>(new AuthModel("Ваш аккаунт не активирован"),HttpStatus.BAD_REQUEST);
+            	
     	}
     	catch(AuthenticationException ex)
     	{
-      		HttpHeaders httpHeaders = new HttpHeaders();
-      	    httpHeaders.add("ErrorMessage", "error");
-    		return new ResponseEntity<>(httpHeaders,HttpStatus.FORBIDDEN);
+      		//System.out.println(ex.);
+    		return new ResponseEntity<>(new AuthModel(ex.getMessage()),HttpStatus.BAD_REQUEST);
     	}
+    	
     }
 	
 	
@@ -211,6 +227,7 @@ public class AuthentificationController {
 		}
 		
 		
+		try {
 		UserModel usConversationModel = new UserModel(user);
 		RestTemplate restTemplate2 = new RestTemplate();
 		HttpEntity<UserModel> entity = new HttpEntity<UserModel>(usConversationModel);
@@ -218,7 +235,11 @@ public class AuthentificationController {
 		UserAndGroupUserModel userAndGroupUserModel = new UserAndGroupUserModel(user);
 		HttpEntity<UserAndGroupUserModel> entityUG = new HttpEntity<UserAndGroupUserModel>(userAndGroupUserModel);
 		restTemplate2.exchange("http://localhost:8090/createUser/", HttpMethod.POST,entityUG, Object.class );
-		
+		}
+		catch(Exception ex)
+		{
+			
+		}
 		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+user.getActivateCode(), user.getEmail());
 		
 		return new ResponseEntity<>(us,HttpStatus.OK);

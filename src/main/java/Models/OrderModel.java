@@ -15,8 +15,17 @@ public class OrderModel {
 	private String customerFIO;
 	private double starsForWork;
 	private String comment;
+	private AdvertisementModel advertisement;
+	
+	
 	
 
+	public AdvertisementModel getAdvertisement() {
+		return advertisement;
+	}
+	public void setAdvertisement(AdvertisementModel advertisement) {
+		this.advertisement = advertisement;
+	}
 	public String getComment() {
 		return comment;
 	}

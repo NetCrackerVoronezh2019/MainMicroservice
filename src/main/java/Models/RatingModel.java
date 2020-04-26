@@ -3,7 +3,7 @@ package Models;
 public class RatingModel {
 	
 	private double rating;
-	private OrderModel order;
+	private Long orderId;
 	private String comment;
 	
 	public String getComment() {
@@ -18,12 +18,13 @@ public class RatingModel {
 	public void setRating(double rating) {
 		this.rating = rating;
 	}
-	public OrderModel getOrder() {
-		return order;
+	public Long getOrderId() {
+		return orderId;
 	}
-	public void setOrder(OrderModel order) {
-		this.order = order;
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
 	}
+	
 	
 	
 	

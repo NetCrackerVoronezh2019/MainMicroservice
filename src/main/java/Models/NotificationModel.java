@@ -19,8 +19,19 @@ public class NotificationModel {
 	private String message;
 	private String senderFIO;
 	private Long orderId;
+	private String userImageKey;
 	
 	
+	
+	
+	public String getUserImageKey() {
+		return userImageKey;
+	}
+
+	public void setUserImageKey(String userImageKey) {
+		this.userImageKey = userImageKey;
+	}
+
 	public String getSenderFIO() {
 		return senderFIO;
 	}
