@@ -7,6 +7,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+
+import javax.mail.MessagingException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +32,7 @@ import com.mainmicroservice.mainmicroservice.Services.MailService;
 import com.mainmicroservice.mainmicroservice.Services.UserDocumentService;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 import Models.*;
+import Models.Enums.TeacherStatus;
 
 
 
@@ -184,7 +187,7 @@ public class AuthentificationController {
 	
 	
     @PostMapping("/registration")
-	public ResponseEntity<?> registation( @RequestBody @Valid RegistrationModel regModel)
+	public ResponseEntity<?> registation( @RequestBody @Valid RegistrationModel regModel) throws MessagingException
 	{
     	
 		User user=new User();
@@ -200,6 +203,10 @@ public class AuthentificationController {
 		if(regModel.role.equals("TEACHER"))
 		{
 			user.setAboutMe(regModel.aboutMe);
+			if(regModel.allFiles.size()!=0)
+				user.setTeacherStatus(TeacherStatus.CERTIFICATES_ARE_NOT_CHECKED);
+			if(regModel.allFiles.size()==0)
+				user.setTeacherStatus(TeacherStatus.EMPTY);
 			user.setEducationLevel(regModel.education);
 			user.setReiting(4.0);
 		}
@@ -219,6 +226,7 @@ public class AuthentificationController {
 		}
 		
 		
+		try {
 		if(user.getRole().getRoleName().equals("ROLE_TEACHER"))
 		{
 			RestTemplate restTemplate1 = new RestTemplate();
@@ -227,7 +235,7 @@ public class AuthentificationController {
 		}
 		
 		
-		try {
+		
 		UserModel usConversationModel = new UserModel(user);
 		RestTemplate restTemplate2 = new RestTemplate();
 		HttpEntity<UserModel> entity = new HttpEntity<UserModel>(usConversationModel);
@@ -240,7 +248,7 @@ public class AuthentificationController {
 		{
 			
 		}
-		ms.SendMessage("Registration", "Код для активации - http://localhost:4200/activate/"+user.getActivateCode(), user.getEmail());
+		ms.SendMessage("Registration", "http://localhost:4200/activate/"+user.getActivateCode(), user.getEmail(),user.getFirstname());
 		
 		return new ResponseEntity<>(us,HttpStatus.OK);
 		

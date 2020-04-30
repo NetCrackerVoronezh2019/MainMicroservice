@@ -1,5 +1,9 @@
 package Models;
 
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import Models.Enums.AdvertisementNotificationType;
 import Models.Enums.NotificationResponseStatus;
 import Models.Enums.NotificationStatus;
@@ -19,11 +23,32 @@ public class NotificationModel {
 	private String message;
 	private String senderFIO;
 	private Long orderId;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	private LocalDateTime date;
 	private String userImageKey;
+	private String certificateName;
 	
 	
 	
 	
+	
+	
+	public LocalDateTime getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDateTime date) {
+		this.date = date;
+	}
+
+	public String getCertificateName() {
+		return certificateName;
+	}
+
+	public void setCertificateName(String certificateName) {
+		this.certificateName = certificateName;
+	}
+
 	public String getUserImageKey() {
 		return userImageKey;
 	}
@@ -116,6 +141,14 @@ public class NotificationModel {
 								else
 									if(type==AdvertisementNotificationType.CHANGE_REITING)
 										this.setMessage("оценил вашу работу");
+									else
+									
+										if(type==AdvertisementNotificationType.ACCEPTED_CERTIFICATION)
+											this.setMessage("принял сертификат");
+										else
+											
+											if(type==AdvertisementNotificationType.REJECTED_CERTIFICATION)
+												this.setMessage("отклонил сертификат");
 									
 						
 		}

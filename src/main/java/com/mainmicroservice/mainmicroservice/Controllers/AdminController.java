@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import javax.validation.Valid;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.mainmicroservice.mainmicroservice.Entities.*;
 import com.mainmicroservice.mainmicroservice.Repositories.RoleRepository;
+import com.mainmicroservice.mainmicroservice.Repositories.UserRepository;
 import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 import com.mainmicroservice.mainmicroservice.Services.RoleService;
 import com.mainmicroservice.mainmicroservice.Services.UserDocumentService;
@@ -25,9 +27,11 @@ import com.mainmicroservice.mainmicroservice.Services.UserService;
 
 import Jacson.Views;
 import Models.AdvertisementModel;
+import Models.CertificationNotModel;
 import Models.ChangeDocumentValid;
 import Models.UserPageModel;
 import Models.UserProp;
+import Models.Enums.AdvertisementNotificationType;
 
 @RestController
 @CrossOrigin(origins="http://localhost:4200")
@@ -35,6 +39,10 @@ public class AdminController {
 
 	@Autowired
     private UserService userService;
+
+	
+	@Autowired
+    private UserRepository userRep;;
 
 	@Autowired 
 	private RoleService roleService;
@@ -57,12 +65,65 @@ public class AdminController {
 	}
 	
 	
+	@GetMapping("getAllValidDocuments/{userId}")
+	public ResponseEntity<List<UserDocument>> getUserValidDocuments(@PathVariable Long userId)
+	{
+		
+		User us=this.userService.getUserById(userId);
+		if(us!=null)
+		{
+			List<UserDocument> documents=us.getDocuments();
+			if(documents!=null)
+				documents=documents.stream().filter(d->d.getIsValid()==Boolean.TRUE)
+									.collect(Collectors.toList());
+			return new ResponseEntity<>(documents,HttpStatus.OK);
+		}
+		
+		return new ResponseEntity<>(null,HttpStatus.OK);
+	
+	}
+	
+	
 	@GetMapping("getAllUnValidDocuments")
 	public ResponseEntity<List<UserDocument>> getAllUnValidDocuments()
 	{
 		List<UserDocument> documents=this.udService.findAllUnValidDocuments();
 		return new ResponseEntity<>(documents,HttpStatus.OK);
 		
+	}
+	
+	@GetMapping("getAllTeachers")
+	public List<User> getAllDocuments()
+	{
+		return this.userRep.findByRoleId();
+	}
+	
+	@PostMapping("saveUserChanges")
+	public void saveChanges(@RequestBody User user)
+	{
+		User newUser=userService.findByEmail(user.getEmail());
+		List<CertificationNotModel> certList=new ArrayList<>();
+		newUser.setDocuments(user.getDocuments());
+		for(UserDocument doc:newUser.getDocuments())
+		{
+			doc.setUser(user);
+			
+			CertificationNotModel not=new CertificationNotModel();
+			not.setAddresseeId(newUser.getUserId());
+			not.setCertificateName(doc.getDocumentKey());
+			if(doc.getIsValid())
+				not.setType(AdvertisementNotificationType.ACCEPTED_CERTIFICATION);
+			if(!doc.getIsValid())
+				not.setType(AdvertisementNotificationType.REJECTED_CERTIFICATION);
+			certList.add(not);
+			
+		}
+		
+		newUser=this.userService.setTeacherStatus(newUser);
+		this.userService.saveChanges(newUser);
+		RestTemplate restTemplate=new RestTemplate();
+	    HttpEntity<List<CertificationNotModel>> entity=new HttpEntity<>(certList);
+		ResponseEntity<Object> res= restTemplate.exchange("http://localhost:1122/certificationNotification",HttpMethod.POST,entity,Object.class);
 	}
 	
 	

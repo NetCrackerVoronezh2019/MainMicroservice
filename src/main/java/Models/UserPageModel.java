@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.mainmicroservice.mainmicroservice.Entities.User;
 
+import Models.Enums.TeacherStatus;
+
 public class UserPageModel {
 	private Long userId;
 	private String firstname;
@@ -20,6 +22,7 @@ public class UserPageModel {
 	private String roleName;
 	private String userImageKey;
 	private Boolean isOnline;
+	private TeacherStatus teacherStatus;
 	private List<String> documentKeys;
 	
 	
@@ -34,6 +37,7 @@ public class UserPageModel {
 		model.setLastTimeWasONLINE(user.getLastTimeWasONLINE());
 		model.setAboutMe(user.getAboutMe());
 		model.setUserImageKey(user.getUserImageKey());
+		model.setTeacherStatus(user.getTeacherStatus());
 		model.setBirthDate(user.getBirthDate().toString());
 		model.setRoleName(user.getRole().getRoleName());
 		model.setGender(user.getGender().toString());
@@ -55,6 +59,17 @@ public class UserPageModel {
 	public List<String> getDocumentKeys() {
 		return documentKeys;
 	}
+	
+	
+	public TeacherStatus getTeacherStatus() {
+		return teacherStatus;
+	}
+
+
+	public void setTeacherStatus(TeacherStatus teacherStatus) {
+		this.teacherStatus = teacherStatus;
+	}
+
 
 	public void setDocumentKeys(List<String> documentKeys) {
 		this.documentKeys = documentKeys;

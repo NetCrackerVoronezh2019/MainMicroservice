@@ -1,6 +1,7 @@
 package com.mainmicroservice.mainmicroservice.Controllers;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.*;
@@ -21,6 +22,7 @@ import com.mainmicroservice.mainmicroservice.Kafka.Microservices;
 import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 import Models.*;
+import Models.Enums.AdvertisementNotificationType;
 
 
 @RestController
@@ -96,22 +98,31 @@ public class AdvertisementController {
 		for(FullNotificationModel fullModel:not)
 		{	
 			NotificationModel model=fullModel.getNotification();
+			if(fullModel.getNotification().getType()!=AdvertisementNotificationType.ACCEPTED_CERTIFICATION
+					&& fullModel.getNotification().getType()!=AdvertisementNotificationType.REJECTED_CERTIFICATION)
+			{
+			
 			Long id1=model.getAddresseeId();
 			Long id2=model.getSenderId();
 			User sender=this.us.getUserById(id2);
 			model.setAddresseeUsername(this.us.getUserById(id1).getEmail());
 			model.setSenderUsername(sender.getEmail());	
 			model.setSenderFIO(sender.getFirstname()+" "+sender.getLastname());
-			model.generateMessage();
 			model.setUserImageKey(sender.getUserImageKey());
+			
+			}
+			
+			model.generateMessage();
 			fullModel.setNotification(model);
 		}	
+		
+		Collections.reverse(not);
 		return new ResponseEntity<>(not,HttpStatus.OK);	
 	}
 	
 	
 	@GetMapping("getCommonNots/{senderId}") 
-	public ResponseEntity<List<NotificationModel>> getCommon(@PathVariable Long senderId,ServletRequest req)
+	public ResponseEntity<List<FullNotificationModel>> getCommon(@PathVariable Long senderId,ServletRequest req)
 	{
 
 		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
@@ -119,17 +130,17 @@ public class AdvertisementController {
 	    Long id=user.getUserid();
 	    
 		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<List<NotificationModel>> res=restTemplate.exchange("http://localhost:1122/getCommonNots/"+senderId+"/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<List<NotificationModel>>(){});
-		List<NotificationModel> not=res.getBody();
-		for(NotificationModel model:not)
+		ResponseEntity<List<FullNotificationModel>> res=restTemplate.exchange("http://localhost:1122/getCommonNots/"+senderId+"/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<List<FullNotificationModel>>(){});
+		List<FullNotificationModel> not=res.getBody();
+		for(FullNotificationModel model:not)
 		{	
-			Long id1=model.getAddresseeId();
-			Long id2=model.getSenderId();
+			Long id1=model.getNotification().getAddresseeId();
+			Long id2=model.getNotification().getSenderId();
 			User sender=this.us.getUserById(id2);
-			model.setAddresseeUsername(this.us.getUserById(id1).getEmail());
-			model.setSenderUsername(sender.getEmail());	
-			model.setSenderFIO(sender.getFirstname()+" "+sender.getLastname());
-			model.generateMessage();
+			model.getNotification().setAddresseeUsername(this.us.getUserById(id1).getEmail());
+			model.getNotification().setSenderUsername(sender.getEmail());	
+			model.getNotification().setSenderFIO(sender.getFirstname()+" "+sender.getLastname());
+			model.getNotification().generateMessage();
 		}	
 		return new ResponseEntity<>(not,HttpStatus.OK);	
 	}

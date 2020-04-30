@@ -14,6 +14,7 @@ import Jacson.Views;
 import Models.FileModel;
 import Models.Enums.EducationLevel;
 import Models.Enums.Gender;
+import Models.Enums.TeacherStatus;
 
 @Entity
 @Table(name = "USERS")
@@ -67,6 +68,12 @@ public class User {
 	@Enumerated(EnumType.STRING) 
 	private Gender gender;
 	
+	@Column(name="TEACHERSTATUS")
+	@JsonView(Views.UserInfoForChangeProps.class)
+	@Enumerated(EnumType.STRING) 
+	private TeacherStatus teacherStatus;
+	
+	@JsonIgnore
 	@Column(name="PASSWORD")
 	private String password;
 	
@@ -97,20 +104,21 @@ public class User {
 	
 	
 	
-	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL,
 		    fetch = FetchType.EAGER,
 		    mappedBy = "user")
 	private List<UserDocument> documents=new ArrayList<>();
 	
 	
-	@JsonGetter("documents")
+	//@JsonGetter("documents")
 	public List<String> documentsKeys()
 	{
 		return this.getDocuments().stream()
 			.map(d->d.getDocumentKey())
 			.collect(Collectors.toList());
 	}
+	
+	
 	
 	public List<UserDocument> getDocuments() {
 		return documents;
@@ -152,6 +160,18 @@ public class User {
 	}
 
 	
+	public TeacherStatus getTeacherStatus() {
+		return teacherStatus;
+	}
+
+
+
+	public void setTeacherStatus(TeacherStatus teacherStatus) {
+		this.teacherStatus = teacherStatus;
+	}
+
+
+
 	public String getAboutMe() {
 		return aboutMe;
 	}

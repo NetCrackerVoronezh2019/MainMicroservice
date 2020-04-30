@@ -31,6 +31,7 @@ import com.mainmicroservice.mainmicroservice.Services.UserService;
 import Models.ChangeOrderStatus;
 import Models.ChangeReiting;
 import Models.IsMyOrder;
+import Models.MyOrderModel;
 import Models.UserOrdersModel;
 import Models.Enums.OrderStatus;
 import Models.OrderModel;
@@ -59,7 +60,16 @@ public class OrderController {
 	
 	    RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<List<OrderModel>> res=restTemplate.exchange("http://localhost:1122/getFreelancerAllFeedBack/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<List<OrderModel>>(){});
-		return res;
+		List<OrderModel> orders=res.getBody();
+		for(OrderModel om:orders)
+		{
+
+				User userx=us.getUserById(om.getCustomerId());
+				om.setCustomerFIO(userx.getFirstname()+" "+userx.getLastname());
+				om.setCustomerImageKey(userx.getUserImageKey());
+
+		}
+		return new ResponseEntity<>(orders,HttpStatus.OK);
 	    
 	}
 	
@@ -73,6 +83,34 @@ public class OrderController {
 	    RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<OrderModel> res=restTemplate.exchange("http://localhost:1122/isMyOrder",HttpMethod.POST,entity,new ParameterizedTypeReference<OrderModel>(){});
 		return res;
+	    
+	}
+	
+	@PostMapping("user/getUserOrdersByOrderStatus")
+	public ResponseEntity<List<OrderModel>> getUserOrdersByOrderStatus(@RequestBody MyOrderModel model,ServletRequest req)
+	{
+		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
+	    User user=us.findByEmail(userName);
+	    String roleName=user.getRole().getRoleName();
+	    model.setMyId(user.getUserId());
+	    model.setRole(user.getRole().getRoleName());
+	    HttpEntity<MyOrderModel> entity=new HttpEntity<>(model);
+	    RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<List<OrderModel>> res=restTemplate.exchange("http://localhost:1122/getUserOrdersByOrderStatus",HttpMethod.POST,entity,new ParameterizedTypeReference<List<OrderModel>>(){});
+		List<OrderModel> orderModels=res.getBody();
+		for(OrderModel om:orderModels)
+		{
+			if(roleName.equals("ROLE_TEACHER"))
+			{	User userx=us.getUserById(om.getCustomerId());
+				om.setCustomerFIO(userx.getFirstname()+" "+userx.getLastname());
+			}
+			else
+			{
+				User userx=us.getUserById(om.getFreelancerId());
+				om.setFreelancerFIO(userx.getFirstname()+" "+userx.getLastname());
+			}
+		}
+		return new ResponseEntity<>(orderModels,HttpStatus.OK);
 	    
 	}
 	

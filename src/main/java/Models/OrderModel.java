@@ -14,12 +14,19 @@ public class OrderModel {
 	private String freelancerFIO;
 	private String customerFIO;
 	private double starsForWork;
+	private String customerImageKey;
 	private String comment;
 	private AdvertisementModel advertisement;
 	
 	
 	
 
+	public String getCustomerImageKey() {
+		return customerImageKey;
+	}
+	public void setCustomerImageKey(String customerImageKey) {
+		this.customerImageKey = customerImageKey;
+	}
 	public AdvertisementModel getAdvertisement() {
 		return advertisement;
 	}

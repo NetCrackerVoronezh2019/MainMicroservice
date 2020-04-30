@@ -1,0 +1,9 @@
+package Models.Enums;
+
+public enum TeacherStatus {
+	
+	CERTIFIED_SPECIALIST,
+	NOT_A_CERTIFIED_SPECIALIST,
+	CERTIFICATES_ARE_NOT_CHECKED,
+	EMPTY
+}

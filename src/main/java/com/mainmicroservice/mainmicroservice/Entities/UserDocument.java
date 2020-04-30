@@ -2,6 +2,7 @@ package com.mainmicroservice.mainmicroservice.Entities;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -22,12 +23,12 @@ public class UserDocument {
 		@Column(name="ISVALID")
 		private Boolean isValid;
 		
-		
-		@ManyToOne(fetch = FetchType.EAGER)
+		@JsonIgnore
+		@ManyToOne(fetch = FetchType.LAZY)
 	    @JoinColumn(name = "USERID", nullable = false)
 	    private User user;
 	
-
+			
 		public Long getDocumentId() {
 			return documentId;
 		}

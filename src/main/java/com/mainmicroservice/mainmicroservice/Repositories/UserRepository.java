@@ -4,6 +4,7 @@ import java.util.Optional;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,5 +23,9 @@ public interface UserRepository extends CrudRepository<User,Long> {
 	
 	User findByUserId(Long id);
 	
+	@Query(value = "select * from users where roleid=3", 
+			  nativeQuery = true)
+	List<User> findByRoleId();
 	
+
 }
