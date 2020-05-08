@@ -6,6 +6,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
+import Models.Enums.AdvertisementStatus;
 import Models.Enums.AdvertisementType;
 
 public class AdvertisementModel {
@@ -25,23 +26,31 @@ public class AdvertisementModel {
 	private String authorRole;
 	private String firstName;
 	private String surName;
+	private AdvertisementStatus status;
 	private AdvertisementType type;
 	private Tag[] tags;
 	private FileModel[] allFiles;
-	private String[] attachments;
+	private AttachmentModel[] attachments;
 
 	
 	
+	public AdvertisementStatus getStatus() {
+		return status;
+	}
+	public void setStatus(AdvertisementStatus status) {
+		this.status = status;
+	}
 	public String getCoverImageKey() {
 		return coverImageKey;
 	}
 	public void setCoverImageKey(String coverImageKey) {
 		this.coverImageKey = coverImageKey;
 	}
-	public String[] getAttachments() {
+
+	public AttachmentModel[] getAttachments() {
 		return attachments;
 	}
-	public void setAttachments(String[] attachments) {
+	public void setAttachments(AttachmentModel[] attachments) {
 		this.attachments = attachments;
 	}
 	public Tag[] getTags() {

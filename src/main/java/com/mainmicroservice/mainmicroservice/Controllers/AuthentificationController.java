@@ -23,6 +23,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import com.mainmicroservice.mainmicroservice.ElasticRepositorys.UserElasticSearchRepository;
 import com.mainmicroservice.mainmicroservice.Entities.Role;
 import com.mainmicroservice.mainmicroservice.Entities.User;
 import com.mainmicroservice.mainmicroservice.Entities.UserDocument;
@@ -30,6 +31,7 @@ import com.mainmicroservice.mainmicroservice.Repositories.RoleRepository;
 import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 import com.mainmicroservice.mainmicroservice.Services.MailService;
 import com.mainmicroservice.mainmicroservice.Services.UserDocumentService;
+import com.mainmicroservice.mainmicroservice.Services.UserElasticSearchService;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 import Models.*;
 import Models.Enums.TeacherStatus;
@@ -42,6 +44,14 @@ public class AuthentificationController {
 
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
+	
+	@Autowired
+	private UserElasticSearchRepository userESRep;
+	
+	
+	@Autowired
+	private UserElasticSearchService userESService;
+	
 	
 	@Autowired 
 	private PasswordEncoder encoder;
@@ -68,6 +78,7 @@ public class AuthentificationController {
 	    User user=us.findByEmail(userName);
 	    user.setUserImageKey("userImageKey_"+user.getUserid());
 	    us.saveChanges(user);
+	    this.userESRep.save(user);
 	    fileModel.key=user.getUserImageKey();
 	    
 	    RestTemplate restTemplate = new RestTemplate();
@@ -88,6 +99,23 @@ public class AuthentificationController {
 		{
 			return new ResponseEntity<>(null,HttpStatus.OK);
 		}
+	}
+	
+	@GetMapping("getallusers")
+	public List<User> getallusers()
+	{
+		List<User> documents = new ArrayList<>();
+        for (User doc : this.userESRep.findAll()) {
+            documents.add(doc);
+        }
+        return documents;
+		
+	}
+	
+	@GetMapping("admin/filterUser/{searchText}")
+	public List<User> filter(@PathVariable String searchText)
+	{
+		return this.userESService.filterAll(searchText);
 	}
 	
 	@GetMapping("/getMyId")
@@ -208,7 +236,7 @@ public class AuthentificationController {
 			if(regModel.allFiles.size()==0)
 				user.setTeacherStatus(TeacherStatus.EMPTY);
 			user.setEducationLevel(regModel.education);
-			user.setReiting(4.0);
+			user.setReiting(5.0);
 		}
 		user.setRole(this.roleRepository.findByRoleName("ROLE_"+regModel.role));
 		user = this.us.addNewUser(user);
@@ -219,12 +247,13 @@ public class AuthentificationController {
 		{
 			UserDocument document=new UserDocument();
 			document.setDocumentKey(keys[i]);
-			document.setIsValid(true);
+			document.setIsValid(false);
 			document.setUser(user);
 			udService.save(document);
 			files.allFiles[i]=new UploadFileModel(keys[i],regModel.allFiles.get(i).content,regModel.allFiles.get(i).contentType);
 		}
 		
+		this.userESRep.save(user);
 		
 		try {
 		if(user.getRole().getRoleName().equals("ROLE_TEACHER"))

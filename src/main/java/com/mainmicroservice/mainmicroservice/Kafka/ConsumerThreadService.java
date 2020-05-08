@@ -46,26 +46,33 @@ public class ConsumerThreadService {
 	@PostConstruct
 	public void init()
 	{
-		String bootstrapServers2="192.168.99.100:9092";
-    	Properties properties=new Properties();
-    	properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServers2);
-    	properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
-    	properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
-    	properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
-    	properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, this.portTopicGroup);
-    	this.consumer=new KafkaConsumer<String,String>(properties);
-    	consumer.subscribe(Arrays.asList(this.portTopicName));
-    	
-    	
-    	String topic="roles_topic";
-    	Properties properties2=new Properties();
-    	properties2.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServers2);
-    	properties2.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
-    	properties2.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
-    	properties2.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
-    	properties2.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "main_roles");
-    	this.consumer2=new KafkaConsumer<String,String>(properties2);
-    	consumer2.subscribe(Arrays.asList(topic));
+		try
+		{
+			String bootstrapServers2="192.168.99.101:9092";
+	    	Properties properties=new Properties();
+	    	properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServers2);
+	    	properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
+	    	properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
+	    	properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
+	    	properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, this.portTopicGroup);
+	    	this.consumer=new KafkaConsumer<String,String>(properties);
+	    	consumer.subscribe(Arrays.asList(this.portTopicName));
+	    	
+	    	
+	    	String topic="roles_topic";
+	    	Properties properties2=new Properties();
+	    	properties2.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServers2);
+	    	properties2.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
+	    	properties2.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
+	    	properties2.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
+	    	properties2.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "main_roles");
+	    	this.consumer2=new KafkaConsumer<String,String>(properties2);
+	    	consumer2.subscribe(Arrays.asList(topic));
+		}
+		catch(Exception ex)
+		{
+			
+		}
 	}
 	public Runnable getRunnable()
 	{
@@ -92,7 +99,11 @@ public class ConsumerThreadService {
         		}
         		finally
         		{
-        			consumer.close();
+        			if(consumer!=null)
+        			{
+	        			consumer.unsubscribe();
+	        			consumer.close();
+        			}
         			
         		}
             }
@@ -123,7 +134,11 @@ public class ConsumerThreadService {
         		}
         		finally
         		{
-        			consumer2.close();
+        			if(consumer2!=null)
+        			{   System.out.println("finnaly");
+	        			consumer2.unsubscribe();
+	        			consumer2.close();
+        			}
         			
         		}
             }

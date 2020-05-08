@@ -12,6 +12,7 @@ public class UserAndGroupUserModel {
     private String lastName;
     private Date birthday;
     private String role;
+    private String image;
 
     public UserAndGroupUserModel(User user) {
         userId = user.getUserid();
@@ -19,6 +20,15 @@ public class UserAndGroupUserModel {
         firstName = user.getFirstname();
         lastName = user.getLastname();
         role = user.getRole().getRoleName();
+    }
+
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getRole() {

@@ -16,6 +16,8 @@ public class Microservices {
 	private String advertismentPort;
 	private String amazonPort;
 	private String conversationPort;
+	private String userAndgroupsPort;
+	private String host;
   
 	
 	private String main_token;
@@ -26,6 +28,18 @@ public class Microservices {
 	
 	
 	
+	public String getUserAndgroupsPort() {
+		return userAndgroupsPort;
+	}
+	public void setUserAndgroupsPort(String userAndgroupsPort) {
+		this.userAndgroupsPort = userAndgroupsPort;
+	}
+	public String getHost() {
+		return host;
+	}
+	public void setHost(String host) {
+		this.host = host;
+	}
 	public String getMain_token() {
 		return main_token;
 	}
@@ -100,6 +114,7 @@ public class Microservices {
 	public void setPort(MicroserviceInfo portModel)
 	{
 		
+		System.out.println(portModel.getPort());
 		if(portModel!=null)
 		{
 			if(portModel.getMicroserviceName()!=null && portModel.getPort()!=null && portModel.getToken()!=null)
@@ -114,6 +129,7 @@ public class Microservices {
 				{
 					if(portModel.getMicroserviceName()==MicroservicesEnum.ADVERTISEMENT)
 					{
+						System.out.println("Я тут");
 						this.setAdvertismentPort(portModel.getPort().toString());
 						this.setAdvertisement_token(portModel.getToken());
 					}

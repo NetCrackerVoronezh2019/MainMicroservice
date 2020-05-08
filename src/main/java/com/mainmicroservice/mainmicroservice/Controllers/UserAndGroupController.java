@@ -384,4 +384,25 @@ public class UserAndGroupController {
         });
         template.convertAndSend("/groupsNot/" + user.getUserid(),c.getBody());
     }
+
+    /*
+    @GetMapping("user/friendshipNotifications")
+    public List<FriendshipNotifications> friendshipNotifications(ServletRequest req) {
+        RestTemplate restTemplate = new RestTemplate();
+        String adderName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+        User user=us.findByEmail(adderName);
+        UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/getFriendshipNotifications").queryParam("userId",user.getUserid());
+        return restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.GET,null,new ParameterizedTypeReference<List<FriendshipNotifications>>() {}).getBody();
+    }
+    
+    */
+    
+
+    @DeleteMapping("user/ignoreNotifications")
+    public void ignoreFriend(@RequestParam Long notificationId) {
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8090/ignoreNotification").queryParam("notificationId",notificationId);
+        restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.DELETE,null,Object.class);
+    }
+
 }

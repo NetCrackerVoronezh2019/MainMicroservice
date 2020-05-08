@@ -1,6 +1,6 @@
 package Models;
 
-
+import java.util.List;
 
 public class OrderModel {
 
@@ -17,10 +17,17 @@ public class OrderModel {
 	private String customerImageKey;
 	private String comment;
 	private AdvertisementModel advertisement;
+	private List<OrderDocumentModel> orderDocuments;
 	
 	
 	
-
+	
+	public List<OrderDocumentModel> getOrderDocuments() {
+		return orderDocuments;
+	}
+	public void setOrderDocuments(List<OrderDocumentModel> orderDocuments) {
+		this.orderDocuments = orderDocuments;
+	}
 	public String getCustomerImageKey() {
 		return customerImageKey;
 	}

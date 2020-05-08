@@ -82,6 +82,8 @@ public class SocketController {
         uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8088/getUserNotificationsSize/").queryParam("userId",cleanConversationNotificationModel.getUserId());
         ResponseEntity<String> res = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<String>() {});
         template.convertAndSend("/notificationCount/" + cleanConversationNotificationModel.getUserId(),res.getBody());
+        User user = us.getUserById(cleanConversationNotificationModel.getUserId());
+        template.convertAndSend("/readMessages/" + cleanConversationNotificationModel.getDialogId(),user);
     }
 
 }

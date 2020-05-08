@@ -34,11 +34,15 @@ public class RoleService {
 		}
 		
 		
-		
 	}
 	
 	public List<Role> allRoles()
 	{
 		return roleRep.findAll();
+	}
+	
+	public Role findRoleByRoleName(String roleName)
+	{
+		return this.roleRep.findByRoleName(roleName);
 	}
 }

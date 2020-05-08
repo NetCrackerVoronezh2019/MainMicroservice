@@ -15,7 +15,7 @@ public class MainmicroserviceApplication {
 		
 		ConfigurableApplicationContext app=SpringApplication.run(MainmicroserviceApplication.class, args);
 		
-	   /*
+	    try {
 		ConsumerThreadService a = (ConsumerThreadService) app.getBean("consumerThreadService");		
 	    Utility utility=(Utility) app.getBean("utility");	
 	    utility.sendInfoModelToConfig("http://localhost:7082/setInfoModel");
@@ -23,6 +23,9 @@ public class MainmicroserviceApplication {
 	    consumerThread.start();
 	    Thread RoleThread =new Thread(a.RoleThread());
 	    RoleThread.start();
-		*/
+	    }
+	    catch(Exception ex) {
+	    	System.out.println(ex.getMessage());
+	    }
 	}
 }

@@ -8,6 +8,7 @@ public class UserModel {
 
 	private Integer userId;
 	private String name;
+	private String image;
 	public String getName() {
 		return name;
 	}
@@ -27,7 +28,15 @@ public class UserModel {
 		userId = (int)user.getUserid();
 		name = user.getLastname() + ' ' + user.getFirstname();
 	}
-	
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
 	public UserModel() {}
 	
 	

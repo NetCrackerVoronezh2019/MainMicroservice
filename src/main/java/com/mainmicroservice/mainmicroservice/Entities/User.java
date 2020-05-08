@@ -18,10 +18,12 @@ import Models.Enums.TeacherStatus;
 
 @Entity
 @Table(name = "USERS")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "user_index", type = "users")
 public class User {
 
 	
 	@Id
+	@org.springframework.data.annotation.Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@JsonView(Views.UserInfoForChangeProps.class)
 	@Column(name="USERID")

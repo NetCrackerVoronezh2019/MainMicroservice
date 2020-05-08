@@ -10,8 +10,9 @@ public class MessagesModel {
     private Date date;
     private Integer dialog;
     private UserModel sender;
-    private boolean isModified;
+    private boolean modified;
 	private boolean isReaded;
+	private boolean readBySomebody;
 	private List<String> files;
 	private List<String> names;
 
@@ -29,6 +30,22 @@ public class MessagesModel {
 
 	public void setFiles(List<String> files) {
 		this.files = files;
+	}
+
+	public boolean isModified() {
+		return modified;
+	}
+
+	public void setModified(boolean modified) {
+		this.modified = modified;
+	}
+
+	public boolean isReadBySomebody() {
+		return readBySomebody;
+	}
+
+	public void setReadBySomebody(boolean readBySomebody) {
+		this.readBySomebody = readBySomebody;
 	}
 
 	public Integer getMessageId() {
@@ -60,12 +77,6 @@ public class MessagesModel {
 	}
 	public void setSender(UserModel sender) {
 		this.sender = sender;
-	}
-	public boolean isModified() {
-		return isModified;
-	}
-	public void setModified(boolean isModified) {
-		this.isModified = isModified;
 	}
 	public boolean isReaded() {
 		return isReaded;
