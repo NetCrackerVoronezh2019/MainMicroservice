@@ -1,10 +1,13 @@
 package Models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UploadFilesModel {
-	public UploadFileModel[] allFiles;
+	public List<UploadFileModel> allFiles;
 	
-	public UploadFilesModel(int count)
+	public UploadFilesModel()
 	{
-		allFiles=new UploadFileModel[count];
+		allFiles=new ArrayList<UploadFileModel>();
 	}
 }

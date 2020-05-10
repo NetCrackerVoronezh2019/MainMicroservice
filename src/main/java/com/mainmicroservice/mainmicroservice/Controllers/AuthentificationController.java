@@ -218,6 +218,7 @@ public class AuthentificationController {
 	public ResponseEntity<?> registation( @RequestBody @Valid RegistrationModel regModel) throws MessagingException
 	{
     	
+    
 		User user=new User();
 		user.setIsActivate(false);
 		user.setIsDeleted(false);
@@ -231,17 +232,18 @@ public class AuthentificationController {
 		if(regModel.role.equals("TEACHER"))
 		{
 			user.setAboutMe(regModel.aboutMe);
-			if(regModel.allFiles.size()!=0)
+			if(regModel.certificateFiles.size()!=0)
 				user.setTeacherStatus(TeacherStatus.CERTIFICATES_ARE_NOT_CHECKED);
-			if(regModel.allFiles.size()==0)
+			if(regModel.certificateFiles.size()==0)
 				user.setTeacherStatus(TeacherStatus.EMPTY);
 			user.setEducationLevel(regModel.education);
 			user.setReiting(5.0);
 		}
 		user.setRole(this.roleRepository.findByRoleName("ROLE_"+regModel.role));
 		user = this.us.addNewUser(user);
-		
-		String[] keys=user.getDocumentKeys(regModel.allFiles);
+		UploadFilesModel files=this.us.setUserDocuments(user, regModel.certificateFiles);
+		/*
+		String[] keys=user.getDocumentKeys(regModel.certificateFiles);
 		UploadFilesModel files=new UploadFilesModel(keys.length);
 		for(int i=0;i<keys.length;i++)
 		{
@@ -250,12 +252,13 @@ public class AuthentificationController {
 			document.setIsValid(false);
 			document.setUser(user);
 			udService.save(document);
-			files.allFiles[i]=new UploadFileModel(keys[i],regModel.allFiles.get(i).content,regModel.allFiles.get(i).contentType);
+		//	files.allFiles[i]=new UploadFileModel(keys[i],regModel.allFiles.get(i).content,regModel.allFiles.get(i).contentType);
 		}
+		*/
 		
-		this.userESRep.save(user);
 		
 		try {
+			
 		if(user.getRole().getRoleName().equals("ROLE_TEACHER"))
 		{
 			RestTemplate restTemplate1 = new RestTemplate();
@@ -264,7 +267,8 @@ public class AuthentificationController {
 		}
 		
 		
-		
+		this.userESRep.save(user);
+	
 		UserModel usConversationModel = new UserModel(user);
 		RestTemplate restTemplate2 = new RestTemplate();
 		HttpEntity<UserModel> entity = new HttpEntity<UserModel>(usConversationModel);

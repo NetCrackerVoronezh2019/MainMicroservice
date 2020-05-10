@@ -18,17 +18,17 @@ public class RegistrationModel {
 	public String role;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	public Date birthDate;
-	public List<FileModel> allFiles=new ArrayList<FileModel>();
+	public List<CertificateFileModel> certificateFiles=new ArrayList<CertificateFileModel>();
 	public Gender gender;
 	public String aboutMe;
 	public EducationLevel education;
-	
 	@Override
 	public String toString() {
 		return "RegistrationModel [firstname=" + firstname + ", lastname=" + lastname + ", email=" + email
-				+ ", password=" + password + ", role=" + role + ", birthDate=" + birthDate + ", gender=" + gender
-				+ ", aboutMe=" + aboutMe + ", education=" + education + "]";
+				+ ", password=" + password + ", role=" + role + ", birthDate=" + birthDate + ", certificateFiles="
+				+ certificateFiles.size() + ", gender=" + gender + ", aboutMe=" + aboutMe + ", education=" + education + "]";
 	}
+	
 	
 	
 	

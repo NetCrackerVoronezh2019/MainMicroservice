@@ -31,6 +31,7 @@ import com.mainmicroservice.mainmicroservice.Services.UserService;
 
 import Models.ChangeOrderStatus;
 import Models.ChangeReiting;
+import Models.CompleteOrderModel;
 import Models.IsMyOrder;
 import Models.MyOrderModel;
 import Models.UserOrdersModel;
@@ -57,6 +58,21 @@ public class OrderController {
 	@Autowired
     private SimpMessagingTemplate template;
 	
+	
+	@PostMapping("user/completeOrder")
+	public ResponseEntity<?> completeOrder(@RequestBody CompleteOrderModel model,ServletRequest req)
+	{
+		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
+	    User user=us.findByEmail(userName);	
+	    model.setUserId(user.getUserId());
+	    model.setRoleName(user.getRole().getRoleName());
+	    RestTemplate restTemplate = new RestTemplate();
+	    HttpEntity<CompleteOrderModel> entity=new HttpEntity<>(model);
+		String host=microservices.getHost();
+	    String advPort=microservices.getAdvertismentPort();
+		ResponseEntity<Object> res=restTemplate.exchange("http://"+host+":"+advPort+"/completeOrder/",HttpMethod.POST,entity,Object.class);
+		return res;
+	}
 	
 	@GetMapping("getFreelancerAllFeedBack/{id}")
 	public ResponseEntity<List<OrderModel>> getFreelancerAllFeedBack(@PathVariable Long id,ServletRequest req)

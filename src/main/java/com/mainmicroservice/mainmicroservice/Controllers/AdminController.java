@@ -6,6 +6,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,6 +33,7 @@ import Jacson.Views;
 import Models.AdvertisementModel;
 import Models.CertificationNotModel;
 import Models.ChangeDocumentValid;
+import Models.ChangeUserDocument;
 import Models.UserPageModel;
 import Models.UserProp;
 import Models.Enums.AdvertisementNotificationType;
@@ -65,6 +67,9 @@ public class AdminController {
 	@Autowired
 	private Microservices microservices;
 	
+	@Autowired
+    private SimpMessagingTemplate template;
+	
 	@Autowired 
 	private UserDocumentService udService;
 	
@@ -93,6 +98,21 @@ public class AdminController {
 		
 		return new ResponseEntity<>(null,HttpStatus.OK);
 	
+	}
+	
+	@GetMapping("getAllValidSubjects/{userId}")
+	private ResponseEntity<Set<String>> getAllValidSubjects(@PathVariable Long userId)
+	{
+		User user=this.userService.getUserById(userId);
+		Set<String> subjects=new HashSet<>();
+		List<UserDocument> documents=user.getDocuments();
+		documents=documents.stream()
+				 .filter(doc->doc.getIsValid()==Boolean.TRUE)
+				 .collect(Collectors.toList());
+		for(UserDocument doc:documents)
+			subjects.add(doc.getSubject());
+		return new ResponseEntity<>(subjects,HttpStatus.OK);
+			
 	}
 	
 	@GetMapping("admin/getTeachersByStatus/{text}/{status}")
@@ -148,34 +168,40 @@ public class AdminController {
 	}
 	
 	@PostMapping("saveUserChanges")
-	public void saveChanges(@RequestBody User user)
+	public ResponseEntity<?> saveChanges(@RequestBody ChangeUserDocument doc)
 	{
-		User newUser=userService.findByEmail(user.getEmail());
+		
+		User newUser=userService.getUserById(doc.getUserId());
+		UserDocument userDoc=doc.getUserDocument();
+		userDoc.setUser(newUser);
+		this.udService.save(userDoc);
+		
 		List<CertificationNotModel> certList=new ArrayList<>();
-		newUser.setDocuments(user.getDocuments());
-		for(UserDocument doc:newUser.getDocuments())
-		{
-			doc.setUser(user);
-			
 			CertificationNotModel not=new CertificationNotModel();
 			not.setAddresseeId(newUser.getUserId());
-			not.setCertificateName(doc.getDocumentKey());
-			if(doc.getIsValid())
+			not.setCertificateName(userDoc.getDocumentKey());
+			if(userDoc.getIsValid())
 				not.setType(AdvertisementNotificationType.ACCEPTED_CERTIFICATION);
-			if(!doc.getIsValid())
+			if(!userDoc.getIsValid())
 				not.setType(AdvertisementNotificationType.REJECTED_CERTIFICATION);
 			certList.add(not);
 			
-		}
-		
 		newUser=this.userService.setTeacherStatus(newUser);
 		this.userService.saveChanges(newUser);
+		try {
 		this.userESRep.save(newUser);
+		}
+		catch(Exception ex){		}
 		RestTemplate restTemplate=new RestTemplate();
 	    HttpEntity<List<CertificationNotModel>> entity=new HttpEntity<>(certList);
 		String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
 		ResponseEntity<Object> res= restTemplate.exchange("http://"+host+":"+advPort+"/certificationNotification",HttpMethod.POST,entity,Object.class);
+		ResponseEntity<Integer> res2=restTemplate.exchange("http://"+host+":"+advPort+"/getMyAllNotificationsSize/"+newUser.getUserid(),HttpMethod.GET,null,new ParameterizedTypeReference<Integer>(){});
+		
+	    template.convertAndSend("/notification/"+newUser.getUserid(),res2.getBody());
+	    
+	    return new ResponseEntity<>(null,HttpStatus.OK);
 	}
 	
 	

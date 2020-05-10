@@ -9,6 +9,10 @@ import com.mainmicroservice.mainmicroservice.Entities.User;
 import com.mainmicroservice.mainmicroservice.Entities.UserDocument;
 import com.mainmicroservice.mainmicroservice.Repositories.UserRepository;
 
+import Models.CertificateFileModel;
+import Models.FileModel;
+import Models.UploadFileModel;
+import Models.UploadFilesModel;
 import Models.Enums.TeacherStatus;
 
 
@@ -19,7 +23,8 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 	
-	
+	@Autowired
+	private UserDocumentService udService;
 
 	public List<User> getAllUsers()
 	{
@@ -75,6 +80,29 @@ public class UserService {
 		return user;
 		
 	}
+	
+	
+   public UploadFilesModel setUserDocuments(User user,List<CertificateFileModel> certificateFiles)
+   {
+		UploadFilesModel files=new UploadFilesModel();
+		
+	   for(int i=0;i<certificateFiles.size();i++)
+	   {
+		   List<FileModel> allFiles=certificateFiles.get(i).getAllFiles();
+		   for(int j=0;j<allFiles.size();j++)
+		   {
+			   UserDocument doc=new UserDocument();
+			   doc.setIsValid(Boolean.FALSE);
+			   doc.setUser(user);
+			   doc.setSubject(certificateFiles.get(i).getSection());
+			   String key="user"+user.getUserid()+"_document"+allFiles.get(j).name;
+			   doc.setDocumentKey(key);
+			   this.udService.save(doc);
+			   files.allFiles.add(new UploadFileModel(doc.getDocumentKey(),allFiles.get(j).content,allFiles.get(j).contentType));
+		   }
+	   }
+	   return files;
+   }
 
 	
 }

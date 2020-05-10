@@ -23,6 +23,9 @@ public class UserDocument {
 		@Column(name="ISVALID")
 		private Boolean isValid;
 		
+		@Column(name="SUBJECT")
+		private String subject;
+		
 		@JsonIgnore
 		@ManyToOne(fetch = FetchType.LAZY)
 	    @JoinColumn(name = "USERID", nullable = false)
@@ -36,6 +39,16 @@ public class UserDocument {
 
 		public void setDocumentId(Long documentId) {
 			this.documentId = documentId;
+		}
+
+		
+		public String getSubject() {
+			return subject;
+		}
+
+
+		public void setSubject(String subject) {
+			this.subject = subject;
 		}
 
 

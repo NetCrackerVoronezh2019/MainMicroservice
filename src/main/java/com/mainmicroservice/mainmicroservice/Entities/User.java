@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import com.fasterxml.jackson.annotation.*;
 import Jacson.Views;
+import Models.CertificateFileModel;
 import Models.FileModel;
 import Models.Enums.EducationLevel;
 import Models.Enums.Gender;
@@ -286,22 +287,6 @@ public class User {
 		this.password = password;
 	}
 	 
-
-	
-	public String[] getDocumentKeys(List<FileModel> keys)
-	{
-		String str="";
-		String[] arr=new String[keys.size()];
-		String newKey="";
-		for(int i=0;i<keys.size();i++)
-		{
-		  	newKey="user"+this.getUserid()+"_"+keys.get(i).name;
-		  	arr[i]=newKey;
-		  	str+=newKey+",";
-		}
-		return arr;
-	}
-	
 
 
 }
