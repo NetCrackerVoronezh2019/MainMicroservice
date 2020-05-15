@@ -27,6 +27,7 @@ import com.mainmicroservice.mainmicroservice.ElasticRepositorys.UserElasticSearc
 import com.mainmicroservice.mainmicroservice.Entities.Role;
 import com.mainmicroservice.mainmicroservice.Entities.User;
 import com.mainmicroservice.mainmicroservice.Entities.UserDocument;
+import com.mainmicroservice.mainmicroservice.Kafka.Microservices;
 import com.mainmicroservice.mainmicroservice.Repositories.RoleRepository;
 import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 import com.mainmicroservice.mainmicroservice.Services.MailService;
@@ -71,6 +72,10 @@ public class AuthentificationController {
 	@Autowired
 	private UserDocumentService udService;
 	
+	
+	@Autowired
+	private Microservices microservices;
+	
 	@PostMapping("user/updateUserImage")
 	public ResponseEntity<?> updateUserImage(@RequestBody UploadFileModel fileModel, ServletRequest req)
 	{
@@ -80,10 +85,11 @@ public class AuthentificationController {
 	    us.saveChanges(user);
 	    this.userESRep.save(user);
 	    fileModel.key=user.getUserImageKey();
-	    
+	    String port=microservices.getAmazonPort();
+	    String host=microservices.getHost();
 	    RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<UploadFileModel> entity = new HttpEntity<>(fileModel);
-		return restTemplate.exchange("http://localhost:1234/uploadUserfile", HttpMethod.POST,entity, Object.class);
+		return restTemplate.exchange("http://"+host+":"+port+"/uploadUserfile", HttpMethod.POST,entity, Object.class);
 	}
 	@GetMapping("/getRole")
 	public ResponseEntity<UserInfoModel> getRole(ServletRequest req)
@@ -245,7 +251,10 @@ public class AuthentificationController {
 		
 		List<UserDocument> docs=this.udService.findByUserId(user.getUserId());
 		
-		
+		String amazonport=microservices.getAmazonPort();
+		String convport=microservices.getConversationPort();
+		String userandgroupsport=microservices.getUserAndgroupsPort();
+		String host=microservices.getHost();
 		user.setDocuments(docs);
 		this.userESRep.save(user);
 		
@@ -255,16 +264,16 @@ public class AuthentificationController {
 		{
 			RestTemplate restTemplate1 = new RestTemplate();
 			HttpEntity<UploadFilesModel> entity1 = new HttpEntity<UploadFilesModel>(files);
-			restTemplate1.exchange("http://localhost:1234/uploadCertificationFiles", HttpMethod.POST,entity1, Object.class);
+			restTemplate1.exchange("http://"+host+":"+amazonport+"/uploadCertificationFiles", HttpMethod.POST,entity1, Object.class);
 		}
 		
 		UserModel usConversationModel = new UserModel(user);
 		RestTemplate restTemplate2 = new RestTemplate();
 		HttpEntity<UserModel> entity = new HttpEntity<UserModel>(usConversationModel);
-		restTemplate2.exchange("http://localhost:8088/createUser", HttpMethod.POST,entity, Object.class );
+		restTemplate2.exchange("http://"+host+":"+convport+"/createUser", HttpMethod.POST,entity, Object.class );
 		UserAndGroupUserModel userAndGroupUserModel = new UserAndGroupUserModel(user);
 		HttpEntity<UserAndGroupUserModel> entityUG = new HttpEntity<UserAndGroupUserModel>(userAndGroupUserModel);
-		restTemplate2.exchange("http://localhost:8090/createUser/", HttpMethod.POST,entityUG, Object.class );
+		restTemplate2.exchange("http://"+host+":"+userandgroupsport+"/createUser/", HttpMethod.POST,entityUG, Object.class );
 		}
 		catch(Exception ex)
 		{
