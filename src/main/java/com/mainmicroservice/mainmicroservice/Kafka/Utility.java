@@ -29,7 +29,7 @@ public class Utility {
 		    model.setPort(Integer.parseInt(this.port));
 		    model.setToken(jwtProvider.createTokenForMicroservice());
 			HttpEntity<MicroserviceInfo> entity = new HttpEntity<MicroserviceInfo>(model);
-			System.out.println("Send port");
+			System.out.println("Отправляю порт - "+model.getPort());
 			ResponseEntity<MicroserviceInfo> response = restTemplate.exchange(configURL,HttpMethod.POST,entity, MicroserviceInfo.class );
 	}
 }

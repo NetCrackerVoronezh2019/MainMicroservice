@@ -117,6 +117,8 @@ public class UserElasticSearchService {
     			.must(QueryBuilders.multiMatchQuery(text)
 				.field("firstname")
 				.field("lastname")
+				.fuzziness(Fuzziness.TWO)
+				  .prefixLength(3)
 				.type(MultiMatchQueryBuilder.Type.BEST_FIELDS));
     		
     			

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import com.mainmicroservice.mainmicroservice.Entities.User;
+import com.mainmicroservice.mainmicroservice.Kafka.Microservices;
 import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 
@@ -29,18 +30,21 @@ public class ConversationController {
 	@Autowired
     private UserService us;
 	
+	@Autowired
+	private Microservices microservices;
+	
 
 	@GetMapping("user/getDialogMembers/")
 	public List<UserModel> getDialogMembers(@RequestParam Integer dialogId,ServletRequest req)
 	{
 		RestTemplate restTemplate = new RestTemplate();
-		String port="8088";
-		// пиши свой роут 
+		String port=this.microservices.getConversationPort();
+		String host=this.microservices.getHost();
 		String route="/getDialogMembers/";
 		String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
 		User user=us.findByEmail(userName);
 		int userId=(int)(long)user.getUserid();
-		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:"+port+route).queryParam("dialogId", dialogId).queryParam("userId", userId);
+		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://"+host+":"+port+route).queryParam("dialogId", dialogId).queryParam("userId", userId);
 		ResponseEntity<List<UserModel>> res=restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.GET,null,new ParameterizedTypeReference<List<UserModel>>(){});
 		return res.getBody();
 	}
@@ -49,12 +53,13 @@ public class ConversationController {
 	public List<MessagesModel> getDialogMessages(@RequestParam Integer dialogId, ServletRequest req)
 	{
 		RestTemplate restTemplate = new RestTemplate();
-		String port="8088";
+		String port=this.microservices.getConversationPort();
+		String host=this.microservices.getHost();
 		String route="/getDialogMessages/";
 		String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
 		User user=us.findByEmail(userName);
 		int userId=(int)(long)user.getUserid();
-		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:"+port+route).queryParam("dialogId", dialogId).queryParam("userId", userId);
+		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://"+host+":"+port+route).queryParam("dialogId", dialogId).queryParam("userId", userId);
 		ResponseEntity<List<MessagesModel>> res=restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.GET,null,new ParameterizedTypeReference<List<MessagesModel>>(){});
 		return res.getBody();
 	}
@@ -71,9 +76,10 @@ public class ConversationController {
 	    User user=us.findByEmail(userName);
 	    Long userId=user.getUserid();
 		RestTemplate restTemplate = new RestTemplate();
-		String port="8088";
+		String port=this.microservices.getConversationPort();
+		String host=this.microservices.getHost();
 		String route="/getDialog/";
-		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:"+port+route).queryParam("dialogId", dialogId).queryParam("userId", userId);
+		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://"+host+":"+port+route).queryParam("dialogId", dialogId).queryParam("userId", userId);
 		ResponseEntity<DialogModel> res=restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.GET,null,new ParameterizedTypeReference<DialogModel>(){});
 		return res;
 	}
@@ -82,12 +88,13 @@ public class ConversationController {
 	public ResponseEntity<?> addUserInDialog(@RequestParam Long userId,@RequestParam Integer dialogId, ServletRequest req)
 	{
 		RestTemplate restTemplate = new RestTemplate();
-		String port="8088";
+		String port=this.microservices.getConversationPort();
+		String host=this.microservices.getHost();
 		String route="/addUserInDialog/";
 		String adderName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
 		User user=us.findByEmail(adderName);
 		int adderId=(int)(long)user.getUserid();
-		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:"+port+route).queryParam("adderId", adderId).queryParam("userId",userId).queryParam("dialogId",dialogId);
+		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://"+host+":"+port+route).queryParam("adderId", adderId).queryParam("userId",userId).queryParam("dialogId",dialogId);
 		restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.GET,null,new ParameterizedTypeReference<Object>(){});
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -97,12 +104,13 @@ public class ConversationController {
 	public ResponseEntity<UserModel> getUser(ServletRequest req)
 	{
 		RestTemplate restTemplate = new RestTemplate();
-		String port="8088";
+		String port=this.microservices.getConversationPort();
+		String host=this.microservices.getHost();
 		String route="/getUser/";
 		String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
 		User user=us.findByEmail(userName);
 		int userId=(int)(long)user.getUserid();
-		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:"+port+route).queryParam("userId", userId);
+		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://"+host+":"+port+route).queryParam("userId", userId);
 		ResponseEntity<UserModel> res=restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.GET,null,new ParameterizedTypeReference<UserModel>(){});
 		return res;
 	}
@@ -111,12 +119,13 @@ public class ConversationController {
 	public ResponseEntity<List<DialogModel>> getUserDialogs(@RequestParam(required = false) String type, ServletRequest req)
 	{
 		RestTemplate restTemplate = new RestTemplate();
-		String port="8088";
+		String port=this.microservices.getConversationPort();
+		String host=this.microservices.getHost();
 		String route="/getUserDialogs/";
 		String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
 		User user=us.findByEmail(userName);
 		int userId=(int)(long)user.getUserid();
-		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:"+port+route).queryParam("userId", userId);
+		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://"+host+":"+port+route).queryParam("userId", userId);
 		if (type != null) {
 			uriBuilder.queryParam("type",type);
 		}
@@ -137,10 +146,11 @@ public class ConversationController {
 	    int userId=(int)(long)user.getUserid();
 	    
 	    dialog.setCreatorId(userId);
-
+	    String port=this.microservices.getConversationPort();
+		String host=this.microservices.getHost();
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<DialogModel> entity = new HttpEntity<DialogModel>(dialog);
-		restTemplate.exchange("http://localhost:8088/dialogCreate/",HttpMethod.POST,entity, Object.class );
+		restTemplate.exchange("http://"+host+":"+port+"/dialogCreate/",HttpMethod.POST,entity, Object.class );
 		
 	    return new ResponseEntity<>(null,HttpStatus.OK);
 	}
@@ -148,12 +158,13 @@ public class ConversationController {
 	@DeleteMapping("user/liveDialog/")
 	public  ResponseEntity<?> liveDialog(@RequestParam(name = "dialogId") Integer dialogId,ServletRequest req) {
 		RestTemplate restTemplate = new RestTemplate();
-		String port="8088";
+		String port=this.microservices.getConversationPort();
+		String host=this.microservices.getHost();
 		String route="/liveDialog/";
 		String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
 		User user=us.findByEmail(userName);
 		int userId=(int)(long)user.getUserid();
-		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:"+port+route).queryParam("dialogId", dialogId).queryParam("userId", userId);
+		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://"+host+":"+port+route).queryParam("dialogId", dialogId).queryParam("userId", userId);
 		ResponseEntity<?> res=restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.DELETE,null,Object.class);
 		return res;
 	}
@@ -161,34 +172,41 @@ public class ConversationController {
 	@DeleteMapping("user/deleteDialog/")
 	public  ResponseEntity<?> deleteDialog(@RequestParam(name = "dialogId") Integer dialogId,ServletRequest req) {
 		RestTemplate restTemplate = new RestTemplate();
-		String port="8088";
+		String port=this.microservices.getConversationPort();
+		String host=this.microservices.getHost();
 		String route="/deleteDialog/";
 		String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
 		User user=us.findByEmail(userName);
 		int userId=(int)(long)user.getUserid();
-		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:"+port+route).queryParam("dialogId", dialogId).queryParam("userId", userId);
+		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://"+host+":"+port+route).queryParam("dialogId", dialogId).queryParam("userId", userId);
 		ResponseEntity<?> res=restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.DELETE,null,Object.class);
 		return res;
 	}
 
 	@PutMapping("dialog/settings")
 	public void dialogSettings(@RequestBody DialogModel dialogModel) {
+		String port=this.microservices.getConversationPort();
+		String host=this.microservices.getHost();
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<DialogModel> entity = new HttpEntity<DialogModel>(dialogModel);
-		restTemplate.exchange("http://localhost:8088/dialog/settings",HttpMethod.PUT,entity, Object.class );
+		restTemplate.exchange("http://"+host+":"+port+"/dialog/settings",HttpMethod.PUT,entity, Object.class );
 	}
 
 	@PutMapping("dialog/setAvatar")
 	public void setAvatar(@RequestBody DialogModel dialogModel) {
+		String port=this.microservices.getConversationPort();
+		String host=this.microservices.getHost();
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<DialogModel> entity = new HttpEntity<DialogModel>(dialogModel);
-		restTemplate.exchange("http://localhost:8088/dialog/setAvatar",HttpMethod.PUT,entity, Object.class );
+		restTemplate.exchange("http://"+host+":"+port+"/dialog/setAvatar",HttpMethod.PUT,entity, Object.class );
 	}
 
 	@PutMapping("dialog/setMessage")
 	public void messageSettings(@RequestBody MessagesModel messagesModel) {
 		RestTemplate restTemplate = new RestTemplate();
+		String port=this.microservices.getConversationPort();
+		String host=this.microservices.getHost();
 		HttpEntity<MessagesModel> entity = new HttpEntity<MessagesModel>(messagesModel);
-		restTemplate.exchange("http://localhost:8088/dialog/setMessage",HttpMethod.PUT,entity, Object.class );
+		restTemplate.exchange("http://"+host+":"+port+"/dialog/setMessage",HttpMethod.PUT,entity, Object.class );
 	}
 }

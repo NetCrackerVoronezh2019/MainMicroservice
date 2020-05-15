@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.mainmicroservice.mainmicroservice.Entities.User;
+import com.mainmicroservice.mainmicroservice.Kafka.Microservices;
 import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 
@@ -26,10 +27,16 @@ public class NotificationsController {
 	@Autowired
     private UserService us;
 	
+	@Autowired
+	private Microservices microservices;
+	
+	
 	@GetMapping("user/getMessageNotificationCount")
 	public ResponseEntity<?> getMessageNotificationCount(ServletRequest req)
 	{
 		
+		String port=this.microservices.getConversationPort();
+		String host=this.microservices.getHost();
 		String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
 	    if(userName==null)
 	    {
@@ -38,7 +45,7 @@ public class NotificationsController {
 	    
 	    RestTemplate restTemplate = new RestTemplate();
 		User user=us.findByEmail(userName);
-		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://localhost:8088/getUserNotificationsSize/").queryParam("userId",user.getUserid());
+		UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://"+host+":"+port+"/getUserNotificationsSize/").queryParam("userId",user.getUserid());
     	ResponseEntity<String> res = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<String>() {});
     	return res;
 	}

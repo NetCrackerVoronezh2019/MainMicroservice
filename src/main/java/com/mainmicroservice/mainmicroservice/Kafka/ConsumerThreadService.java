@@ -101,6 +101,7 @@ public class ConsumerThreadService {
         		{
         			if(consumer!=null)
         			{
+        				System.out.println("UNSUBSCRIBE");
 	        			consumer.unsubscribe();
 	        			consumer.close();
         			}

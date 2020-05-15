@@ -15,6 +15,7 @@ public class OrderModel {
 	private String customerFIO;
 	private double starsForWork;
 	private String customerImageKey;
+	private Integer chatId;
 	private String comment;
 	private AdvertisementModel advertisement;
 	private List<OrderDocumentModel> orderDocuments;
@@ -65,6 +66,12 @@ public class OrderModel {
 		this.customerFIO = customerFIO;
 	}
 
+	public Integer getChatId() {
+		return chatId;
+	}
+	public void setChatId(Integer chatId) {
+		this.chatId = chatId;
+	}
 	public String getNextStatus() {
 		return nextStatus;
 	}

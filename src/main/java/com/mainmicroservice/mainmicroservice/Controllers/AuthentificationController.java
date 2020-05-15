@@ -242,20 +242,12 @@ public class AuthentificationController {
 		user.setRole(this.roleRepository.findByRoleName("ROLE_"+regModel.role));
 		user = this.us.addNewUser(user);
 		UploadFilesModel files=this.us.setUserDocuments(user, regModel.certificateFiles);
-		/*
-		String[] keys=user.getDocumentKeys(regModel.certificateFiles);
-		UploadFilesModel files=new UploadFilesModel(keys.length);
-		for(int i=0;i<keys.length;i++)
-		{
-			UserDocument document=new UserDocument();
-			document.setDocumentKey(keys[i]);
-			document.setIsValid(false);
-			document.setUser(user);
-			udService.save(document);
-		//	files.allFiles[i]=new UploadFileModel(keys[i],regModel.allFiles.get(i).content,regModel.allFiles.get(i).contentType);
-		}
-		*/
 		
+		List<UserDocument> docs=this.udService.findByUserId(user.getUserId());
+		
+		
+		user.setDocuments(docs);
+		this.userESRep.save(user);
 		
 		try {
 			
@@ -266,9 +258,6 @@ public class AuthentificationController {
 			restTemplate1.exchange("http://localhost:1234/uploadCertificationFiles", HttpMethod.POST,entity1, Object.class);
 		}
 		
-		
-		this.userESRep.save(user);
-	
 		UserModel usConversationModel = new UserModel(user);
 		RestTemplate restTemplate2 = new RestTemplate();
 		HttpEntity<UserModel> entity = new HttpEntity<UserModel>(usConversationModel);

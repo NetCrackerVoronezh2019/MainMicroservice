@@ -140,6 +140,11 @@ public class AdminController {
 		return users;
 	}
 	
+	@GetMapping("delete")
+	public void deleteEs()
+	{
+		this.userESRep.deleteAll();
+	}
 	
 	@GetMapping("getAllUnValidDocuments")
 	public ResponseEntity<List<UserDocument>> getAllUnValidDocuments()
@@ -191,7 +196,8 @@ public class AdminController {
 		try {
 		this.userESRep.save(newUser);
 		}
-		catch(Exception ex){		}
+		catch(Exception ex){}
+		
 		RestTemplate restTemplate=new RestTemplate();
 	    HttpEntity<List<CertificationNotModel>> entity=new HttpEntity<>(certList);
 		String host=microservices.getHost();

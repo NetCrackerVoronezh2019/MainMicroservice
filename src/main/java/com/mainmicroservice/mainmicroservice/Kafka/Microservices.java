@@ -114,10 +114,10 @@ public class Microservices {
 	public void setPort(MicroserviceInfo portModel)
 	{
 		
-		System.out.println(portModel.getPort());
+		System.out.println(portModel.getPort()+" /"+portModel.getMicroserviceName());
 		if(portModel!=null)
 		{
-			if(portModel.getMicroserviceName()!=null && portModel.getPort()!=null && portModel.getToken()!=null)
+			if(portModel.getMicroserviceName()!=null && portModel.getPort()!=null)
 			{
 				if(portModel.getMicroserviceName()==MicroservicesEnum.MAIN)
 				{
@@ -129,7 +129,7 @@ public class Microservices {
 				{
 					if(portModel.getMicroserviceName()==MicroservicesEnum.ADVERTISEMENT)
 					{
-						System.out.println("Я тут");
+						System.out.println(portModel.getMicroserviceName());
 						this.setAdvertismentPort(portModel.getPort().toString());
 						this.setAdvertisement_token(portModel.getToken());
 					}
@@ -137,13 +137,27 @@ public class Microservices {
 					{
 						if(portModel.getMicroserviceName()==MicroservicesEnum.CONVERSATION)
 						{
+							System.out.println(portModel.getMicroserviceName());
 							this.setConversationPort(portModel.getPort().toString());
 							this.setConversation_token(portModel.getToken());
 						}
 						else
 						{
-							//this.setUserAndgroupsPort(portModel.getPort().toString());
-							//this.setUserAndgroups_token(portModel.getToken());
+							if(portModel.getMicroserviceName()==MicroservicesEnum.AMAZON)
+							{
+								System.out.println(portModel.getMicroserviceName());
+								this.setAmazonPort(portModel.getPort().toString());
+								this.setAmazon_token(portModel.getToken());
+							}
+							else
+							{
+								if(portModel.getMicroserviceName()==MicroservicesEnum.USERANDGROUPS)
+								{
+									System.out.println(portModel.getMicroserviceName());
+									this.setUserAndgroupsPort(portModel.getPort().toString());
+									this.setUserAndgroups_token(portModel.getToken());
+								}
+							}
 						}
 					}
 				}
