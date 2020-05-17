@@ -40,7 +40,7 @@ import Models.OrderModel;
 import Models.RatingModel;
 
 @RestController
-@CrossOrigin(origins="https://helpui.herokuapp.com")
+@CrossOrigin(origins="http://helpui.herokuapp.com")
 public class OrderController {
 
 	@Autowired

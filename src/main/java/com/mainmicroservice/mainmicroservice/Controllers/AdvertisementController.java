@@ -29,7 +29,7 @@ import Models.Enums.AdvertisementStatus;
 
 
 @RestController
-@CrossOrigin(origins="https://helpui.herokuapp.com")
+@CrossOrigin(origins="http://helpui.herokuapp.com")
 public class AdvertisementController {
 
 	

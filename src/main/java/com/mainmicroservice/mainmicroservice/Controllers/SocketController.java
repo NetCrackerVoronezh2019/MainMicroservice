@@ -44,7 +44,6 @@ public class SocketController {
 	private Microservices microservices;
 
     @PostMapping("/sendMessage/")
-    @CrossOrigin(origins="http://localhost:4200")
     public ResponseEntity<?>  sendMessage(@RequestBody MessagesModel messagesModel) {
     	
     	String port=this.microservices.getConversationPort();
