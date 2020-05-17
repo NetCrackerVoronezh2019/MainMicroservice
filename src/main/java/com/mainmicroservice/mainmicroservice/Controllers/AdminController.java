@@ -40,7 +40,7 @@ import Models.Enums.AdvertisementNotificationType;
 import Models.Enums.TeacherStatus;
 
 @RestController
-@CrossOrigin(origins="https://helpui.herokuapp.com")
+@CrossOrigin(origins="http://helpui.herokuapp.com")
 public class AdminController {
 
 	@Autowired
@@ -157,6 +157,7 @@ public class AdminController {
 	@GetMapping("getAllTeachers")
 	public List<User> getAllDocuments()
 	{
+		
 		return this.userRep.findByRoleId()
 				.stream()
 				.filter(t->t.getTeacherStatus()!=TeacherStatus.CERTIFICATES_ARE_NOT_CHECKED)
@@ -254,13 +255,18 @@ public class AdminController {
 			User changedUser=userService.getUserById(model.userId);
 			changedUser.setFirstname(model.firstname);
 			changedUser.setLastname(model.lastname);
+			changedUser.setBlockType(model.blockType);
 			changedUser.setIsActivate(model.isActivate);
 			changedUser.setEmail(model.email);
+			changedUser.setCancellationOfTheBan(model.getBanCancelDate(model.blockType));
 			changedUser.setIsDeleted(model.isDeleted);
 			Role role=roleRepository.findByRoleName(model.role);
 			changedUser.setRole(role);
 			userService.saveChanges(changedUser);
+			try {
 			this.userESRep.save(changedUser);
+			}
+			catch(Exception ex) {}
 			return new ResponseEntity<>(HttpStatus.OK);
 	}
 	

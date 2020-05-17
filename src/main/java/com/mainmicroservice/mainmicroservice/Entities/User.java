@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.*;
 import Jacson.Views;
 import Models.CertificateFileModel;
 import Models.FileModel;
+import Models.Enums.BlockType;
 import Models.Enums.EducationLevel;
 import Models.Enums.Gender;
 import Models.Enums.TeacherStatus;
@@ -84,6 +85,7 @@ public class User {
 	@Column(name="ISDELETED")
 	private Boolean isDeleted;
 	
+
 	@Column(name="LASTTIMEWASONLINE")
 	@JsonView(Views.UserInfoForChangeProps.class)
 	private LocalDateTime lastTimeWasONLINE;
@@ -97,8 +99,14 @@ public class User {
 	@JsonView(Views.UserInfoForChangeProps.class)
 	private String aboutMe;
 	
+	@Column(name="cancellationOfTheBan")
+	@JsonView(Views.UserInfoForChangeProps.class)
+	private LocalDateTime cancellationOfTheBan;	
 	
-
+	@Column(name="BLOCKTYPE")
+	@Enumerated(EnumType.STRING) 
+	@JsonView(Views.UserInfoForChangeProps.class)
+	private BlockType blockType;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JsonView(Views.UserInfoForChangeProps.class)
@@ -152,11 +160,22 @@ public class User {
 		return userImageKey;
 	}
 
+	
+	public BlockType getBlockType() {
+		return blockType;
+	}
+
+
+
+	public void setBlockType(BlockType blockType) {
+		this.blockType = blockType;
+	}
+
+
+
 	public void setUserImageKey(String userImageKey) {
 		this.userImageKey = userImageKey;
 	}
-
-	
 
 	public Date getBirthDate() {
 		return birthDate;
@@ -195,6 +214,7 @@ public class User {
 		return gender;
 	}
 
+	
 	public void setGender(Gender gender) {
 		this.gender = gender;
 	}
@@ -204,6 +224,13 @@ public class User {
 	}
 	
 	
+	public LocalDateTime getCancellationOfTheBan() {
+		return cancellationOfTheBan;
+	}
+
+	public void setCancellationOfTheBan(LocalDateTime cancellationOfTheBan) {
+		this.cancellationOfTheBan = cancellationOfTheBan;
+	}
 
 	public LocalDateTime getLastTimeWasONLINE() {
 		return lastTimeWasONLINE;

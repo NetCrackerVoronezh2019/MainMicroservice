@@ -29,7 +29,7 @@ import Models.Enums.AdvertisementStatus;
 
 
 @RestController
-@CrossOrigin(origins="https://helpui.herokuapp.com")
+@CrossOrigin(origins="http://helpui.herokuapp.com")
 public class AdvertisementController {
 
 	
@@ -50,6 +50,17 @@ public class AdvertisementController {
     private SimpMessagingTemplate template;
 	
 	
+	@GetMapping("deleteAdvertisement/{id}/{comment}")
+	public ResponseEntity<?> deleteAdvertisement(@PathVariable Long id,@PathVariable String comment)
+	{
+		 RestTemplate restTemplate = new RestTemplate();
+		 String host=microservices.getHost();
+		 String advPort=microservices.getAdvertismentPort();
+		 ResponseEntity<Long> res=restTemplate.exchange("http://"+host+":"+advPort+"/deleteAdvertisement/"+id+"/"+comment,HttpMethod.GET,null,new ParameterizedTypeReference<Long>(){});
+		 ResponseEntity<Integer> res2=restTemplate.exchange("http://"+host+":"+advPort+"/getMyAllNotificationsSize/"+res.getBody(),HttpMethod.GET,null,new ParameterizedTypeReference<Integer>(){});
+		 template.convertAndSend("/notification/"+res.getBody(),res2.getBody());
+		 return res;
+	}
 	@GetMapping("user/setNotificatiosAsReaded")
 	public ResponseEntity<?> setNotificationsAsReaded(ServletRequest req)
 	{

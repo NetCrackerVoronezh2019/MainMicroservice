@@ -32,6 +32,7 @@ import com.mainmicroservice.mainmicroservice.Services.UserService;
 import Models.ChangeOrderStatus;
 import Models.ChangeReiting;
 import Models.CompleteOrderModel;
+import Models.DeleteOrderAttachments;
 import Models.IsMyOrder;
 import Models.MyOrderModel;
 import Models.UserOrdersModel;
@@ -40,7 +41,7 @@ import Models.OrderModel;
 import Models.RatingModel;
 
 @RestController
-@CrossOrigin(origins="https://helpui.herokuapp.com")
+@CrossOrigin(origins="http://helpui.herokuapp.com")
 public class OrderController {
 
 	@Autowired
@@ -59,6 +60,17 @@ public class OrderController {
     private SimpMessagingTemplate template;
 	
 	
+	
+	@PostMapping("deleteOrderAttachments")
+	public ResponseEntity<?> deleteOrderAttachments(@RequestBody DeleteOrderAttachments model)
+	{
+		RestTemplate restTemplate = new RestTemplate();
+	    HttpEntity<DeleteOrderAttachments> entity=new HttpEntity<>(model);
+		String host=microservices.getHost();
+	    String advPort=microservices.getAdvertismentPort();
+		ResponseEntity<Object> res=restTemplate.exchange("http://"+host+":"+advPort+"/deleteOrderAttachments/",HttpMethod.POST,entity,Object.class);
+		return res;
+	}
 	@PostMapping("user/completeOrder")
 	public ResponseEntity<?> completeOrder(@RequestBody CompleteOrderModel model,ServletRequest req)
 	{

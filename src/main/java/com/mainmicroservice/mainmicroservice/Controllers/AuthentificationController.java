@@ -35,12 +35,13 @@ import com.mainmicroservice.mainmicroservice.Services.UserDocumentService;
 import com.mainmicroservice.mainmicroservice.Services.UserElasticSearchService;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 import Models.*;
+import Models.Enums.BlockType;
 import Models.Enums.TeacherStatus;
 
 
 
 @RestController
-@CrossOrigin(origins="https://helpui.herokuapp.com")
+@CrossOrigin(origins="http://helpui.herokuapp.com")
 public class AuthentificationController {
 
 	@Autowired
@@ -151,6 +152,7 @@ public class AuthentificationController {
 	    }
 	    User user=us.findByEmail(userName);
 	    UserInfoModel res=new UserInfoModel(userName,user.getRole().getRoleName());
+	    res.banTime=user.getCancellationOfTheBan();
 	    res.userId=user.getUserid();
 	    user.setLastTimeWasONLINE(LocalDateTime.now());
 	    us.saveChanges(user);
@@ -228,6 +230,7 @@ public class AuthentificationController {
 		User user=new User();
 		user.setIsActivate(false);
 		user.setIsDeleted(false);
+		user.setBlockType(BlockType.NONE);
 		user.setFirstname(regModel.firstname);
 		user.setLastname(regModel.lastname);
 		user.setEmail(regModel.email);

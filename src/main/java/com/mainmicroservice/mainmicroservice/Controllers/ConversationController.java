@@ -22,7 +22,7 @@ import Models.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@CrossOrigin(origins="https://helpui.herokuapp.com")
+@CrossOrigin(origins="http://helpui.herokuapp.com")
 public class ConversationController {
 	
 	@Autowired
