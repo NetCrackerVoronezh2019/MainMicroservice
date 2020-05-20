@@ -237,7 +237,7 @@ public class AdminController {
 		 _roles.add(_role.getRoleName());
 		 RestTemplate restTemplate=new RestTemplate();
 	     HttpEntity<List<String>> entity=new HttpEntity<List<String>>(_roles);
-		 ResponseEntity<List<String>> res= restTemplate.exchange("http://localhost:"+"7082"+"/setRoles",HttpMethod.POST,entity,new ParameterizedTypeReference<List<String>>(){});
+		 ResponseEntity<List<String>> res= restTemplate.exchange("http://192.168.99.103:"+"7082"+"/setRoles",HttpMethod.POST,entity,new ParameterizedTypeReference<List<String>>(){});
 	}
 	
 	

@@ -87,7 +87,7 @@ public class ConsumerThreadService {
                 		{
         	    			System.out.println("Microoooooo");
                 			RestTemplate template=new RestTemplate();
-                			ResponseEntity<List<MicroserviceInfo>> res=template.exchange("192.168.99.103:7082/getAllInfo",HttpMethod.GET,null,new ParameterizedTypeReference<List<MicroserviceInfo>>(){});
+                			ResponseEntity<List<MicroserviceInfo>> res=template.exchange("http://192.168.99.103:7082/getAllInfo",HttpMethod.GET,null,new ParameterizedTypeReference<List<MicroserviceInfo>>(){});
                 			micro.setPorts(res.getBody());
                 		}
         	    	}
@@ -123,7 +123,7 @@ public class ConsumerThreadService {
                 		if(records.count()>0)
                 		{
                 			RestTemplate template=new RestTemplate();
-                			ResponseEntity<List<String>> res=template.exchange("192.168.99.103:7082/getAllRoles",HttpMethod.GET,null,new ParameterizedTypeReference<List<String>>(){});
+                			ResponseEntity<List<String>> res=template.exchange("http://192.168.99.103:7082/getAllRoles",HttpMethod.GET,null,new ParameterizedTypeReference<List<String>>(){});
                 			roleService.addNewRoles(res.getBody());
                 		}
                 	}

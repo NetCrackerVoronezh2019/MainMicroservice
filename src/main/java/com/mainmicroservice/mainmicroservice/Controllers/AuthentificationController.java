@@ -37,7 +37,7 @@ import com.mainmicroservice.mainmicroservice.Services.UserService;
 import Models.*;
 import Models.Enums.BlockType;
 import Models.Enums.TeacherStatus;
-
+import org.springframework.web.util.UriComponentsBuilder;
 
 
 @RestController
@@ -83,12 +83,19 @@ public class AuthentificationController {
 		String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
 	    User user=us.findByEmail(userName);
 	    user.setUserImageKey("userImageKey_"+user.getUserid());
+        RestTemplate restTemplate = new RestTemplate();
+        String host=microservices.getHost();
+        String port=microservices.getUserAndgroupsPort();
+        UriComponentsBuilder uriBuilder =UriComponentsBuilder.fromHttpUrl("http://"+host+":"+port+"/user/updateUserImage").queryParam("userId",user.getUserid()).queryParam("key",user.getUserImageKey());
+        restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.PUT,null,Object.class);
+        port=microservices.getConversationPort();
+        uriBuilder =UriComponentsBuilder.fromHttpUrl("http://"+host+":"+port+"/user/updateUserImage").queryParam("userId",user.getUserid()).queryParam("key",user.getUserImageKey());
+        restTemplate.exchange(uriBuilder.toUriString(),HttpMethod.PUT,null,Object.class);
 	    us.saveChanges(user);
 	    this.userESRep.save(user);
 	    fileModel.key=user.getUserImageKey();
-	    String port=microservices.getAmazonPort();
-	    String host=microservices.getHost();
-	    RestTemplate restTemplate = new RestTemplate();
+	    port=microservices.getAmazonPort();
+	    host=microservices.getHost();
 		HttpEntity<UploadFileModel> entity = new HttpEntity<>(fileModel);
 		return restTemplate.exchange("http://"+host+":"+port+"/uploadUserfile", HttpMethod.POST,entity, Object.class);
 	}
@@ -285,7 +292,7 @@ public class AuthentificationController {
 		{
 			
 		}
-		ms.SendMessage("Registration", "http://localhost:4200/activate/"+user.getActivateCode(), user.getEmail(),user.getFirstname());
+		ms.SendMessage("Registration", "http://helpui.herokuapp.com/activate/"+user.getActivateCode(), user.getEmail(),user.getFirstname());
 		
 		return new ResponseEntity<>(us,HttpStatus.OK);
 		
