@@ -209,4 +209,13 @@ public class ConversationController {
 		HttpEntity<MessagesModel> entity = new HttpEntity<MessagesModel>(messagesModel);
 		restTemplate.exchange("http://"+host+":"+port+"/dialog/setMessage",HttpMethod.PUT,entity, Object.class );
 	}
+
+	@PostMapping("addAttachmentsFromDialog")
+    public void addAttachmentsFromDialog(@RequestBody AttachmentsFromDialogModel attachmentsFromDialogModel) {
+        RestTemplate restTemplate = new RestTemplate();
+        String port=this.microservices.getAdvertismentPort();
+        String host=this.microservices.getHost();
+        HttpEntity<AttachmentsFromDialogModel> entity = new HttpEntity<AttachmentsFromDialogModel>(attachmentsFromDialogModel);
+        restTemplate.exchange("http://"+host+":"+port+"/addAttachmentsFromDialog",HttpMethod.POST,entity, Object.class );
+    }
 }

@@ -23,7 +23,7 @@ public interface UserRepository extends CrudRepository<User,Long> {
 	
 	User findByUserId(Long id);
 	
-	@Query(value = "select * from users where roleid=3", 
+	@Query(value = "select * from users where roleid=2", 
 			  nativeQuery = true)
 	List<User> findByRoleId();
 	

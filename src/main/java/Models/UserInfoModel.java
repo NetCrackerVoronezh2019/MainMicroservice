@@ -1,9 +1,12 @@
 package Models;
 
+import java.time.LocalDateTime;
+
 public class UserInfoModel {
  public String userName;
  public String roleName;
  public Long userId;
+ public LocalDateTime banTime;
  
  public UserInfoModel(String name,Long id)
  {

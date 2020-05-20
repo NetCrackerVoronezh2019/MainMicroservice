@@ -7,3 +7,8 @@
 /mvnw.cmd
 /.project
 /Help.md
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
