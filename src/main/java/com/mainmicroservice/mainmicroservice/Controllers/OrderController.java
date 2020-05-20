@@ -41,7 +41,7 @@ import Models.OrderModel;
 import Models.RatingModel;
 
 @RestController
-@CrossOrigin(origins="http://helpui.herokuapp.com")
+@CrossOrigin(origins="http://localhost:4200")
 public class OrderController {
 
 	@Autowired
@@ -71,7 +71,7 @@ public class OrderController {
 		ResponseEntity<Object> res=restTemplate.exchange("http://"+host+":"+advPort+"/deleteOrderAttachments/",HttpMethod.POST,entity,Object.class);
 		return res;
 	}
-	@PostMapping("user/completeOrder")
+	@PostMapping("user/addAttachments")
 	public ResponseEntity<?> completeOrder(@RequestBody CompleteOrderModel model,ServletRequest req)
 	{
 		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
@@ -82,7 +82,7 @@ public class OrderController {
 	    HttpEntity<CompleteOrderModel> entity=new HttpEntity<>(model);
 		String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
-		ResponseEntity<Object> res=restTemplate.exchange("http://"+host+":"+advPort+"/completeOrder/",HttpMethod.POST,entity,Object.class);
+		ResponseEntity<Object> res=restTemplate.exchange("http://"+host+":"+advPort+"/addAttachments/",HttpMethod.POST,entity,Object.class);
 		return res;
 	}
 	

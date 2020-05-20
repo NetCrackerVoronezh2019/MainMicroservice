@@ -40,7 +40,7 @@ import Models.Enums.AdvertisementNotificationType;
 import Models.Enums.TeacherStatus;
 
 @RestController
-@CrossOrigin(origins="http://helpui.herokuapp.com")
+@CrossOrigin(origins="http://localhost:4200")
 public class AdminController {
 
 	@Autowired

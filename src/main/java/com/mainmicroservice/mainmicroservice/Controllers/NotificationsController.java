@@ -18,7 +18,7 @@ import com.mainmicroservice.mainmicroservice.Security.JwtTokenProvider;
 import com.mainmicroservice.mainmicroservice.Services.UserService;
 
 @RestController
-@CrossOrigin(origins="http://helpui.herokuapp.com")
+@CrossOrigin(origins="http://localhost:4200")
 public class NotificationsController {
 	
 	@Autowired

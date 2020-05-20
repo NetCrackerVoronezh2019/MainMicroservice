@@ -41,7 +41,7 @@ import Models.Enums.TeacherStatus;
 
 
 @RestController
-@CrossOrigin(origins="http://helpui.herokuapp.com")
+@CrossOrigin(origins="http://localhost:4200")
 public class AuthentificationController {
 
 	@Autowired
@@ -259,8 +259,11 @@ public class AuthentificationController {
 		String userandgroupsport=microservices.getUserAndgroupsPort();
 		String host=microservices.getHost();
 		user.setDocuments(docs);
-		this.userESRep.save(user);
-		
+		try
+		{
+			this.userESRep.save(user);
+		}
+		catch(Exception ex) {}
 		try {
 			
 		if(user.getRole().getRoleName().equals("ROLE_TEACHER"))

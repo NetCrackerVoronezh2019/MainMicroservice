@@ -44,7 +44,7 @@ public class SocketController {
 	private Microservices microservices;
 
     @PostMapping("/sendMessage/")
-    @CrossOrigin(origins="http://helpui.herokuapp.com")
+    @CrossOrigin(origins="http://localhost:4200")
     public ResponseEntity<?>  sendMessage(@RequestBody MessagesModel messagesModel) {
     	
     	String port=this.microservices.getConversationPort();
@@ -69,7 +69,7 @@ public class SocketController {
     
     
     @MessageMapping("/sendNotification/")
-    @CrossOrigin(origins="http://helpui.herokuapp.com")
+    @CrossOrigin(origins="http://localhost:4200")
     public void sendNotification(NotificationModel model) {
     	
     	String port=this.microservices.getAdvertismentPort();

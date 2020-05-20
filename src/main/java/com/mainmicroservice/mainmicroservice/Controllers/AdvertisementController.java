@@ -26,10 +26,11 @@ import com.mainmicroservice.mainmicroservice.Sort.NotificationComporator;
 import Models.*;
 import Models.Enums.AdvertisementNotificationType;
 import Models.Enums.AdvertisementStatus;
+import Models.Enums.BlockType;
 
 
 @RestController
-@CrossOrigin(origins="http://helpui.herokuapp.com")
+@CrossOrigin(origins="http://localhost:4200")
 public class AdvertisementController {
 
 	
@@ -92,10 +93,11 @@ public class AdvertisementController {
 	{
 		String roleName;
 		Long id;
+		User user;
 		try
 		{
 			String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
-		    User user=us.findByEmail(userName);
+		    user=us.findByEmail(userName);
 		    roleName=user.getRole().getRoleName();
 		    id=user.getUserid();
 		}
@@ -113,7 +115,10 @@ public class AdvertisementController {
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
 		ResponseEntity<Boolean> res=restTemplate.exchange("http://"+host+":"+advPort+"/canSendRequest",HttpMethod.POST,entity,new ParameterizedTypeReference<Boolean>(){});
-		return res;
+		BlockType type=user.getBlockType();
+		if(type==BlockType.NONE && res.getBody())
+			return new ResponseEntity<>(Boolean.TRUE,HttpStatus.OK);
+		return new ResponseEntity<>(Boolean.FALSE,HttpStatus.OK);
 	}
 	
 	@GetMapping("user/getMyAllNotifications") 
