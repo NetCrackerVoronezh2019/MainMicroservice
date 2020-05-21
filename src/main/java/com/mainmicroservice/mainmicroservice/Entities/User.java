@@ -42,14 +42,14 @@ public class User {
 	@Column(name="ACTIVATECODE")
 	private String activateCode;
 	
-	@Size(min=4, max=20)
+	
 	@Column(name="FIRSTNAME")
 	@JsonView(Views.UserInfoForChangeProps.class)
 	private String firstname;
 	
 	@JsonView(Views.UserInfoForChangeProps.class)
 	@Column(name="LASTNAME")
-	@Size(min=4, max=20)
+
 	private String lastname;
 	
 	@Column(name="REITING")
