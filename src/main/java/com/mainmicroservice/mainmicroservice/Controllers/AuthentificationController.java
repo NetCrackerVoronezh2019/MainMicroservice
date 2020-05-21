@@ -104,9 +104,12 @@ public class AuthentificationController {
 	{	
 		try
 		{
-			String roleName=this.jwtTokenProvider.getRole((HttpServletRequest) req);
+			String userName=this.jwtTokenProvider.getUsername((HttpServletRequest) req);
+		    User user=us.findByEmail(userName);
+			String roleName=user.getRole().getRoleName();
 			UserInfoModel userInfo=new UserInfoModel();
 			userInfo.roleName=roleName;
+			userInfo.userId=user.getUserId();
 			return new ResponseEntity<>(userInfo,HttpStatus.OK);
 		}
 		catch(Exception ex)
