@@ -231,7 +231,45 @@ public class AuthentificationController {
     	
     }
 	
-	
+	@PostMapping("changeInfo")
+	public ResponseEntity<?> changeInfo(@RequestBody RegistrationModel regModel)
+	{
+		System.out.println("Я ТУТ");
+		User user=this.us.findById(regModel.id);
+		user.setFirstname(regModel.firstname);
+		user.setLastname(regModel.lastname);
+		user.setBirthDate(regModel.birthDate);
+		user.setGender(regModel.gender);
+		if(user.getRole().getRoleName().equals("ROLE_TEACHER"))
+		{
+			user.setAboutMe(regModel.aboutMe);
+			user.setEducationLevel(regModel.education);
+		}
+		
+		this.us.saveChanges(user);
+		try {
+			this.userESRep.save(user);
+		}
+		catch(Exception ex) {}
+		
+		RestTemplate restTemplate=new RestTemplate();
+		String userandgroupsport=microservices.getUserAndgroupsPort();
+		UserModel usConversationModel = new UserModel(user);
+		String convPort=microservices.getConversationPort();
+		String host=microservices.getHost();
+		UserAndGroupUserModel userAndGroupUserModel = new UserAndGroupUserModel(user);
+		HttpEntity<UserModel> entity = new HttpEntity<UserModel>(usConversationModel);
+		HttpEntity<UserAndGroupUserModel> entityUG = new HttpEntity<UserAndGroupUserModel>(userAndGroupUserModel);
+		try {
+		restTemplate.exchange("http://"+host+":"+userandgroupsport+"/userSettings/", HttpMethod.PUT,entityUG, Object.class );
+		restTemplate.exchange("http://"+host+":"+convPort+"/userSettings/", HttpMethod.PUT,entity, Object.class );
+		}
+		catch(Exception ex) {}
+
+		return new ResponseEntity<>(null,HttpStatus.OK);
+
+		
+	}
     @PostMapping("/registration")
 	public ResponseEntity<?> registation( @RequestBody @Valid RegistrationModel regModel) throws MessagingException
 	{

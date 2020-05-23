@@ -317,6 +317,18 @@ public class AdvertisementController {
 		return res;
 		
 	}
+	
+	
+	@PostMapping("updateAdvertisementInformation")
+	public ResponseEntity<?> updateAdvertisement(@RequestBody AdvertisementModel model){
+		
+		 HttpEntity<AdvertisementModel> requestEntity =new HttpEntity<>(model);
+		 RestTemplate restTemplate = new RestTemplate();
+		 String host=microservices.getHost();
+		 String advPort=microservices.getAdvertismentPort();
+		 ResponseEntity<Boolean> res=restTemplate.exchange("http://"+host+":"+advPort+"/updateAdvertisementInformation",HttpMethod.POST,requestEntity, Boolean.class );
+	     return res;
+	}
 
 	@GetMapping("allAdvertisements")
 	public ResponseEntity<List<AdvertisementModel>> getAll() {
@@ -345,15 +357,20 @@ public class AdvertisementController {
 	}
 	
 	@PostMapping("admin/addNewSubject")
-	public SubjectModel addNewSubject(@RequestBody SubjectModel _model)
+	public ResponseEntity<?> addNewSubject(@RequestBody SubjectModel _model)
 	{
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<SubjectModel> entity = new HttpEntity<SubjectModel>(_model);
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
-	    ResponseEntity<SubjectModel> res=restTemplate.exchange("http://"+host+":"+advPort+"/addNewSubject",HttpMethod.POST,entity, SubjectModel.class);
+	    String ugPort=microservices.getUserAndgroupsPort();
+	    try {
+	    ResponseEntity<SubjectModel> res1=restTemplate.exchange("http://"+host+":"+advPort+"/addNewSubject",HttpMethod.POST,entity, SubjectModel.class);
+	    ResponseEntity<SubjectModel> res2=restTemplate.exchange("http://"+host+":"+ugPort+"/addNewSubject",HttpMethod.POST,entity, SubjectModel.class);
+	    }
+	    catch(Exception ex) {}
 		//ResponseEntity<SubjectModel> res=restTemplate.exchange("http://localhost:7082/setNewSubject",HttpMethod.POST,entity, SubjectModel.class );
-		return res.getBody();
+		return new ResponseEntity<>(null,HttpStatus.OK);
 	}
 	
 	

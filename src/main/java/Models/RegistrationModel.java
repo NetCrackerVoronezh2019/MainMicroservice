@@ -12,6 +12,7 @@ import Models.Enums.Gender;
 public class RegistrationModel {
 	
 	public String firstname;
+	public Long id;
 	public String lastname;
 	public String email;
 	public String password;
@@ -28,13 +29,5 @@ public class RegistrationModel {
 				+ ", password=" + password + ", role=" + role + ", birthDate=" + birthDate + ", certificateFiles="
 				+ certificateFiles.size() + ", gender=" + gender + ", aboutMe=" + aboutMe + ", education=" + education + "]";
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		
 }

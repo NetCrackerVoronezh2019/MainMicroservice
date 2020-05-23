@@ -35,6 +35,11 @@ public class UserService {
 		return userRepository.findByUserId(id);
 	}
 	
+	public User findById(Long id)
+	{
+		return this.userRepository.findById(id).get();
+	}
+	
 	public void saveChanges(User user) {
 		userRepository.save(user);
 	}
