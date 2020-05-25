@@ -118,6 +118,15 @@ public class OrderController {
 		String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
 		ResponseEntity<OrderModel> res=restTemplate.exchange("http://"+host+":"+advPort+"/isMyOrder",HttpMethod.POST,entity,new ParameterizedTypeReference<OrderModel>(){});
+		
+		OrderModel om=res.getBody();
+		Long id=om.getFreelancerId();
+		if(id!=null)
+		{
+			User freelancer=this.us.getUserById(id);
+			om.setFreelancerFIO(freelancer.getFirstname()+" "+freelancer.getLastname());
+			return new ResponseEntity<>(om,HttpStatus.OK);
+		}
 		return res;
 	    
 	}

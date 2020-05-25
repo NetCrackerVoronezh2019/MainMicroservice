@@ -100,7 +100,7 @@ public class UserService {
 			   doc.setIsValid(Boolean.FALSE);
 			   doc.setUser(user);
 			   doc.setSubject(certificateFiles.get(i).getSection());
-			   String key="user"+user.getUserid()+"_document"+allFiles.get(j).name;
+			   String key="user"+user.getUserid()+"document_"+allFiles.get(j).name;
 			   doc.setDocumentKey(key);
 			   this.udService.save(doc);
 			   files.allFiles.add(new UploadFileModel(doc.getDocumentKey(),allFiles.get(j).content,allFiles.get(j).contentType));

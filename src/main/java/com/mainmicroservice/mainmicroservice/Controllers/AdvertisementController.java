@@ -26,6 +26,7 @@ import com.mainmicroservice.mainmicroservice.Sort.NotificationComporator;
 import Models.*;
 import Models.Enums.AdvertisementNotificationType;
 import Models.Enums.AdvertisementStatus;
+import Models.Enums.AdvertisementType;
 import Models.Enums.BlockType;
 
 
@@ -353,25 +354,47 @@ public class AdvertisementController {
 		AdvertisementModel m=res.getBody();
 		m.setFirstName(us.getUserById(m.getAuthorId()).getFirstname());
 		m.setSurName(us.getUserById(m.getAuthorId()).getLastname());
+		
 		return new ResponseEntity<>(m,HttpStatus.OK);
 	}
 	
 	@PostMapping("admin/addNewSubject")
 	public ResponseEntity<?> addNewSubject(@RequestBody SubjectModel _model)
 	{
+		
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<SubjectModel> entity = new HttpEntity<SubjectModel>(_model);
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
 	    String ugPort=microservices.getUserAndgroupsPort();
-	    try {
+	   try {
 	    ResponseEntity<SubjectModel> res1=restTemplate.exchange("http://"+host+":"+advPort+"/addNewSubject",HttpMethod.POST,entity, SubjectModel.class);
 	    ResponseEntity<SubjectModel> res2=restTemplate.exchange("http://"+host+":"+ugPort+"/addNewSubject",HttpMethod.POST,entity, SubjectModel.class);
 	    }
 	    catch(Exception ex) {}
-		//ResponseEntity<SubjectModel> res=restTemplate.exchange("http://localhost:7082/setNewSubject",HttpMethod.POST,entity, SubjectModel.class );
+	    
+	
 		return new ResponseEntity<>(null,HttpStatus.OK);
 	}
 	
+	@PostMapping("editSubject")
+	public ResponseEntity<?> editSubject(@RequestBody EditSubject model)
+	{
+		
+		RestTemplate restTemplate = new RestTemplate();
+	    String host=microservices.getHost();
+	    String advPort=microservices.getAdvertismentPort();
+	    String ugPort=microservices.getUserAndgroupsPort();
+	    HttpEntity<EditSubject> entity = new HttpEntity<>(model);
+	   try {
+	      ResponseEntity<Object> res1=restTemplate.exchange("http://"+host+":"+advPort+"/editSubject",HttpMethod.POST,entity, Object.class);
+	 //  ResponseEntity<SubjectModel> res2=restTemplate.exchange("http://"+host+":"+ugPort+"/editSubject",HttpMethod.POST,entity, SubjectModel.class);
+	    }
+	    catch(Exception ex) {}
+	    
+		//ResponseEntity<SubjectModel> res=restTemplate.exchange("http://localhost:7082/setNewSubject",HttpMethod.POST,entity, SubjectModel.class );
+		return new ResponseEntity<>(null,HttpStatus.OK);
+		
+	}
 	
 }

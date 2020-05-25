@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 public class SubjectModel {
 
+	private Long id;
 	private String name;
 	private String translateName;
 	private String url;
@@ -23,6 +24,15 @@ public class SubjectModel {
 		this.isChecked = isChecked;
 	}
 	
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}
