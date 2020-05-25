@@ -3,6 +3,7 @@ package com.mainmicroservice.mainmicroservice.Controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,6 +67,9 @@ public class AdminController {
 	
 	@Autowired
 	private Microservices microservices;
+	
+	@Autowired
+	private Microservices microInfo;
 	
 	@Autowired
     private SimpMessagingTemplate template;
@@ -200,11 +204,15 @@ public class AdminController {
 		catch(Exception ex){}
 		
 		RestTemplate restTemplate=new RestTemplate();
-	    HttpEntity<List<CertificationNotModel>> entity=new HttpEntity<>(certList);
+	   
 		String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
+	    HttpHeaders headers = new HttpHeaders();
+		 headers.set("Authorization", microInfo.getAdvertisement_token());
+		 HttpEntity<Object> entity2 = new HttpEntity<>(headers);
+		 HttpEntity<List<CertificationNotModel>> entity=new HttpEntity<>(certList,headers);
 		ResponseEntity<Object> res= restTemplate.exchange("http://"+host+":"+advPort+"/certificationNotification",HttpMethod.POST,entity,Object.class);
-		ResponseEntity<Integer> res2=restTemplate.exchange("http://"+host+":"+advPort+"/getMyAllNotificationsSize/"+newUser.getUserid(),HttpMethod.GET,null,new ParameterizedTypeReference<Integer>(){});
+		ResponseEntity<Integer> res2=restTemplate.exchange("http://"+host+":"+advPort+"/getMyAllNotificationsSize/"+newUser.getUserid(),HttpMethod.GET,entity2,new ParameterizedTypeReference<Integer>(){});
 		
 	    template.convertAndSend("/notification/"+newUser.getUserid(),res2.getBody());
 	    

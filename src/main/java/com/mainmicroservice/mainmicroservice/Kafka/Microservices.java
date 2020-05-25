@@ -2,6 +2,8 @@ package com.mainmicroservice.mainmicroservice.Kafka;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,10 @@ public class Microservices {
 	private String amazon_token;
 	
 	
+	@PostConstruct
+    protected void init() {
+		this.setAdvertisement_token("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZHZlcnRpc2VtZW50TWljcm9zZXJ2aWNlIn0.V-b7cLMxTsersdxV6oB26_UsQxs0mR3mqS_YP7IgP3I");
+	}
 	
 	public String getUserAndgroupsPort() {
 		return userAndgroupsPort;

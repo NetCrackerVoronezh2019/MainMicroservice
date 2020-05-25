@@ -18,7 +18,7 @@ public class MainmicroserviceApplication {
 	    try {
 		ConsumerThreadService a = (ConsumerThreadService) app.getBean("consumerThreadService");		
 	    Utility utility=(Utility) app.getBean("utility");	
-	    utility.sendInfoModelToConfig("http://192.168.99.103:7082/setInfoModel");
+	    utility.sendInfoModelToConfig("http://95.30.222.140:7082/setInfoModel");
 	    Thread consumerThread =new Thread(a.getRunnable());
 	    consumerThread.start();
 	    Thread RoleThread =new Thread(a.RoleThread());

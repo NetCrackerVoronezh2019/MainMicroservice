@@ -56,10 +56,13 @@ public class AdvertisementController {
 	public ResponseEntity<?> deleteAdvertisement(@PathVariable Long id,@PathVariable String comment)
 	{
 		 RestTemplate restTemplate = new RestTemplate();
+		 HttpHeaders headers = new HttpHeaders();
+		 headers.set("Authorization", microInfo.getAdvertisement_token());
+		 HttpEntity<Object> entity = new HttpEntity<>(headers);
 		 String host=microservices.getHost();
 		 String advPort=microservices.getAdvertismentPort();
-		 ResponseEntity<Long> res=restTemplate.exchange("http://"+host+":"+advPort+"/deleteAdvertisement/"+id+"/"+comment,HttpMethod.GET,null,new ParameterizedTypeReference<Long>(){});
-		 ResponseEntity<Integer> res2=restTemplate.exchange("http://"+host+":"+advPort+"/getMyAllNotificationsSize/"+res.getBody(),HttpMethod.GET,null,new ParameterizedTypeReference<Integer>(){});
+		 ResponseEntity<Long> res=restTemplate.exchange("http://"+host+":"+advPort+"/deleteAdvertisement/"+id+"/"+comment,HttpMethod.GET,entity,new ParameterizedTypeReference<Long>(){});
+		 ResponseEntity<Integer> res2=restTemplate.exchange("http://"+host+":"+advPort+"/getMyAllNotificationsSize/"+res.getBody(),HttpMethod.GET,entity,new ParameterizedTypeReference<Integer>(){});
 		 template.convertAndSend("/notification/"+res.getBody(),res2.getBody());
 		 return res;
 	}
@@ -72,8 +75,11 @@ public class AdvertisementController {
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
 		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<Object> res=restTemplate.exchange("http://"+host+":"+advPort+"/setNotificatiosAsReaded/"+userId,HttpMethod.GET,null,Object.class);
-		ResponseEntity<Integer> res2=restTemplate.exchange("http://"+host+":"+advPort+"/getMyAllNotificationsSize/"+userId,HttpMethod.GET,null,new ParameterizedTypeReference<Integer>(){});
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+		HttpEntity<Object> entity = new HttpEntity<Object>(headers);
+		ResponseEntity<Object> res=restTemplate.exchange("http://"+host+":"+advPort+"/setNotificatiosAsReaded/"+userId,HttpMethod.GET,entity,Object.class);
+		ResponseEntity<Integer> res2=restTemplate.exchange("http://"+host+":"+advPort+"/getMyAllNotificationsSize/"+userId,HttpMethod.GET,entity,new ParameterizedTypeReference<Integer>(){});
 	    template.convertAndSend("/notification/"+userId,res2.getBody());
 		return res;
 	}
@@ -86,7 +92,10 @@ public class AdvertisementController {
 		String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
 	    RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<AdvertisementModel> res=restTemplate.exchange("http://"+host+":"+advPort+"/changeAdvStatus/"+advId+"/"+status,HttpMethod.GET,null,AdvertisementModel.class);	
+	    HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+		HttpEntity<Object> entity = new HttpEntity<Object>(headers);
+		ResponseEntity<AdvertisementModel> res=restTemplate.exchange("http://"+host+":"+advPort+"/changeAdvStatus/"+advId+"/"+status,HttpMethod.GET,entity,AdvertisementModel.class);	
 		return res;
 	}
 	@GetMapping("canSendRequest/{advertisementId}")
@@ -111,7 +120,10 @@ public class AdvertisementController {
 	    sendModel.setRoleName(roleName);
 	    sendModel.setAdvertisementId(advertisementId);
 	    sendModel.setSenderId(id);
-	    HttpEntity<SendAdvertisementNotificationModel> entity=new HttpEntity<>(sendModel);
+	    HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+	
+	    HttpEntity<SendAdvertisementNotificationModel> entity=new HttpEntity<>(sendModel,headers);
 	    RestTemplate restTemplate = new RestTemplate();
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
@@ -132,7 +144,10 @@ public class AdvertisementController {
 		RestTemplate restTemplate = new RestTemplate();
 		String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
-		ResponseEntity<List<FullNotificationModel>> res=restTemplate.exchange("http://"+host+":"+advPort+"/getMyAllNotifications/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<List<FullNotificationModel>>(){});
+	    HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+		HttpEntity<Object> entity = new HttpEntity<Object>(headers);
+		ResponseEntity<List<FullNotificationModel>> res=restTemplate.exchange("http://"+host+":"+advPort+"/getMyAllNotifications/"+id,HttpMethod.GET,entity,new ParameterizedTypeReference<List<FullNotificationModel>>(){});
 		List<FullNotificationModel> not=res.getBody();
 		for(FullNotificationModel fullModel:not)
 		{	
@@ -174,7 +189,10 @@ public class AdvertisementController {
 		RestTemplate restTemplate = new RestTemplate();
 		String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
-		ResponseEntity<List<FullNotificationModel>> res=restTemplate.exchange("http://"+host+":"+advPort+"/getCommonNots/"+senderId+"/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<List<FullNotificationModel>>(){});
+	    HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+		HttpEntity<Object> entity = new HttpEntity<Object>(headers);
+		ResponseEntity<List<FullNotificationModel>> res=restTemplate.exchange("http://"+host+":"+advPort+"/getCommonNots/"+senderId+"/"+id,HttpMethod.GET,entity,new ParameterizedTypeReference<List<FullNotificationModel>>(){});
 		List<FullNotificationModel> not=res.getBody();
 		for(FullNotificationModel model:not)
 		{	
@@ -197,7 +215,9 @@ public class AdvertisementController {
 	    User user=us.findByEmail(userName);	
 	    model.setSenderId(user.getUserid());
 	    RestTemplate restTemplate = new RestTemplate();
-	    HttpEntity<NotificationModel> entity=new HttpEntity<>(model);
+	    HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+	    HttpEntity<NotificationModel> entity=new HttpEntity<>(model,headers);
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
 		ResponseEntity<Object> res=restTemplate.exchange("http://"+host+":"+advPort+"/newNotification",HttpMethod.POST,entity,new ParameterizedTypeReference<Object>(){});
@@ -212,7 +232,9 @@ public class AdvertisementController {
 	{
 
 	    RestTemplate restTemplate = new RestTemplate();
-	    HttpEntity<NotificationModel> entity=new HttpEntity<>(model);
+	    HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+	    HttpEntity<NotificationModel> entity=new HttpEntity<>(model,headers);
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
 		ResponseEntity<Object> res=restTemplate.exchange("http://"+host+":"+advPort+"/notificationResponse",HttpMethod.POST,entity,new ParameterizedTypeReference<Object>(){});
@@ -226,13 +248,16 @@ public class AdvertisementController {
 	@GetMapping("user/getMyAllNotificationsSize")
 	public ResponseEntity<String> notSize(ServletRequest req)
 	{
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+		HttpEntity<SubjectModel> entity = new HttpEntity<SubjectModel>(headers);
 		String userName=this.tokenProvider.getUsername((HttpServletRequest) req);
 	    User user=us.findByEmail(userName);	
 	    Long id=user.getUserid();
 	    RestTemplate restTemplate = new RestTemplate();
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
-		ResponseEntity<Integer> res=restTemplate.exchange("http://"+host+":"+advPort+"/getMyAllNotificationsSize/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<Integer>(){});
+		ResponseEntity<Integer> res=restTemplate.exchange("http://"+host+":"+advPort+"/getMyAllNotificationsSize/"+id,HttpMethod.GET,entity,new ParameterizedTypeReference<Integer>(){});
 		return new ResponseEntity<>(res.getBody().toString(),res.getStatusCode());
 	}
 	
@@ -246,7 +271,9 @@ public class AdvertisementController {
 	   
 	    model.userId=user.getUserid();
 	    RestTemplate restTemplate = new RestTemplate();
-		HttpEntity<IsUserAdvertisementModel> entity=new HttpEntity<>(model);
+	    HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+		HttpEntity<IsUserAdvertisementModel> entity=new HttpEntity<>(model,headers);
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
 		ResponseEntity<Boolean> res=restTemplate.exchange("http://"+host+":"+advPort+"/isUserAdvertisement",HttpMethod.POST,entity,new ParameterizedTypeReference<Boolean>(){});
@@ -255,8 +282,11 @@ public class AdvertisementController {
 	@PostMapping("filterAdvertisements")
 	public ResponseEntity<List<AdvertisementModel>> filterAdvertisements(@RequestBody AdvFilters advFilters)
 	{
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+		
 		RestTemplate restTemplate = new RestTemplate();
-		HttpEntity<AdvFilters> entity=new HttpEntity<>(advFilters);
+		HttpEntity<AdvFilters> entity=new HttpEntity<>(advFilters,headers);
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
 		ResponseEntity<List<AdvertisementModel>> res=restTemplate.exchange("http://"+host+":"+advPort+"/filterAdvertisements",HttpMethod.POST,entity,new ParameterizedTypeReference<List<AdvertisementModel>>(){});
@@ -273,28 +303,37 @@ public class AdvertisementController {
 		RestTemplate restTemplate = new RestTemplate();
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
-		HttpEntity<UserAdvertisementsModel> entity=new HttpEntity<>(userAdv);
+	    HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+		
+		HttpEntity<UserAdvertisementsModel> entity=new HttpEntity<>(userAdv,headers);
 		ResponseEntity<List<AdvertisementModel>> res=restTemplate.exchange("http://"+host+":"+advPort+"/getStudentAdvertisements",HttpMethod.POST,entity,new ParameterizedTypeReference<List<AdvertisementModel>>(){});
 		return res;
 	}
 	@GetMapping("getAllSubjects")
 	public ResponseEntity<List<SubjectModel>> getAllSubjects()
 	{
-		
+	
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+		HttpEntity<Object> entity = new HttpEntity<Object>(headers);
 		RestTemplate restTemplate = new RestTemplate();
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
-		ResponseEntity<List<SubjectModel>> res=restTemplate.exchange("http://"+host+":"+advPort+"/allSubjects",HttpMethod.GET,null,new ParameterizedTypeReference<List<SubjectModel>>(){});
+		ResponseEntity<List<SubjectModel>> res=restTemplate.exchange("http://"+host+":"+advPort+"/allSubjects",HttpMethod.GET,entity,new ParameterizedTypeReference<List<SubjectModel>>(){});
 		return new ResponseEntity<>(res.getBody(),HttpStatus.OK);
 	}
 	
 	@GetMapping("getAllFilters")
 	public ResponseEntity<AdvFilters> getAllFilters()
 	{
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+		HttpEntity<Object> entity = new HttpEntity<Object>(headers);
 		RestTemplate restTemplate = new RestTemplate();
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
-		ResponseEntity<List<SubjectModel>> res=restTemplate.exchange("http://"+host+":"+advPort+"/allSubjects",HttpMethod.GET,null,new ParameterizedTypeReference<List<SubjectModel>>(){});
+		ResponseEntity<List<SubjectModel>> res=restTemplate.exchange("http://"+host+":"+advPort+"/allSubjects",HttpMethod.GET,entity,new ParameterizedTypeReference<List<SubjectModel>>(){});
 		AdvFilters filter=new AdvFilters();
 		filter.setSubjects(res.getBody());
 		return new ResponseEntity<>(filter,HttpStatus.OK);
@@ -310,7 +349,9 @@ public class AdvertisementController {
 	    Long id=user.getUserid();
 	    advertisementModel.setAuthorRole(user.getRole().getRoleName());
 		advertisementModel.setAuthorId(id);	
-	    HttpEntity<AdvertisementModel> requestEntity =new HttpEntity<>(advertisementModel);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+	    HttpEntity<AdvertisementModel> requestEntity =new HttpEntity<>(advertisementModel,headers);
 		RestTemplate restTemplate = new RestTemplate();
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
@@ -323,7 +364,9 @@ public class AdvertisementController {
 	@PostMapping("updateAdvertisementInformation")
 	public ResponseEntity<?> updateAdvertisement(@RequestBody AdvertisementModel model){
 		
-		 HttpEntity<AdvertisementModel> requestEntity =new HttpEntity<>(model);
+		 HttpHeaders headers = new HttpHeaders();
+		 headers.set("Authorization", microInfo.getAdvertisement_token());
+		 HttpEntity<AdvertisementModel> requestEntity =new HttpEntity<>(model,headers);
 		 RestTemplate restTemplate = new RestTemplate();
 		 String host=microservices.getHost();
 		 String advPort=microservices.getAdvertismentPort();
@@ -350,7 +393,11 @@ public class AdvertisementController {
 		RestTemplate restTemplate = new RestTemplate();
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
-		ResponseEntity<AdvertisementModel> res=restTemplate.exchange("http://"+host+":"+advPort+"/advertisement/"+id,HttpMethod.GET,null,new ParameterizedTypeReference<AdvertisementModel>(){});
+	    
+	    HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+		HttpEntity<Object> entity = new HttpEntity<Object>(headers);
+		ResponseEntity<AdvertisementModel> res=restTemplate.exchange("http://"+host+":"+advPort+"/advertisement/"+id,HttpMethod.GET,entity,new ParameterizedTypeReference<AdvertisementModel>(){});
 		AdvertisementModel m=res.getBody();
 		m.setFirstName(us.getUserById(m.getAuthorId()).getFirstname());
 		m.setSurName(us.getUserById(m.getAuthorId()).getLastname());
@@ -363,7 +410,9 @@ public class AdvertisementController {
 	{
 		
 		RestTemplate restTemplate = new RestTemplate();
-		HttpEntity<SubjectModel> entity = new HttpEntity<SubjectModel>(_model);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+		HttpEntity<SubjectModel> entity = new HttpEntity<SubjectModel>(_model,headers);
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
 	    String ugPort=microservices.getUserAndgroupsPort();
@@ -385,7 +434,9 @@ public class AdvertisementController {
 	    String host=microservices.getHost();
 	    String advPort=microservices.getAdvertismentPort();
 	    String ugPort=microservices.getUserAndgroupsPort();
-	    HttpEntity<EditSubject> entity = new HttpEntity<>(model);
+	    HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", microInfo.getAdvertisement_token());
+	    HttpEntity<EditSubject> entity = new HttpEntity<>(model,headers);
 	   try {
 	      ResponseEntity<Object> res1=restTemplate.exchange("http://"+host+":"+advPort+"/editSubject",HttpMethod.POST,entity, Object.class);
 	 //  ResponseEntity<SubjectModel> res2=restTemplate.exchange("http://"+host+":"+ugPort+"/editSubject",HttpMethod.POST,entity, SubjectModel.class);
